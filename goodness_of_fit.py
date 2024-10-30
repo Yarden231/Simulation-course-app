@@ -383,80 +383,99 @@ def visualize_samples_and_qqplots(samples):
 
 def estimate_parameters(samples, distribution):
     """Enhanced parameter estimation with confidence intervals and visual explanation."""
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h1 class="section-header">אמידת פרמטרים לסימולציה</h1>
-            <h2>כדי לייצר זמני הכנה מציאותיים בסימולציה, נאמוד את הפרמטרים של ההתפלגות הנבחרת:</h2>
-        </div>
+    with st.container():
+    
+        st.markdown("""
+    <div class="custom-card rtl-content">
+        <h1 class="section-header">אמידת פרמטרים לסימולציה</h1>
+        <h2>כדי לייצר זמני הכנה מציאותיים בסימולציה, נאמוד את הפרמטרים של ההתפלגות הנבחרת:</h2>
+    </div>
     """, unsafe_allow_html=True)
+        
+    col1, col2 = st.columns([0.15, 0.85])
+    
+
+
 
     if distribution == 'Normal':
-        # Maximum Likelihood estimation for Normal distribution
-        mu, sigma = stats.norm.fit(samples)
-        
-        # Calculate confidence intervals using bootstrap
-        bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
-        bootstrap_means = np.mean(bootstrap_samples, axis=1)
-        bootstrap_stds = np.std(bootstrap_samples, axis=1)
-        
-        mu_ci = np.percentile(bootstrap_means, [2.5, 97.5])
-        sigma_ci = np.percentile(bootstrap_stds, [2.5, 97.5])
-        
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>פרמטרים של התפלגות נורמלית:</h4>
-                <ul>
-                    <li>ממוצע (μ): {mu:.2f} [CI: {mu_ci[0]:.2f}, {mu_ci[1]:.2f}]</li>
-                    <li>סטיית תקן (σ): {sigma:.2f} [CI: {sigma_ci[0]:.2f}, {sigma_ci[1]:.2f}]</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+
+            # Emoji column
+        with col1:
+            # Maximum Likelihood estimation for Normal distribution
+            mu, sigma = stats.norm.fit(samples)
+            
+            # Calculate confidence intervals using bootstrap
+            bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
+            bootstrap_means = np.mean(bootstrap_samples, axis=1)
+            bootstrap_stds = np.std(bootstrap_samples, axis=1)
+            
+            mu_ci = np.percentile(bootstrap_means, [2.5, 97.5])
+            sigma_ci = np.percentile(bootstrap_stds, [2.5, 97.5])
+
+        with col2:
+            
+            st.markdown(f"""
+                <div class="info-box rtl-content">
+                    <h4>הפרמטרים שנאמדו עבור התפלגות נורמלית:</h4>
+                    <ul>
+                        <li>ממוצע (μ): {mu:.2f} [CI: {mu_ci[0]:.2f}, {mu_ci[1]:.2f}]</li>
+                        <li>סטיית תקן (σ): {sigma:.2f} [CI: {sigma_ci[0]:.2f}, {sigma_ci[1]:.2f}]</li>
+                    </ul>
+                </div>
+            """, unsafe_allow_html=True)
         
         return mu, sigma
 
     elif distribution == 'Exponential':
-        # Maximum Likelihood estimation for Exponential distribution
-        lambda_est = 1 / np.mean(samples)
-        
-        # Calculate confidence interval for lambda using bootstrap
-        bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
-        bootstrap_lambdas = 1 / np.mean(bootstrap_samples, axis=1)
-        lambda_ci = np.percentile(bootstrap_lambdas, [2.5, 97.5])
-        
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>פרמטר של התפלגות מעריכית:</h4>
-                <ul>
-                    <li>קצב (λ): {lambda_est:.4f} [CI: {lambda_ci[0]:.4f}, {lambda_ci[1]:.4f}]</li>
-                    <li>זמן ממוצע (1/λ): {1/lambda_est:.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+            
+        with col1:
+            # Maximum Likelihood estimation for Exponential distribution
+            lambda_est = 1 / np.mean(samples)
+            
+            # Calculate confidence interval for lambda using bootstrap
+            bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
+            bootstrap_lambdas = 1 / np.mean(bootstrap_samples, axis=1)
+            lambda_ci = np.percentile(bootstrap_lambdas, [2.5, 97.5])
+            
+        with col2:
+            st.markdown(f"""
+                <div class="info-box rtl-content">
+                    <h4>הפרמטרים שנאמדו עבור התפלגות מעריכית:</h4>
+                    <ul>
+                        <li>קצב (λ): {lambda_est:.4f} [CI: {lambda_ci[0]:.4f}, {lambda_ci[1]:.4f}]</li>
+                        <li>זמן ממוצע (1/λ): {1/lambda_est:.2f} דקות</li>
+                    </ul>
+                </div>
+            """, unsafe_allow_html=True)
         
         return lambda_est,
 
     elif distribution == 'Uniform':
-        # Maximum Likelihood estimation for Uniform distribution
-        a, b = np.min(samples), np.max(samples)
-        
-        # Calculate confidence intervals using bootstrap
-        bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
-        bootstrap_mins = np.min(bootstrap_samples, axis=1)
-        bootstrap_maxs = np.max(bootstrap_samples, axis=1)
-        
-        a_ci = np.percentile(bootstrap_mins, [2.5, 97.5])
-        b_ci = np.percentile(bootstrap_maxs, [2.5, 97.5])
-        
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>פרמטרים של התפלגות אחידה:</h4>
-                <ul>
-                    <li>מינימום (a): {a:.2f} [CI: {a_ci[0]:.2f}, {a_ci[1]:.2f}]</li>
-                    <li>מקסימום (b): {b:.2f} [CI: {b_ci[0]:.2f}, {b_ci[1]:.2f}]</li>
-                    <li>טווח: {b-a:.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+
+        with col1:
+
+            # Maximum Likelihood estimation for Uniform distribution
+            a, b = np.min(samples), np.max(samples)
+            
+            # Calculate confidence intervals using bootstrap
+            bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
+            bootstrap_mins = np.min(bootstrap_samples, axis=1)
+            bootstrap_maxs = np.max(bootstrap_samples, axis=1)
+            
+            a_ci = np.percentile(bootstrap_mins, [2.5, 97.5])
+            b_ci = np.percentile(bootstrap_maxs, [2.5, 97.5])
+            
+        with col2:    
+            st.markdown(f"""
+                <div class="info-box rtl-content">
+                    <h4> הפרמטרים שנאמדו עבור התפלגות אחידה: </h4>
+                    <ul>
+                        <li>מינימום (a): {a:.2f} [CI: {a_ci[0]:.2f}, {a_ci[1]:.2f}]</li>
+                        <li>מקסימום (b): {b:.2f} [CI: {b_ci[0]:.2f}, {b_ci[1]:.2f}]</li>
+                        <li>טווח: {b-a:.2f} דקות</li>
+                    </ul>
+                </div>
+            """, unsafe_allow_html=True)
         
         return a, b
 
