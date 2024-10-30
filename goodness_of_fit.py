@@ -324,31 +324,31 @@ def visualize_samples_and_qqplots(samples):
             </div>
         """, unsafe_allow_html=True)
         
-    st.markdown("""
-        <style>
-        * {
-            font-family: Arial, sans-serif !important;
-        }
-        .info-box {
-            font-family: Arial, sans-serif !important;
-        }
-        .info-box ul li {
-            font-family: Arial, sans-serif !important;
-        }
-        button {
-            font-family: Arial, sans-serif !important;
-        }
-        </style>
-        <div class="info-box rtl-content">
-            <h4 style="font-family: Arial, sans-serif;">כיצד לפרש את הגרפים:</h4>
-            <ul>
-                <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה.</li>
-                <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
-                <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
-            </ul>
-        </div>
-    """, unsafe_allow_html=True)
-    
+        st.markdown("""
+            <style>
+            * {
+                font-family: Arial, sans-serif !important;
+            }
+            .info-box {
+                font-family: Arial, sans-serif !important;
+            }
+            .info-box ul li {
+                font-family: Arial, sans-serif !important;
+            }
+            button {
+                font-family: Arial, sans-serif !important;
+            }
+            </style>
+            <div class="info-box rtl-content">
+                <h4 style="font-family: Arial, sans-serif;">כיצד לפרש את הגרפים:</h4>
+                <ul>
+                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה.</li>
+                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
+                    <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
     with col2:
         fig = plt.figure(figsize=(8, 8))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
