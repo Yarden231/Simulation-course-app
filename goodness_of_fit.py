@@ -265,17 +265,17 @@ def display_samples(samples):
         # Display first few samples in a table
         st.markdown("""
             <div class="info-box rtl-content">
-                <h4>דוגמאות לזמני הכנה (בדקות):</h4>
+                <h4>זמני ההכנה שנמדדו (בדקות):</h4>
             </div>
         """, unsafe_allow_html=True)
         
         # Create a DataFrame with the first 10 samples
         sample_df = pd.DataFrame({
-            'Sample #': range(1, 11),
-            'Time (minutes)': samples[:10].round(2)
+            'Sample #': range(1, 1001),
+            'Time (minutes)': samples.round(2)
         }).set_index('Sample #')
         
-        st.dataframe(sample_df, height=300)
+        st.dataframe(sample_df, height=200)
 
         # Display summary statistics with business context
         st.markdown("""
@@ -337,16 +337,14 @@ def visualize_samples_and_qqplots(samples):
         """, unsafe_allow_html=True)
 
     with col2:
-        # Create a grid of 2x2 with better proportions
-        fig = plt.figure(figsize=(5, 5))
+        fig = plt.figure(figsize=(6, 6))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
         axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
-        # Enhanced Histogram with KDE
         sns.histplot(data=samples, kde=False, stat='density', ax=axs[0])
-        axs[0].set_title('התפלגות זמני ההכנה')
-        axs[0].set_xlabel('זמן (דקות)')
-        axs[0].set_ylabel('צפיפות')
+        axs[0].set_title('Arrival Time Distribution')
+        axs[0].set_xlabel('Time (minutes)')
+        axs[0].set_ylabel('Density')
 
         # QQ Plots with confidence bands
         distributions = [
