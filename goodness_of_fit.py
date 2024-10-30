@@ -823,17 +823,17 @@ def show():
 
     # Header section with business context
     with st.container():
-        col1, col2 = st.columns([1,2])
+        col1, col2 = st.columns([1,1])
 
     with col1:
         st.markdown("""
             <div class="custom-card rtl-content">
                 <h4>תהליך הניתוח:</h4>
                 <ol class="custom-list">
-                    <li>1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
-                    <li>2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
-                    <li>3️⃣ התאמת מודל סטטיסטי לנתונים</li>
-                    <li>4️⃣ בדיקת טיב ההתאמה של המודל</li>
+                    <li> איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
+                    <li> זיהוי דפוסים והתפלגויות אפשריות</li>
+                    <li> התאמת מודל סטטיסטי לנתונים</li>
+                    <li> בדיקת טיב ההתאמה של המודל</li>
                 </ol>
             </div>
         """, unsafe_allow_html=True)
@@ -843,7 +843,7 @@ def show():
         # Business context explanation
         st.markdown("""
             <div class="custom-card rtl-content">
-                <h3 class="section-header">מטרת הניתוח הסטטיסטי</h3>
+                <h3 class="section-header">מטרת הניתוח הסטטיסטי:</h3>
                 <p>
                     כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                     דרך ניתוח הנתונים נוכל:
