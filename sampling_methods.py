@@ -1,3 +1,4 @@
+
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,110 +6,90 @@ from scipy import stats
 from utils import set_rtl
 from utils import set_ltr_sliders
 import time
+# Call the set_rtl function to apply RTL styles
+set_rtl()
 
-
-def sample_normal(mu, sigma, size):
-    """Sample from normal distribution"""
-    samples = np.random.normal(mu, sigma, size)
-    return np.clip(samples, 2, 15)  # Clip to realistic food prep times
+def sample_uniform(a, b, size):
+    return np.random.uniform(a, b, size)
 
 def sample_exponential(lambda_param, size):
-    """Sample from exponential distribution"""
-    samples = np.random.exponential(1/lambda_param, size)
-    return np.clip(samples, 2, 15)  # Clip to realistic food prep times
+    return np.random.exponential(1/lambda_param, size)
 
-def sample_composite(size):
-    """Sample from mixture of two normal distributions"""
-    n_simple = int(0.2 * size)
-    n_complex = size - n_simple
-    
-    simple_orders = np.random.normal(5, 1, n_simple)
-    complex_orders = np.random.normal(10, 1.5, n_complex)
-    
-    all_orders = np.concatenate([simple_orders, complex_orders])
-    return np.clip(all_orders, 2, 15)
+def sample_normal(mu, sigma, size):
+    return np.random.normal(mu, sigma, size)
+
+def sample_composite_distribution(size):
+    normal_1 = np.random.normal(0, 1, size)
+    normal_2 = np.random.normal(3, 1, size)
+    mask = np.random.rand(size) < 0.2
+    return np.where(mask, normal_1, normal_2)
+
+def sample_acceptance_rejection(size):
+    samples = []
+    while len(samples) < size:
+        x = np.random.random()
+        y = np.random.random() * 3
+        if y <= f(x):
+            samples.append(x)
+    return np.array(samples)
+
+def f(x):
+    return 3 * x ** 2
 
 def plot_histogram(samples, title, distribution_func=None, true_density=None):
-    """Plot histogram with better styling."""
-    fig, ax = plt.subplots(figsize=(8, 5))
-    
-    bins = np.linspace(min(samples), max(samples), 30)
-    ax.hist(samples, bins=bins, density=True, alpha=0.7, color='pink', label='Sampled Data')
+    fig, ax = plt.subplots(figsize=(6, 4))  # Fixed figure size
+    ax.hist(samples, bins=100, density=True, alpha=0.7, label='Sampled Data')
+    ax.set_title(f"{title} (Number of samples: {len(samples)})")
+    ax.set_xlabel("Value")
+    ax.set_ylabel("Density")
     
     if true_density:
         x = np.linspace(min(samples), max(samples), 100)
-        ax.plot(x, true_density(x), 'darkred', linewidth=2, label='True Density')
-
+        ax.plot(x, true_density(x), 'r-', lw=2, label='True Density Function')
+    
     if distribution_func:
         x = np.linspace(0, 1, 100)
-        ax.plot(x, distribution_func(x), 'darkred', linewidth=2, linestyle='--', label='Target Distribution')
+        ax.plot(x, distribution_func(x), 'g--', lw=2, label='Target Distribution')
 
-    ax.set_title(title)
-    ax.set_xlabel("Time (minutes)")
-    ax.set_ylabel("Density")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    
+    ax.legend(loc='upper right')  # Fixed legend location
+    ax.set_xlim([min(samples), max(samples)])  # Set axis limits
+    ax.set_ylim(0, 2.0)  # Fixed y-axis limit for consistency
+    ax.grid(True)  # Add grid for clarity
     return fig
 
 def plot_qqplot(samples, title):
-    """Plot QQ plot with better styling."""
-    fig, ax = plt.subplots(figsize=(8, 5))
-    
+    fig, ax = plt.subplots(figsize=(6, 4))  # Fixed figure size
     stats.probplot(samples, dist="norm", plot=ax)
-    
-    ax.get_lines()[0].set_markerfacecolor('pink')
-    ax.get_lines()[0].set_markeredgecolor('darkred')
-    ax.get_lines()[1].set_color('darkred')
-    
-    ax.set_title(f"{title}\nQ-Q Plot")
-    ax.grid(True, alpha=0.3)
-    
+    ax.set_title(f"{title} - QQ Plot")
+    ax.set_xlabel("Theoretical Quantiles")
+    ax.set_ylabel("Sample Quantiles")
+    ax.grid(True)  # Add grid for clarity
     return fig
 
 def display_statistics(samples):
-    """Display statistics with better formatting."""
-    col1, col2 = st.columns(2)
+    mean = np.mean(samples)
+    median = np.median(samples)
+    std_dev = np.std(samples)
+    min_val = np.min(samples)
+    max_val = np.max(samples)
     
-    with col1:
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>מדדי מרכז:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>ממוצע: {np.mean(samples):.2f} דקות</li>
-                    <li>חציון: {np.median(samples):.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>מדדי פיזור:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>סטיית תקן: {np.std(samples):.2f} דקות</li>
-                    <li>טווח: {np.min(samples):.2f} - {np.max(samples):.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+    st.write(f"**Mean:** {mean:.2f}")
+    st.write(f"**Median:** {median:.2f}")
+    st.write(f"**Standard Deviation:** {std_dev:.2f}")
+    st.write(f"**Minimum Value:** {min_val:.2f}")
+    st.write(f"**Maximum Value:** {max_val:.2f}")
 
-def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
-    """Run sampling with visualization updates"""
+def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples, distribution_func=None, true_density=None):
     # Generate all samples at once
     all_samples = sampling_function(num_samples)
     
-    # Calculate number of iterations
-    num_iterations = (num_samples + update_interval - 1) // update_interval
-    
-    # Process samples in batches
+    # Simulate real-time updates by splitting samples into batches
     samples = []
-    for i in range(num_iterations):
-        start_idx = i * update_interval
-        end_idx = min(start_idx + update_interval, num_samples)
-        
-        batch_samples = all_samples[start_idx:end_idx]
+    for i in range(0, num_samples, update_interval):
+        batch_samples = all_samples[i:i+update_interval]
         samples.extend(batch_samples)
         
+        # Update histograms and QQ plots side by side
         with plot_placeholder.container():
             col1, col2 = st.columns(2)
             with col1:
@@ -120,269 +101,100 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
                 st.pyplot(qqplot_fig)
                 plt.close(qqplot_fig)
 
+        # Update statistics
         stats_placeholder.empty()
         with stats_placeholder:
             display_statistics(samples)
         
+        # Print sample values
         if print_samples:
             st.write(f"**Sample values (first {min(10, len(samples))} values):** {samples[:10]}")
         
-        progress = min(1.0, end_idx / num_samples)
-        progress_bar.progress(progress)
-
-def show_sampling_intro():
-    # Main header
-    st.markdown("""
-        <div style="
-            background-color: #1A1A1A;
-            border: 1px solid #8B0000;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 20px 0;
-        ">
-            <!-- Title Section -->
-            <div style="margin-bottom: 30px;">
-                <h1 style="
-                    color: #FFFFFF;
-                    text-align: right;
-                    font-size: 1.8rem;
-                    margin-bottom: 15px;
-                ">שיטות דגימה - הדרך ליצירת סימולציה מדויקת 🎲</h1>
-                <p style="
-                    color: #CCCCCC;
-                    text-align: right;
-                    line-height: 1.6;
-                ">
-                    כדי לדמות את פעילות משאית המזון של משפחת לוקו בצורה מדויקת, אנחנו צריכים להבין כיצד ליצור מספרים אקראיים 
-                    שמתנהגים בדיוק כמו הנתונים האמיתיים שאספנו.
-                </p>
-            </div>
-
-            <!-- Two Column Layout -->
-            <div style="
-                display: flex;
-                gap: 30px;
-                margin-bottom: 30px;
-            ">
-                <!-- Left Column -->
-                <div style="flex: 1;">
-                    <div style="
-                        background-color: #2D2D2D;
-                        padding: 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                    ">
-                        <h4 style="
-                            color: #FFFFFF;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">למה זה חשוב?</h4>
-                        <ul style="
-                            color: #CCCCCC;
-                            padding-right: 20px;
-                            margin: 0;
-                            text-align: right;
-                            list-style-type: none;
-                        ">
-                            <li style="margin-bottom: 10px;">🎯 דיוק בחיזוי זמני המתנה</li>
-                            <li style="margin-bottom: 10px;">⚡ שיפור יעילות התהליך</li>
-                            <li style="margin-bottom: 10px;">📊 תכנון משמרות מדויק</li>
-                            <li style="margin-bottom: 10px;">💡 קבלת החלטות מבוססות נתונים</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div style="flex: 2;">
-                    <div style="
-                        background-color: #2D2D2D;
-                        padding: 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                    ">
-                        <h3 style="
-                            color: #FFFFFF;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">מה נלמד בעמוד זה?</h3>
-                        <p style="
-                            color: #CCCCCC;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">
-                            בעמוד זה נלמד את השיטות השונות לדגימת מספרים אקראיים עבור:
-                        </p>
-                        <ul style="
-                            color: #CCCCCC;
-                            padding-right: 20px;
-                            margin: 0;
-                            text-align: right;
-                        ">
-                            <li style="margin-bottom: 10px;">⏰ זמני הגעת לקוחות למשאית</li>
-                            <li style="margin-bottom: 10px;">🍽️ זמני הכנת מנות שונות</li>
-                            <li style="margin-bottom: 10px;">⌛ זמני המתנה מקסימליים של לקוחות</li>
-                            <li style="margin-bottom: 10px;">🔄 זמני מעבר בין עמדות השירות</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Section -->
-            <div style="
-                background-color: #2D2D2D;
-                padding: 20px;
-                border-radius: 8px;
-            ">
-                <h4 style="
-                    color: #FFFFFF;
-                    text-align: right;
-                    margin-bottom: 15px;
-                ">כיצד נשתמש בשיטות הדגימה?</h4>
-                <p style="
-                    color: #CCCCCC;
-                    text-align: right;
-                    line-height: 1.6;
-                    margin-bottom: 0;
-                ">
-                    בהמשך, נשתמש בשיטות אלו כדי ליצור סימולציה מדויקת של פעילות המשאית. 
-                    הסימולציה תאפשר לנו לבחון תרחישים שונים ולקבל החלטות מושכלות לגבי תפעול המשאית.
-                    נתחיל בהבנת השיטות הבסיסיות ונתקדם לשיטות מורכבות יותר.
-                </p>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
- 
+        # Simulate progress in real-time
+        progress_bar.progress((i + update_interval) / num_samples)
+        
+        # Delay to simulate real-time sampling (optional)
+        #time.sleep(0.01)
 
 def show_sampling_methods():
-    with open('.streamlit/style.css') as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    st.title("הדגמה של שיטות דגימה שונות")
 
-    # Header
-    st.markdown("""
-        <div class="custom-header rtl-content">
-            <h1>שיטות דגימה לסימולציית זמני שירות 🚚</h1>
-            <p>לאחר שזיהינו את ההתפלגות המתאימה לזמני השירות, נלמד כיצד לייצר דגימות מההתפלגות</p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.write("בדף זה נלמד על שיטות דגימה שונות, ונראה דוגמאות כיצד ניתן לייצר דגימות באמצעות Python.")
 
-    # Show the introduction
-    #show_sampling_intro()
-
-    num_samples = st.slider("מספר דגימות", min_value=1000, max_value=10000, value=1000, step=1000)
-
-    # Distribution selection
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">בחירת התפלגות</h3>
-            <p>בחר את סוג ההתפלגות שברצונך לבחון:</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Initialize session state
     if 'selected_sampling' not in st.session_state:
         st.session_state.selected_sampling = None
 
-    # Distribution selection buttons
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("התפלגות נורמלית", help="מתאים למנות סטנדרטיות"):
-            st.session_state.selected_sampling = 'normal'
-    with col2:
-        if st.button("התפלגות מעריכית", help="מתאים להזמנות מהירות"):
-            st.session_state.selected_sampling = 'exponential'
-    with col3:
-        if st.button("התפלגות מורכבת", help="מתאים למגוון סוגי מנות"):
-            st.session_state.selected_sampling = 'composite'
+    # Move the slider for sample size inside the main page area
+    st.subheader("בחר מספר דגימות ודגום התפלגות")
+    num_samples = st.slider("מספר דגימות", min_value=1000, max_value=1000000, value=1000, step=1000)
+    update_interval = st.slider("תדירות עדכון (מספר דגימות)", 100, 1000, 100)
 
-    # Display selected distribution content
-    if st.session_state.selected_sampling == 'normal':
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3>התפלגות נורמלית - זמני הכנה למנה סטנדרטית</h3>
-                <p>התפלגות זו מתאימה למנות עם זמן הכנה קבוע יחסית.</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        mu = st.slider("זמן הכנה ממוצע (μ)", 5.0, 15.0, 8.0)
-        sigma = st.slider("שונות בזמני ההכנה (σ)", 0.5, 3.0, 1.0)
-        
+    st.header("בחר שיטת דגימה")
+    set_ltr_sliders() 
+    if st.button("התפלגות אחידה"):
+        st.session_state.selected_sampling = 'uniform'
+    if st.button("התפלגות נורמלית"):
+        st.session_state.selected_sampling = 'normal'
+    if st.button("התפלגות מעריכית"):
+        st.session_state.selected_sampling = 'exponential'
+    if st.button("התפלגות מורכבת"):
+        st.session_state.selected_sampling = 'composite'
+    if st.button("שיטת הקבלה-דחייה"):
+        st.session_state.selected_sampling = 'acceptance_rejection'
+
+    if st.session_state.selected_sampling == 'uniform':
+        st.header("1. התפלגות אחידה")
+        st.latex(r"f(x) = \frac{1}{b-a}, \quad a \leq x \leq b")
+        a = st.slider("ערך מינימלי (a)", 0.0, 1.0, 0.0)
+        b = st.slider("ערך מקסימלי (b)", a + 0.1, 1.0, 1.0)
         progress_bar = st.progress(0)
         plot_placeholder = st.empty()
         qqplot_placeholder = st.empty()
         stats_placeholder = st.empty()
-        
+        true_density = lambda x: np.ones_like(x) / (b - a)
+        run_sampling(lambda size: sample_uniform(a, b, size), num_samples, update_interval, "Uniform Distribution", progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=True, true_density=true_density)
+
+    elif st.session_state.selected_sampling == 'normal':
+        st.header("2. התפלגות נורמלית")
+        st.latex(r"f(x) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(x - \mu)^2}{2\sigma^2}}")
+        mu = st.slider("ממוצע (μ)", -10.0, 10.0, 0.0)
+        sigma = st.slider("סטיית תקן (σ)", 0.1, 5.0, 1.0)
+        progress_bar = st.progress(0)
+        plot_placeholder = st.empty()
+        qqplot_placeholder = st.empty()
+        stats_placeholder = st.empty()
         true_density = lambda x: stats.norm.pdf(x, mu, sigma)
-        run_sampling(
-            lambda size: sample_normal(mu, sigma, size),
-            num_samples,
-            update_interval,
-            "Normal Distribution",
-            progress_bar,
-            plot_placeholder,
-            qqplot_placeholder,
-            stats_placeholder,
-            true_density=true_density
-        )
+        run_sampling(lambda size: sample_normal(mu, sigma, size), num_samples, update_interval, "Normal Distribution", progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=True, true_density=true_density)
 
     elif st.session_state.selected_sampling == 'exponential':
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3>התפלגות מעריכית - זמני הכנה למנות מהירות</h3>
-                <p>התפלגות זו מתאימה למנות שבדרך כלל מוכנות מהר.</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        lambda_param = st.slider("קצב הכנה (λ)", 0.1, 1.0, 0.5)
-        
+        st.header("3. התפלגות מעריכית")
+        st.latex(r"f(x) = \lambda e^{-\lambda x}, \quad x \geq 0")
+        lambda_param = st.slider("פרמטר למבדא", 0.1, 5.0, 1.0)
         progress_bar = st.progress(0)
         plot_placeholder = st.empty()
         qqplot_placeholder = st.empty()
         stats_placeholder = st.empty()
-        
         true_density = lambda x: lambda_param * np.exp(-lambda_param * x)
-        run_sampling(
-            lambda size: sample_exponential(lambda_param, size),
-            num_samples,
-            update_interval,
-            "Exponential Distribution",
-            progress_bar,
-            plot_placeholder,
-            qqplot_placeholder,
-            stats_placeholder,
-            true_density=true_density
-        )
+        run_sampling(lambda size: sample_exponential(lambda_param, size), num_samples, update_interval, "Exponential Distribution", progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=True, true_density=true_density)
 
     elif st.session_state.selected_sampling == 'composite':
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3>התפלגות מורכבת - זמני הכנה למגוון מנות</h3>
-                <p>התפלגות זו מתאימה כאשר יש שני סוגי מנות עיקריים.</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
+        st.header("4. התפלגות מורכבת")
+        st.latex(r"f(x) = 0.2 \cdot N(0, 1) + 0.8 \cdot N(3, 1)")
         progress_bar = st.progress(0)
         plot_placeholder = st.empty()
         qqplot_placeholder = st.empty()
         stats_placeholder = st.empty()
-        
-        true_density = lambda x: 0.2 * stats.norm.pdf(x, 5, 1) + 0.8 * stats.norm.pdf(x, 10, 1.5)
-        run_sampling(
-            sample_composite,
-            num_samples,
-            update_interval,
-            "Composite Distribution",
-            progress_bar,
-            plot_placeholder,
-            qqplot_placeholder,
-            stats_placeholder,
-            true_density=true_density
-        )
+        true_density = lambda x: 0.2 * stats.norm.pdf(x, 0, 1) + 0.8 * stats.norm.pdf(x, 3, 1)
+        run_sampling(lambda size: sample_composite_distribution(size), num_samples, update_interval, "Composite Distribution", progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=True, true_density=true_density)
 
-    # Display code implementation
-    #if st.session_state.selected_sampling:
-        #show_implementation()
-
+    elif st.session_state.selected_sampling == 'acceptance_rejection':
+        st.header("5. שיטת הקבלה-דחייה")
+        st.latex(r"f(x) = 3x^2, \quad 0 \leq x \leq 1")
+        progress_bar = st.progress(0)
+        plot_placeholder = st.empty()
+        qqplot_placeholder = st.empty()
+        stats_placeholder = st.empty()
+        run_sampling(lambda size: sample_acceptance_rejection(size), num_samples, update_interval, "Acceptance-Rejection Method", progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=True, distribution_func=f)
 
 if __name__ == "__main__":
     show_sampling_methods()
