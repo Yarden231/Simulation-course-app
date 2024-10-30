@@ -230,6 +230,7 @@ def show_sampling_intro():
 from statsmodels.graphics.gofplots import qqplot
 import numpy as np
 
+
 def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
     """Run sampling with visualization updates"""
     # Generate all samples at once
@@ -248,13 +249,27 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         samples.extend(batch_samples)
         
         # Generate Q-Q plot
-        qqplot_fig = qqplot(np.array(samples), line='s')
+        qqplot_fig = plt.figure()
+        ax = qqplot(np.array(samples), line='s', ax=qqplot_fig.add_subplot(111))
+        ax.get_lines()[1].set_color('#8B0000')  # Set the color of the theoretical line
+        ax.get_lines()[0].set_markerfacecolor('#8B0000')  # Set the color of the sample points
+        ax.get_lines()[0].set_markeredgecolor('#8B0000')  # Set the edge color of the sample points
         
         with plot_placeholder.container():
             col1, col2 = st.columns(2)
             with col1:
                 st.pyplot(qqplot_fig)
                 plt.close(qqplot_fig)
+
+            with col2:
+                # Create histogram figure
+                hist_fig, ax = plt.subplots()
+                ax.hist(samples, bins=30, color='#8B0000', edgecolor='black', alpha=0.7)
+                ax.set_title("Sample Histogram")
+                ax.set_xlabel("Value")
+                ax.set_ylabel("Frequency")
+                st.pyplot(hist_fig)
+                plt.close(hist_fig)
 
         # Update statistics placeholder
         stats_placeholder.empty()
@@ -270,7 +285,9 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         progress_bar.progress(progress)
 
 
+
 def show_sampling_methods():
+    set_ltr_sliders()
     st.title("אלגוריתמי דגימה - מודלים סטטיסטיים למשאית טאקו לוקו")
 
     st.write("""
@@ -359,7 +376,7 @@ def show_sampling_methods():
         qqplot_placeholder = st.empty()
         stats_placeholder = st.empty()
         true_density = lambda x: stats.norm.pdf(x, mu, sigma)
-        run_sampling(lambda size: sample_normal(mu, sigma, size), num_samples, update_interval, 
+        run_sampling(lambda size: sample_normal(mu, sigma, size), num_samples, 100, 
                     "התפלגות זמני הכנה", progress_bar, plot_placeholder, 
                     qqplot_placeholder, stats_placeholder, print_samples=True, 
                     true_density=true_density)
@@ -389,7 +406,7 @@ def show_sampling_methods():
         stats_placeholder = st.empty()
         true_density = lambda x: lambda_minutes * np.exp(-lambda_minutes * x)
         run_sampling(lambda size: sample_exponential(lambda_minutes, size), 
-                    num_samples, update_interval, "התפלגות זמני הגעה", 
+                    num_samples, 100, "התפלגות זמני הגעה", 
                     progress_bar, plot_placeholder, qqplot_placeholder, 
                     stats_placeholder, print_samples=True, true_density=true_density)
 
