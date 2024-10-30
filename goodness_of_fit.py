@@ -43,7 +43,7 @@ def show_introduction():
 
     with col1:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג א'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">50% מהלקוחות</p>
@@ -55,7 +55,7 @@ def show_introduction():
 
     with col2:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ב'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
@@ -67,7 +67,7 @@ def show_introduction():
 
     with col3:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ג'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
@@ -90,7 +90,7 @@ def show_introduction():
 
     with col1:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">N(5, 1)</p>
@@ -101,7 +101,7 @@ def show_introduction():
 
     with col2:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 2</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">N(8, 2)</p>
@@ -112,7 +112,7 @@ def show_introduction():
 
     with col3:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 3</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">N(10, 3)</p>
@@ -123,45 +123,13 @@ def show_introduction():
 
     # Arrival Times Section
     st.markdown("""
-        <div class="custom-card rtl-content" style="margin-top: 20px;">
+        <div class="custom-card rtl-content" style="margin-top: 10px;">
             <h3 class="section-header">3. זמני הגעה</h3>
             <p> הצוות ביצע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-
-def show_business_context():
-    """Display the business context and importance of the analysis."""
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h1 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
-            <p>
-                כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
-            </p>
-        </div>
-        
-        <div class="info-box rtl-content">
-            <h4>למה זה חשוב?</h4>
-            <ul class="custom-list">
-                <li>🎯 נוכל לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
-                <li>👥 נוכל לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
-                <li>⚡ נוכל לזהות הזדמנויות לייעול תהליך ההכנה</li>
-                <li>📊 נוכל לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
-            </ul>
-        </div>
-        
-        <div class="custom-card rtl-content">
-            <h4>תהליך הניתוח:</h4>
-            <ol class="custom-list">
-                <li>1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההכנה</li>
-                <li>2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
-                <li>3️⃣ התאמת מודל סטטיסטי לנתונים</li>
-                <li>4️⃣ בדיקת טיב ההתאמה של המודל</li>
-            </ol>
-        </div>
-    """, unsafe_allow_html=True)
 
 def generate_service_times(size=1000, distribution_type=None):
     """Generate realistic food preparation times."""
@@ -747,9 +715,9 @@ def perform_goodness_of_fit(samples, distribution, params):
             <style>
             .custom-back-card {{
                 background-color: #3f0000;
-                padding: 20px;
+                padding: 10px;
                 border-radius: 8px;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }}
             .custom-back-card ul {{
                 list-style-type: none;
@@ -772,9 +740,9 @@ def perform_goodness_of_fit(samples, distribution, params):
             <style>
             .custom-back-card {{
                 background-color: #3f0000;
-                padding: 20px;
+                padding: 10px;
                 border-radius: 8px;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }}
             .custom-back-card ul {{
                 list-style-type: none;
@@ -845,7 +813,7 @@ def show():
 
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h3>
+            <h1 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
             <p>
                 כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                 המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
