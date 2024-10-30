@@ -123,12 +123,10 @@ def show_introduction():
 
     # Arrival Times Section
     st.markdown("""
-        <div class="custom-card rtl-content" style="margin-top: 30px;">
+        <div class="custom-card rtl-content" style="margin-top: 20px;">
             <h3 class="section-header">3. זמני הגעה</h3>
             <div style="color: #CCCCCC;">
-                <p הצוות ביצעע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם.    </p>
-                <p style="margin-top: 15px;"> בעמוד זה נצלול יחד עם אוצ'ו למשימה של התאמת התפלגות ידועה לדגימות שבידינו</p>
-                <p style="margin-top: 15px;">לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</p>
+                <p הצוות ביצעע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -314,7 +312,7 @@ def display_samples(samples):
 
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and QQ plots in a two-column layout."""
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 1])
     
     with col1:
         st.markdown("""
@@ -346,7 +344,7 @@ def visualize_samples_and_qqplots(samples):
         """, unsafe_allow_html=True)
 
     with col2:
-        fig = plt.figure(figsize=(7, 7))
+        fig = plt.figure(figsize=(6, 6))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
         axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
@@ -822,6 +820,7 @@ def show():
     st.markdown("""
         <div class="custom-header rtl-content">
             <h1>ניתוח זמני שירות - עמדת הכנת המנות 👨‍🍳</h1>
+            <h2 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h2>
             <p>התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</p>
         </div>
     """, unsafe_allow_html=True)
@@ -840,6 +839,7 @@ def show():
                 <li>⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
                 <li>📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
             </ul>
+            <p> style="margin-top: 15px;">לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</p>
         </div>
     """, unsafe_allow_html=True)
     
