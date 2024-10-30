@@ -6,6 +6,10 @@ import scipy.stats as stats
 import pandas as pd
 from utils import set_rtl, set_ltr_sliders
 
+def load_css():
+    with open('.streamlit/style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
 def show_introduction():
     # Title and main description
     st.markdown("""
@@ -125,10 +129,6 @@ def show_introduction():
             </div>
         </div>
     """, unsafe_allow_html=True)
-
-def load_css():
-    with open('.streamlit/style.css') as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def generate_service_times(size=1000, distribution_type=None):
     """Generate realistic food preparation times."""
