@@ -671,8 +671,8 @@ def plot_likelihood(samples, distribution):
 def perform_goodness_of_fit(samples, distribution, params):
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header">בדיקת התאמת המודל</h3>
-            <p>לפני שנשתמש במודל בסימולציה, חשוב לוודא שהוא אכן מתאר היטב את המציאות במשאית המזון שלנו. נבצע מבחנים סטטיסטיים כדי לבדוק את מידת ההתאמה:</p>
+            <h1 class="section-header">בדיקת התאמת המודל</h1>
+            <h2>לפני שנשתמש במודל בסימולציה, חשוב לוודא שהוא אכן מתאר היטב את המציאות במשאית המזון שלנו. נבצע מבחנים סטטיסטיים כדי לבדוק את מידת ההתאמה:</h2>
         </div>
     """, unsafe_allow_html=True)
     """Improved goodness of fit testing with corrected hypothesis testing."""
@@ -747,7 +747,7 @@ def perform_goodness_of_fit(samples, distribution, params):
     
     with col1:
         st.markdown(f"""
-            <div class="info-box" style="background-color: #fff0f5; padding: 15px; border-radius: 5px;">
+            <div class="info-box" padding: 15px; border-radius: 5px;">
                 <h4>Kolmogorov-Smirnov Test:</h4>
                 <ul style="list-style-type: none; padding-left: 0;">
                     <li>Statistic: {ks_stat:.4f}</li>
@@ -759,7 +759,7 @@ def perform_goodness_of_fit(samples, distribution, params):
     
     with col2:
         st.markdown(f"""
-            <div class="info-box" style="background-color: #fff0f5; padding: 15px; border-radius: 5px;">
+            <div class="info-box" padding: 15px; border-radius: 5px;">
                 <h4>Chi-Square Test:</h4>
                 <ul style="list-style-type: none; padding-left: 0;">
                     <li>Statistic: {chi_square_stat:.4f}</li>
