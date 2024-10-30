@@ -344,7 +344,7 @@ def visualize_samples_and_qqplots(samples):
                 </ul>
             </div>
         """, unsafe_allow_html=True)
-        
+
     with col2:
         fig = plt.figure(figsize=(8, 8))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
@@ -570,7 +570,7 @@ def generate_service_times(size=1000, distribution_type=None):
 def plot_likelihood(samples, distribution):
     """Enhanced likelihood function visualization with updated styling."""
     if distribution == 'Normal':
-        fig = plt.figure(figsize=(10, 6))
+        fig = plt.figure(figsize=(10, 4))
         gs = fig.add_gridspec(1, 2, wspace=0.3)
         ax1, ax2 = [fig.add_subplot(gs[0, i]) for i in range(2)]
 
