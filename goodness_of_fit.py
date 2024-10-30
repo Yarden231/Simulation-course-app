@@ -318,6 +318,16 @@ def visualize_samples_and_qqplots(samples):
     
     with col1:
         st.markdown("""
+            <style>
+            .custom-card p {
+                line-height: 1.8;
+                margin-bottom: 1.5rem;
+            }
+            .info-box ul li {
+                line-height: 1.8;
+                margin-bottom: 1rem;
+            }
+            </style>
             <div class="custom-card rtl-content">
                 <h3 class="section-header">ניתוח גרפי של ההתפלגות</h3>
                 <p>להלן ניתוח גרפי של הנתונים באמצעות היסטוגרמה ותרשימי Q-Q:</p>
@@ -325,20 +335,6 @@ def visualize_samples_and_qqplots(samples):
         """, unsafe_allow_html=True)
         
         st.markdown("""
-            <style>
-            * {
-                font-family: Arial, sans-serif !important;
-            }
-            .info-box {
-                font-family: Arial, sans-serif !important;
-            }
-            .info-box ul li {
-                font-family: Arial, sans-serif !important;
-            }
-            button {
-                font-family: Arial, sans-serif !important;
-            }
-            </style>
             <div class="info-box rtl-content">
                 <h4 style="font-family: Arial, sans-serif;">כיצד לפרש את הגרפים:</h4>
                 <ul>
@@ -348,7 +344,7 @@ def visualize_samples_and_qqplots(samples):
                 </ul>
             </div>
         """, unsafe_allow_html=True)
-
+        
     with col2:
         fig = plt.figure(figsize=(8, 8))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
@@ -849,7 +845,7 @@ def show():
         </style>
         <div class="custom-card rtl-content">
             <h1 class="section-header"></h1>
-            <h1 style="padding-bottom: 2rem;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h1>
+            <h1 style="padding-bottom: 3rem;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h1>
         </div>
     """, unsafe_allow_html=True)
 
