@@ -757,7 +757,7 @@ def perform_goodness_of_fit(samples, distribution, params):
             </div>
         """, unsafe_allow_html=True)
     
-    with col2:
+    
         st.markdown(f"""
             <div class="info-box" padding: 15px; border-radius: 5px;">
                 <h4>Chi-Square Test:</h4>
@@ -770,30 +770,31 @@ def perform_goodness_of_fit(samples, distribution, params):
             </div>
         """, unsafe_allow_html=True)
     
-    # Visualization of the fit
-    fig, ax = plt.subplots(figsize=(12, 6))
-    
-    # Plot histogram of data
-    sns.histplot(data=samples, stat='density', alpha=0.5, ax=ax, label='Data', color='pink')
-    
-    # Plot fitted distribution
-    x = np.linspace(np.min(samples), np.max(samples), 100)
-    if distribution == 'Normal':
-        pdf = stats.norm.pdf(x, *params)
-        ax.plot(x, pdf, 'darkred', label='Fitted Normal')
-    elif distribution == 'Exponential':
-        pdf = stats.expon.pdf(x, scale=1/params[0])
-        ax.plot(x, pdf, 'darkred', label='Fitted Exponential')
-    elif distribution == 'Uniform':
-        pdf = stats.uniform.pdf(x, *params)
-        ax.plot(x, pdf, 'darkred', label='Fitted Uniform')
-    
-    ax.set_title('Distribution Fit to Data')
-    ax.set_xlabel('Values')
-    ax.set_ylabel('Density')
-    ax.legend()
-    
-    st.pyplot(fig)
+    with col2:
+        # Visualization of the fit
+        fig, ax = plt.subplots(figsize=(6, 6))
+        
+        # Plot histogram of data
+        sns.histplot(data=samples, stat='density', alpha=0.5, ax=ax, label='Data', color='pink')
+        
+        # Plot fitted distribution
+        x = np.linspace(np.min(samples), np.max(samples), 100)
+        if distribution == 'Normal':
+            pdf = stats.norm.pdf(x, *params)
+            ax.plot(x, pdf, 'darkred', label='Fitted Normal')
+        elif distribution == 'Exponential':
+            pdf = stats.expon.pdf(x, scale=1/params[0])
+            ax.plot(x, pdf, 'darkred', label='Fitted Exponential')
+        elif distribution == 'Uniform':
+            pdf = stats.uniform.pdf(x, *params)
+            ax.plot(x, pdf, 'darkred', label='Fitted Uniform')
+        
+        ax.set_title('Distribution Fit to Data')
+        ax.set_xlabel('Values')
+        ax.set_ylabel('Density')
+        ax.legend()
+        
+        st.pyplot(fig)
 
     show_simulation_next_steps()
 
