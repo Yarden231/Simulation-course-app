@@ -844,10 +844,6 @@ def show():
         st.markdown("""
             <div class="custom-card rtl-content">
                 <h3 class="section-header">מטרת הניתוח הסטטיסטי:</h3>
-                <p>
-                    כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                    דרך ניתוח הנתונים נוכל:
-                </p>
                 <ul class="custom-list">
                     <li>🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
                     <li>👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
