@@ -346,7 +346,7 @@ def visualize_samples_and_qqplots(samples):
         """, unsafe_allow_html=True)
 
     with col2:
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(7, 7))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
         axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
@@ -392,7 +392,7 @@ def estimate_parameters(samples, distribution):
     </div>
     """, unsafe_allow_html=True)
         
-    col1, col2 = st.columns([0.85, 0.15])
+    col1, col2 = st.columns([0.7, 0.3])
     
     if distribution == 'Normal':
 
