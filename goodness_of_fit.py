@@ -844,20 +844,30 @@ def show():
 
 
     st.markdown("""
-    <div class="custom-card rtl-content">
-        <h1>ניתוח זמני שירות - עמדת הכנת המנות 👨‍🍳</h1>
-    </div>
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h3>
+            <p>
+                כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
+                המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
+            </p>
+        </div>
     """, unsafe_allow_html=True)
+
                 
     # Header section with business context
     with st.container():
         col1, col2 = st.columns([1,2])
     
     with col1:
-
         st.markdown("""
             <div class="custom-card rtl-content">
-                <h3 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו על ידי צוות סימולציה, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h3>
+                <h4>תהליך הניתוח:</h4>
+                <ol class="custom-list">
+                    <li>1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
+                    <li>2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
+                    <li>3️⃣ התאמת מודל סטטיסטי לנתונים</li>
+                    <li>4️⃣ בדיקת טיב ההתאמה של המודל</li>
+                </ol>
             </div>
         """, unsafe_allow_html=True)
 
