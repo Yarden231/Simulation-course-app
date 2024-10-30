@@ -338,7 +338,7 @@ def visualize_samples_and_qqplots(samples):
 
     with col2:
         # Create a grid of 2x2 with better proportions
-        fig = plt.figure(figsize=(12, 10))
+        fig = plt.figure(figsize=(6, 6))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
         axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
