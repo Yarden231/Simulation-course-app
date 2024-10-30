@@ -338,7 +338,7 @@ def visualize_samples_and_qqplots(samples):
 
     with col2:
         # Create a grid of 2x2 with better proportions
-        fig = plt.figure(figsize=(6, 6))
+        fig = plt.figure(figsize=(5, 5))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
         axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
@@ -560,56 +560,10 @@ def generate_service_times(size=1000, distribution_type=None):
     
     return samples, dist_info
 
-def visualize_samples_and_qqplots(samples):
-    """Display enhanced histograms and QQ plots with updated styling."""
-    # Create grid
-    fig = plt.figure(figsize=(15, 12))
-    gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
-    axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
-
-    # Enhanced Histogram with KDE
-    sns.histplot(data=samples, kde=True, stat='density', ax=axs[0], color='pink')
-    axs[0].set_title('Sample Distribution')
-    axs[0].set_xlabel('Time (minutes)')
-    axs[0].set_ylabel('Density')
-
-    # QQ Plots with confidence bands
-    distributions = [
-        ('norm', 'Normal Distribution', axs[1]),
-        ('uniform', 'Uniform Distribution', axs[2]),
-        ('expon', 'Exponential Distribution', axs[3])
-    ]
-
-    for dist_name, title, ax in distributions:
-        # Calculate QQ plot
-        qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
-        
-        # Update color to pink
-        ax.get_lines()[0].set_color('pink')
-        ax.get_lines()[1].set_color('darkred')
-        
-        # Add confidence bands
-        x = qq[0][0]
-        y = qq[0][1]
-        slope, intercept = qq[1][0], qq[1][1]
-        y_fit = slope * x + intercept
-        
-        # Calculate confidence bands
-        n = len(samples)
-        sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
-        conf_band = 1.96 * sigma
-        
-        ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='pink')
-        ax.set_title(f'Q-Q Plot - {title}')
-        ax.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    st.pyplot(fig)
-
 def plot_likelihood(samples, distribution):
     """Enhanced likelihood function visualization with updated styling."""
     if distribution == 'Normal':
-        fig = plt.figure(figsize=(15, 6))
+        fig = plt.figure(figsize=(10, 6))
         gs = fig.add_gridspec(1, 2, wspace=0.3)
         ax1, ax2 = [fig.add_subplot(gs[0, i]) for i in range(2)]
 
@@ -640,7 +594,7 @@ def plot_likelihood(samples, distribution):
         st.pyplot(fig)
 
     elif distribution == 'Uniform':
-        fig = plt.figure(figsize=(15, 6))
+        fig = plt.figure(figsize=(10, 6))
         gs = fig.add_gridspec(1, 2, wspace=0.3)
         ax1, ax2 = [fig.add_subplot(gs[0, i]) for i in range(2)]
 
