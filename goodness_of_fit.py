@@ -408,7 +408,7 @@ def estimate_parameters(samples, distribution):
             
             mu_ci = np.percentile(bootstrap_means, [2.5, 97.5])
             sigma_ci = np.percentile(bootstrap_stds, [2.5, 97.5])
-
+            plot_likelihood(samples, distribution)
         with col2:
             
             st.markdown(f"""
@@ -433,6 +433,7 @@ def estimate_parameters(samples, distribution):
             bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
             bootstrap_lambdas = 1 / np.mean(bootstrap_samples, axis=1)
             lambda_ci = np.percentile(bootstrap_lambdas, [2.5, 97.5])
+            plot_likelihood(samples, distribution)
             
         with col2:
             st.markdown(f"""
@@ -461,6 +462,7 @@ def estimate_parameters(samples, distribution):
             
             a_ci = np.percentile(bootstrap_mins, [2.5, 97.5])
             b_ci = np.percentile(bootstrap_maxs, [2.5, 97.5])
+            plot_likelihood(samples, distribution)
 
         with col2:    
             st.markdown(f"""
@@ -919,7 +921,6 @@ def show():
 
     if distribution_choice:
         params = estimate_parameters(samples, distribution_choice)
-        plot_likelihood(samples, distribution_choice)
         perform_goodness_of_fit(samples, distribution_choice, params)
 
 # To show the app, call the show() function
