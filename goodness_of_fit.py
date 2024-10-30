@@ -392,11 +392,8 @@ def estimate_parameters(samples, distribution):
     </div>
     """, unsafe_allow_html=True)
         
-    col1, col2 = st.columns([0.15, 0.85])
+    col1, col2 = st.columns([0.85, 0.15])
     
-
-
-
     if distribution == 'Normal':
 
             # Emoji column
@@ -464,7 +461,7 @@ def estimate_parameters(samples, distribution):
             
             a_ci = np.percentile(bootstrap_mins, [2.5, 97.5])
             b_ci = np.percentile(bootstrap_maxs, [2.5, 97.5])
-            
+
         with col2:    
             st.markdown(f"""
                 <div class="info-box rtl-content">
