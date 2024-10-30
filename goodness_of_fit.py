@@ -259,7 +259,7 @@ def display_samples(samples):
     """, unsafe_allow_html=True)
 
     # Create two columns
-    col1, col2 = st.columns([1, 3])
+    col1, col2 = st.columns([1, 2])
 
     with col1:
         # Display first few samples in a table
@@ -275,7 +275,7 @@ def display_samples(samples):
             'Time (minutes)': samples.round(2)
         }).set_index('Sample #')
         
-        st.dataframe(sample_df, height=200)
+        st.dataframe(sample_df, height=250)
 
         # Display summary statistics with business context
         st.markdown("""
@@ -314,7 +314,7 @@ def display_samples(samples):
 
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and QQ plots in a two-column layout."""
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([1, 2])
     
     with col1:
         st.markdown("""
