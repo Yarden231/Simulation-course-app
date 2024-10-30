@@ -745,7 +745,20 @@ def perform_goodness_of_fit(samples, distribution, params):
     
     with col1:
         st.markdown(f"""
-            <div class="info-box" padding: 15px; border-radius: 5px;">
+            <style>
+            .custom-back-card {{
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }}
+            .custom-back-card ul {{
+                list-style-type: none;
+                padding-left: 0;
+                line-height: 1.6;
+            }}
+            </style>
+            <div class="custom-back-card rtl-content" padding: 15px; border-radius: 5px;">
                 <h4>Kolmogorov-Smirnov Test:</h4>
                 <ul style="list-style-type: none; padding-left: 0;">
                     <li>Statistic: {ks_stat:.4f}</li>
@@ -757,9 +770,22 @@ def perform_goodness_of_fit(samples, distribution, params):
     
     
         st.markdown(f"""
-            <div class="info-box" padding: 15px; border-radius: 5px;">
+            <style>
+            .custom-back-card {{
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }}
+            .custom-back-card ul {{
+                list-style-type: none;
+                padding-left: 0;
+                line-height: 1.6;
+            }}
+            </style>
+            <div class="custom-back-card rtl-content">
                 <h4>Chi-Square Test:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
+                <ul>
                     <li>Statistic: {chi_square_stat:.4f}</li>
                     <li>Degrees of freedom: {dof}</li>
                     <li>p-value: {p_value_chi:.4f}</li>
