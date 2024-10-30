@@ -40,7 +40,6 @@ def main():
         "סיפור מערכת טאקו לוקו": show_story,
         "התאמת התפלגות למודל": show_googness,
         "שיטות דגימה": show_sampling_methods,
-        "מחולל מספרים אקראיים": show_random_generator,
         "תכנות אירועים": show_food_truck,
     }
 
