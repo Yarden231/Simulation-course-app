@@ -843,13 +843,13 @@ def show():
         # Business context explanation
         st.markdown("""
             <div class="custom-card rtl-content">
-                <h3 class="section-header">מטרת הניתוח הסטטיסטי:</h3>
-                <ul class="custom-list">
+                <h3>מטרת הניתוח הסטטיסטי:</h3>
+                <ol class="custom-list">
                     <li> לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
                     <li> לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
                     <li> לזהות הזדמנויות לייעול תהליך ההכנה</li>
                     <li> לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
-                </ul>
+                </ol>
             </div>
         """, unsafe_allow_html=True)
 
