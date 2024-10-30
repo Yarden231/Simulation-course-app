@@ -439,6 +439,75 @@ def visualize_samples_and_qqplots(samples):
 
     return fig
 
+def visualize_samples_and_qqplots(samples):
+    """Display enhanced histograms and QQ plots in a two-column layout."""
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("""
+            <style>
+            .custom-card p {
+                line-height: 1.8;
+                margin-bottom: 1.5rem;
+            }
+            .info-box ul li {
+                line-height: 1.8;
+                margin-bottom: 1rem;
+            }
+            </style>
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">ניתוח גרפי של ההתפלגות</h3>
+                <p>להלן ניתוח גרפי של הנתונים באמצעות היסטוגרמה ותרשימי Q-Q:</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+            <div class="info-box rtl-content">
+                <h4 style="font-family: Arial, sans-serif;">כיצד לפרש את הגרפים:</h4>
+                <ul>
+                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה.</li>
+                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
+                    <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        fig = plt.figure(figsize=(6, 6))
+        gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
+        axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
+
+        sns.histplot(data=samples, kde=False, stat='density', ax=axs[0])
+        axs[0].set_title('Arrival Time Distribution')
+        axs[0].set_xlabel('Time (minutes)')
+        axs[0].set_ylabel('Density')
+
+        # QQ Plots with confidence bands
+        distributions = [
+            ('norm', 'Normal Distribution', axs[1]),
+            ('uniform', 'Uniform Distribution', axs[2]),
+            ('expon', 'Exponential Distribution', axs[3])
+        ]
+
+        for dist_name, title, ax in distributions:
+            qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
+            
+            x = qq[0][0]
+            y = qq[0][1]
+            slope, intercept = qq[1][0], qq[1][1]
+            y_fit = slope * x + intercept
+            
+            n = len(samples)
+            sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
+            conf_band = 1.96 * sigma
+            
+            ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='gray')
+            ax.set_title(f'{title}')
+            ax.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
 
 def estimate_parameters(samples, distribution):
     """Enhanced parameter estimation with confidence intervals and visual explanation."""
@@ -991,6 +1060,8 @@ def show():
             </p>
         </div>
     """, unsafe_allow_html=True)
+
+
 
     # Create three columns for the distribution buttons with business context
     col1, col2, col3 = st.columns(3)

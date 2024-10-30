@@ -290,7 +290,7 @@ def display_statistics(samples):
             </div>
         """, unsafe_allow_html=True)
 
-def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
+def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, stats_placeholder,  distribution_func=None, true_density=None):
     """Run sampling with visualization updates."""
     # Generate all samples at once
     all_samples = sampling_function(num_samples)
@@ -448,7 +448,7 @@ def show_sampling_methods():
         true_density = lambda x: stats.norm.pdf(x, mu, sigma)
         run_sampling(lambda size: sample_normal(mu, sigma, size), num_samples, 100, 
                     "Preparation Time Distribution", progress_bar, plot_placeholder, 
-                    qqplot_placeholder, stats_placeholder, print_samples=True, 
+                    qqplot_placeholder, stats_placeholder, 
                     true_density=true_density)
 
     elif st.session_state.selected_sampling == 'exponential':
@@ -478,7 +478,7 @@ def show_sampling_methods():
         run_sampling(lambda size: sample_exponential(lambda_minutes, size), 
                     num_samples, 100, "Arrival Time Distribution", 
                     progress_bar, plot_placeholder, qqplot_placeholder, 
-                    stats_placeholder, print_samples=True, true_density=true_density)
+                    stats_placeholder,  true_density=true_density)
 
     st.write("""
     ### 📚 קשר לחומר הקורס

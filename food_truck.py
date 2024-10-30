@@ -6,13 +6,13 @@ import plotly.graph_objs as go
 from utils import set_rtl  # RTL setting function
 import time  # Import the time module
 from utils import set_ltr_sliders
+from PIL import Image
 # Call the set_rtl function to apply RTL styles
 set_rtl()
 
 class FoodTruck:
-    def __init__(self, env, order_time_min, order_time_max, config, logger):
+    def __init__(self, env, order_time_min, order_time_max, config):
         self.env = env
-        self.logger = logger
         self.event_log = []
         self.order_station = simpy.Resource(env, capacity=config['order_capacity'])
         self.prep_station = simpy.Resource(env, capacity=config['prep_capacity'])
@@ -33,7 +33,7 @@ class FoodTruck:
 
     def log_event(self, customer_id, event_type, time):
         self.event_log.append({'customer_id': customer_id, 'event': event_type, 'time': time})
-        self.logger.log_event(customer_id, event_type, time)
+
 
     def process_service(self, station, visitor, service_time_range):
         with station.request() as req:
@@ -102,10 +102,10 @@ class FoodTruck:
             yield self.env.timeout(1)
 
 # Simulation function with real-time updates
-def run_simulation(sim_time, arrival_rate, order_time_min, order_time_max, leave_probability, config, logger):
+def run_simulation(sim_time, arrival_rate, order_time_min, order_time_max, leave_probability, config):
     # Create a SimPy environment and FoodTruck object
     env = simpy.Environment()
-    food_truck = FoodTruck(env, order_time_min, order_time_max, config, logger)
+    food_truck = FoodTruck(env, order_time_min, order_time_max, config)
     
     # Start the customer arrival and monitoring processes
     env.process(arrival_process(env, food_truck, arrival_rate, leave_probability))
@@ -199,7 +199,85 @@ def plot_queue_sizes_over_time(food_truck):
 # Main Streamlit app
 def show_food_truck():
     set_ltr_sliders()  # Inject the CSS to ensure LTR behavior for the sliders
-    st.title("סימולציית משאית מזון בזמן אמת")
+        # Apply custom CSS
+    with open('.streamlit/style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    # Title and Main Description
+    st.markdown("""
+        <div class="custom-header rtl-content">
+            <h1>הקדמה לסימולציית משאית המזון באמצעות תכנות אירועים</h1>
+            <p>הבנת העקרונות המרכזיים של תכנות מבוסס אירועים וכיצד הוא מתאים לסימולציה של משאית המזון.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Background Card
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">מהי סימולציה מבוססת אירועים?</h3>
+            <p>
+                תכנות מבוסס אירועים (Event-Driven Programming) הוא סגנון תכנות שבו תהליך מתבצע באמצעות תגובה לרצף 
+                אירועים הנוצרים במערכת. בסימולציה מבוססת אירועים, כל שלב בתהליך הסימולציה מופעל לפי התרחשות של אירוע, 
+                מה שמאפשר תכנון יעיל של סדר הפעולות והגדרת סדר עדיפויות במערכת דינמית.
+            </p>
+            <p>
+                בדוגמה של משאית המזון, נשתמש באירועים כדי לדמות את פעילות המשאית בסביבה דינמית - מהגעת לקוחות, דרך הכנת המנות, ועד לאיסוף ההזמנה.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Simulation Explanation Card
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">כיצד תכנות אירועים מסייע בסימולציית משאית המזון?</h3>
+            <p>
+                המודל מבוסס האירועים מאפשר לנו לדמות את כל שלבי התהליך בשירות הלקוחות:
+            </p>
+            <ul>
+                <li><strong>הגעת הלקוחות</strong> - כל לקוח מגיע בזמן אקראי למשאית המזון, והאירוע נוצר כאשר לקוח חדש מגיע.</li>
+                <li><strong>ביצוע ההזמנה</strong> - כל לקוח מבצע הזמנה בהתאם לזמינות בעמדת ההזמנות. אירוע זה מדמה את תהליך הזמנת הלקוח.</li>
+                <li><strong>זמני ההכנה</strong> - הכנת המנה מתבצעת בהתאם לזמן הנדרש לכל סוג של מנה, עם אירוע נוסף המדמה את הכנת האוכל.</li>
+                <li><strong>איסוף המנה</strong> - לאחר הכנת המנה, מתבצע אירוע איסוף בו הלקוח מקבל את המנה וסיים את התהליך.</li>
+            </ul>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Benefits of Event-Driven Simulation Card
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">למה תכנות אירועים מתאים למשאית המזון?</h3>
+            <p>
+                במשאית המזון ישנם תהליכים מקבילים המתבצעים בזמן אמת, כמו הגעת לקוחות, הכנת מנות, ושירות לקוחות חדשים. 
+                תכנות אירועים מאפשר ניהול יעיל של כל פעולה בהתאם לזמן בו היא מתבצעת:
+            </p>
+            <ul>
+                <li><strong>תזמון משתנה</strong> - לקוחות מגיעים בזמנים שונים ואקראיים, כל שלב מתוזמן בהתאם לזמן משתנה.</li>
+                <li><strong>חלוקת משאבים</strong> - עמדות השירות מוגבלות, ולכן המערכת צריכה להקצות את המשאבים בצורה אופטימלית כדי למנוע עיכובים.</li>
+                <li><strong>שיפור תהליכים</strong> - הסימולציה מאפשרת לזהות צווארי בקבוק ולשפר את זמן השירות.</li>
+            </ul>
+            <p>בכך, הסימולציה מבוססת האירועים מאפשרת תכנון מיטבי של פעילות המשאית ושיפור חוויית הלקוח.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Event Flow Diagram Placeholder
+    st.subheader("דיאגרמת דרימת האירועים")
+
+    # Load and display the image with Streamlit
+    image_path = "event_flow_diagram.png"
+    image = Image.open(image_path)
+
+
+    # HTML code to add styling with RTL support
+    st.markdown(
+        """
+        <div style="text-align: right;  padding: 20px; border-radius: 8px;">
+            <p style="font-family: Arial, sans-serif; font-size: 1.1em; color: #FFFFFF;">להלן מבנה בסיסי של זרימת האירועים בסימולציה, המדגים את רצף התהליכים ואת סדר פעולות המערכת.</p>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+
+    # Display the image
+    st.image(image, caption="זרימת האירועים במשאית המזון", use_column_width=True)
 
     st.header("הגדרות סימולציה")
     sim_time = st.slider("זמן סימולציה (דקות)", 100, 10000, 100)
@@ -219,7 +297,7 @@ def show_food_truck():
             
 
             # Run the simulation and get the completed FoodTruck object
-            food_truck = run_simulation(sim_time, arrival_rate, order_time_min, order_time_max, leave_probability, config, logger)
+            food_truck = run_simulation(sim_time, arrival_rate, order_time_min, order_time_max, leave_probability, config)
 
             # Placeholder for real-time chart
             real_time_chart = st.empty()
