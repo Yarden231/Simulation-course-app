@@ -831,14 +831,6 @@ def show():
     with col1:
 
         st.markdown("""
-            <style>
-            .custom-card {
-                background-color: #2D2D2D;
-                padding: 20px;
-                border-radius: 8px;
-                margin-bottom: 20px;
-            }
-            </style>
             <div class="custom-card rtl-content">
                 <h3 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו על ידי צוות סימולציה, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h3>
             </div>
@@ -864,11 +856,11 @@ def show():
             </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3 class="section-header">  לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
-            </div>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">  לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
+        </div>
+    """, unsafe_allow_html=True)
         
     # Generate new samples
     if 'samples' not in st.session_state or st.button('יצירת מדגם חדש'):
