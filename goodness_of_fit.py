@@ -259,7 +259,7 @@ def display_samples(samples):
     """, unsafe_allow_html=True)
 
     # Create two columns
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 3])
 
     with col1:
         # Display first few samples in a table
