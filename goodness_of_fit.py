@@ -62,7 +62,7 @@ def show_introduction():
                     <p>משולש (4-6 דקות)</p>
                     <p class="highlight">בינוני</p>
                 </div>
-            </div style="text-align: center; color: #CCCCCC;">
+            </div>
         """, unsafe_allow_html=True)
 
     with col3:
@@ -74,7 +74,7 @@ def show_introduction():
                     <p>קבוע (10 דקות)</p>
                     <p class="highlight">האיטי ביותר</p>
                 </div style="text-align: center; color: #CCCCCC;">
-            </div style="text-align: center; color: #CCCCCC;">
+            </div>
         """, unsafe_allow_html=True)
 
     # Cooking Times Section
@@ -82,7 +82,7 @@ def show_introduction():
         <div class="custom-card rtl-content" style="margin-top: 30px;">
             <h3 class="section-header">2. זמני בישול סטוכסטיים</h3>
             <p>הזמן הנדרש להכנת כל מנה עוקב אחר התפלגות נורמלית, המשתנה לפי גודל המנה:</p>
-        </div style="text-align: center; color: #CCCCCC;">
+        </div>
     """, unsafe_allow_html=True)
 
     # Create three columns for meal types
@@ -96,7 +96,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">N(5, 1)</p>
                     <p>הכנה מהירה לשירות מותאם אישית</p>
                 </div>
-            </div style="text-align: center; color: #CCCCCC;">
+            </div>
         """, unsafe_allow_html=True)
 
     with col2:
@@ -107,7 +107,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">N(8, 2)</p>
                     <p>זמן הכנה מאוזן לנפח בינוני</p>
                 </div>
-            </div style="text-align: center; color: #CCCCCC;">
+            </div>
         """, unsafe_allow_html=True)
 
     with col3:
@@ -118,7 +118,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">N(10, 3)</p>
                     <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
                 </div>
-            </div style="text-align: center; color: #CCCCCC;">
+            </div>
         """, unsafe_allow_html=True)
 
     # Arrival Times Section
@@ -803,6 +803,118 @@ def show_simulation_next_steps():
         </div>
     """, unsafe_allow_html=True)
 
+def show_intro_section():
+    # Main Card with all content
+    st.markdown("""
+        <div style="
+            background-color: #1A1A1A;
+            border: 1px solid #8B0000;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        ">
+            <!-- Title Section -->
+            <div style="margin-bottom: 30px;">
+                <h1 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    font-size: 1.8rem;
+                    margin-bottom: 15px;
+                ">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
+                <p style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                ">
+                    כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
+                    המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
+                </p>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div style="
+                display: flex;
+                gap: 30px;
+                margin-bottom: 30px;
+            ">
+                <!-- Left Column -->
+                <div style="flex: 1;">
+                    <div style="
+                        background-color: #2D2D2D;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    ">
+                        <h4 style="
+                            color: #FFFFFF;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">תהליך הניתוח:</h4>
+                        <ol style="
+                            color: #CCCCCC;
+                            padding-right: 20px;
+                            margin: 0;
+                            text-align: right;
+                        ">
+                            <li style="margin-bottom: 10px;">1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
+                            <li style="margin-bottom: 10px;">2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
+                            <li style="margin-bottom: 10px;">3️⃣ התאמת מודל סטטיסטי לנתונים</li>
+                            <li style="margin-bottom: 10px;">4️⃣ בדיקת טיב ההתאמה של המודל</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div style="flex: 2;">
+                    <div style="
+                        background-color: #2D2D2D;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    ">
+                        <h3 style="
+                            color: #FFFFFF;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">מטרת הניתוח הסטטיסטי</h3>
+                        <p style="
+                            color: #CCCCCC;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">
+                            כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
+                            דרך ניתוח הנתונים נוכל:
+                        </p>
+                        <ul style="
+                            color: #CCCCCC;
+                            padding-right: 20px;
+                            margin: 0;
+                            text-align: right;
+                        ">
+                            <li style="margin-bottom: 10px;">🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
+                            <li style="margin-bottom: 10px;">👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
+                            <li style="margin-bottom: 10px;">⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
+                            <li style="margin-bottom: 10px;">📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div style="
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+            ">
+                <h3 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    margin-bottom: 0;
+                ">לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
 def show():
     # Call this at the start of your app
     load_css()
@@ -810,60 +922,8 @@ def show():
     # Show introduction section
     show_introduction()
 
-
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h1 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
-            <p>
-                כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
-
-                
-    # Header section with business context
-    with st.container():
-        col1, col2 = st.columns([1,2])
-    
-    with col1:
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h4>תהליך הניתוח:</h4>
-                <ol class="custom-list">
-                    <li>1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
-                    <li>2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
-                    <li>3️⃣ התאמת מודל סטטיסטי לנתונים</li>
-                    <li>4️⃣ בדיקת טיב ההתאמה של המודל</li>
-                </ol>
-            </div>
-        """, unsafe_allow_html=True)
-
-
-    # Emoji column
-    with col2:
-        # Business context explanation
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3 class="section-header">מטרת הניתוח הסטטיסטי</h3>
-                <p>
-                    כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                    דרך ניתוח הנתונים נוכל:
-                </p>
-                <ul class="custom-list">
-                    <li>🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
-                    <li>👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
-                    <li>⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
-                    <li>📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">  לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
-        </div>
-    """, unsafe_allow_html=True)
+    # Show the introduction card
+    show_intro_section()
         
     # Generate new samples
     if 'samples' not in st.session_state or st.button('יצירת מדגם חדש'):
