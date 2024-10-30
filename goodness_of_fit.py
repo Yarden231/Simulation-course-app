@@ -304,7 +304,7 @@ def display_samples(samples):
 
     with col2:
         # Create a simple line plot of all samples
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(6, 6))
         plt.plot(samples, marker='o', linestyle='None', alpha=0.5, markersize=3,color='darkred')
         plt.title('Service Times')
         plt.xlabel('Sample Number')
@@ -588,7 +588,7 @@ def generate_service_times(size=1000, distribution_type=None):
 def plot_likelihood(samples, distribution):
     """Enhanced likelihood function visualization with updated styling."""
     if distribution == 'Normal':
-        fig = plt.figure(figsize=(10, 4))
+        fig = plt.figure(figsize=(6, 4))
         gs = fig.add_gridspec(1, 2, wspace=0.3)
         ax1, ax2 = [fig.add_subplot(gs[0, i]) for i in range(2)]
 
