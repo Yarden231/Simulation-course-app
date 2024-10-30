@@ -841,11 +841,15 @@ def show():
     samples = st.session_state.samples
     display_samples(samples)
 
-    # Analysis section
     st.markdown("""
+        <style>
+        .section-header {
+            padding-bottom: 2rem;
+        }
+        </style>
         <div class="custom-card rtl-content">
             <h1 class="section-header"></h1>
-            <h1>כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h1>
+            <h1 style="padding-bottom: 2rem;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h1>
         </div>
     """, unsafe_allow_html=True)
 
