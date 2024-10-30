@@ -44,12 +44,12 @@ def show_introduction():
     with col1:
         st.markdown("""
             <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג א'</h4>
+                <h4 style= "color: #FFFFFF;text-align: center; margin-bottom: 15px;">סוג א'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">50% מהלקוחות</p>
                     <p>אחיד (3-4 דקות)</p>
                     <p class="highlight">המהיר ביותר</p>
-                </div>
+                </div style="text-align: center; color: #CCCCCC;">
             </div>
         """, unsafe_allow_html=True)
 
@@ -61,7 +61,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
                     <p>משולש (4-6 דקות)</p>
                     <p class="highlight">בינוני</p>
-                </div>
+                </div style="text-align: center; color: #CCCCCC;">
             </div>
         """, unsafe_allow_html=True)
 
@@ -73,7 +73,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
                     <p>קבוע (10 דקות)</p>
                     <p class="highlight">האיטי ביותר</p>
-                </div>
+                </div style="text-align: center; color: #CCCCCC;">
             </div>
         """, unsafe_allow_html=True)
 
