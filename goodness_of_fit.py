@@ -385,8 +385,8 @@ def estimate_parameters(samples, distribution):
     """Enhanced parameter estimation with confidence intervals and visual explanation."""
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header">אמידת פרמטרים לסימולציה</h3>
-            <p>כדי לייצר זמני הכנה מציאותיים בסימולציה, נאמוד את הפרמטרים של ההתפלגות הנבחרת:</p>
+            <h1 class="section-header">אמידת פרמטרים לסימולציה</h1>
+            <h2>כדי לייצר זמני הכנה מציאותיים בסימולציה, נאמוד את הפרמטרים של ההתפלגות הנבחרת:</h2>
         </div>
     """, unsafe_allow_html=True)
 
