@@ -125,8 +125,7 @@ def show_introduction():
     st.markdown("""
         <div class="custom-card rtl-content" style="margin-top: 20px;">
             <h3 class="section-header">3. זמני הגעה</h3>
-            <div style="color: #CCCCCC;">
-                <p הצוות ביצעע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
+            <p> הצוות ביצעע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
             </div>
         </div>
     """, unsafe_allow_html=True)
