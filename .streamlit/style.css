@@ -39,7 +39,7 @@ h3 { font-size: 1.4rem; }
 
 /* Button Styling with Full-Width Background */
 .stButton button {
-    background-color: #8B0000;
+    background-color: #4a0c0c;
     color: white;
     width: 100%;  /* Make the button full width */
     padding: 0.5rem 1rem;
@@ -52,7 +52,7 @@ h3 { font-size: 1.4rem; }
 }
 
 .stButton button:hover {
-    background-color: #A52A2A;
+    background-color: #591717;
 }
 
 /* Ensure Sidebar Container Adjusts to Button Width */
@@ -63,7 +63,7 @@ h3 { font-size: 1.4rem; }
 /* DataFrame Styling */
 .stDataFrame {
     border: 1px solid #333333;
-    background-color: #2D2D2D;
+    background-color: #272726;
     color: #FFFFFF;
     border-radius: 5px;
 }
@@ -133,7 +133,7 @@ th {
 
 /* Progress Bar */
 .stProgress > div > div {
-    background-color: #8B0000;
+    background-color: #440a0a;
 }
 
 /* Right-aligned RTL Elements */

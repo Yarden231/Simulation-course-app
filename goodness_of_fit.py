@@ -747,7 +747,7 @@ def perform_goodness_of_fit(samples, distribution, params):
         st.markdown(f"""
             <style>
             .custom-back-card {{
-                background-color: #8B0000;
+                background-color: #3f0000;
                 padding: 20px;
                 border-radius: 8px;
                 margin-bottom: 20px;
@@ -772,7 +772,7 @@ def perform_goodness_of_fit(samples, distribution, params):
         st.markdown(f"""
             <style>
             .custom-back-card {{
-                background-color: #8B0000;
+                background-color: #3f0000;
                 padding: 20px;
                 border-radius: 8px;
                 margin-bottom: 20px;
