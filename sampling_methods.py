@@ -267,7 +267,7 @@ def show_sampling_methods():
     """, unsafe_allow_html=True)
 
     # Show the introduction
-    show_sampling_intro()
+    #show_sampling_intro()
 
     num_samples = st.slider("מספר דגימות", min_value=1000, max_value=10000, value=1000, step=1000)
 
