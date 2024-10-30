@@ -61,8 +61,8 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
                     <p>משולש (4-6 דקות)</p>
                     <p class="highlight">בינוני</p>
-                </div style="text-align: center; color: #CCCCCC;">
-            </div>
+                </div>
+            </div style="text-align: center; color: #CCCCCC;">
         """, unsafe_allow_html=True)
 
     with col3:
@@ -74,7 +74,7 @@ def show_introduction():
                     <p>קבוע (10 דקות)</p>
                     <p class="highlight">האיטי ביותר</p>
                 </div style="text-align: center; color: #CCCCCC;">
-            </div>
+            </div style="text-align: center; color: #CCCCCC;">
         """, unsafe_allow_html=True)
 
     # Cooking Times Section
@@ -82,7 +82,7 @@ def show_introduction():
         <div class="custom-card rtl-content" style="margin-top: 30px;">
             <h3 class="section-header">2. זמני בישול סטוכסטיים</h3>
             <p>הזמן הנדרש להכנת כל מנה עוקב אחר התפלגות נורמלית, המשתנה לפי גודל המנה:</p>
-        </div>
+        </div style="text-align: center; color: #CCCCCC;">
     """, unsafe_allow_html=True)
 
     # Create three columns for meal types
@@ -96,7 +96,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">N(5, 1)</p>
                     <p>הכנה מהירה לשירות מותאם אישית</p>
                 </div>
-            </div>
+            </div style="text-align: center; color: #CCCCCC;">
         """, unsafe_allow_html=True)
 
     with col2:
@@ -107,7 +107,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">N(8, 2)</p>
                     <p>זמן הכנה מאוזן לנפח בינוני</p>
                 </div>
-            </div>
+            </div style="text-align: center; color: #CCCCCC;">
         """, unsafe_allow_html=True)
 
     with col3:
@@ -118,7 +118,7 @@ def show_introduction():
                     <p style="margin-bottom: 10px;">N(10, 3)</p>
                     <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
                 </div>
-            </div>
+            </div style="text-align: center; color: #CCCCCC;">
         """, unsafe_allow_html=True)
 
     # Arrival Times Section
