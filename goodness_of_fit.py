@@ -392,7 +392,7 @@ def estimate_parameters(samples, distribution):
     </div>
     """, unsafe_allow_html=True)
         
-    col1, col2 = st.columns([0.7, 0.3])
+    col1, col2 = st.columns([0.6, 0.3])
     
     if distribution == 'Normal':
 
