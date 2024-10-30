@@ -8,7 +8,7 @@ def create_styled_card(title, content, border_color="#8B0000"):
             background-color: #2D2D2D;
             border: 1px solid {border_color};
             border-radius: 8px;
-            padding: 20px;
+            padding: 10px;
             margin: 10px 0;
         ">
             <h3 style="
@@ -42,7 +42,7 @@ def create_station_grid():
                     background-color: #2D2D2D;
                     border: 1px solid #8B0000;
                     border-radius: 8px;
-                    padding: 20px;
+                    padding: 10px;
                     text-align: center;
                     height: 100%;
                 ">
@@ -94,8 +94,8 @@ def show_menu():
             with col2:
                 st.markdown(
                     f"""
-                    <div style='background-color: #2D2D2D; padding: 20px; border-radius: 8px; margin-bottom: 20px;'>
-                        <div style='color: white; font-size: 20px; font-weight: bold; margin-bottom: 10px; text-align: right;'>
+                    <div style='background-color: #2D2D2D; padding: 10px; border-radius: 8px; margin-bottom: 10px;'>
+                        <div style='color: white; font-size: 10px; font-weight: bold; margin-bottom: 10px; text-align: right;'>
                             {item['name']}
                         </div>
                         <div style='color: #CCCCCC; text-align: right;'>
@@ -111,7 +111,7 @@ def show_menu():
                 )
 
             # Add spacing between items
-            st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
 
 # Update the create_styled_card function with better spacing
 def create_styled_card(title, content, border_color="#8B0000"):
@@ -121,12 +121,12 @@ def create_styled_card(title, content, border_color="#8B0000"):
             background-color: #1E1E1E;
             border: 1px solid {border_color};
             border-radius: 8px;
-            padding: 20px;
+            padding: 10px;
             margin: 25px 0;  /* Increased margin */
         ">
             <h3 style="
                 color: #FFFFFF;
-                margin-bottom: 20px;  /* Increased margin */
+                margin-bottom: 10px;  /* Increased margin */
                 text-align: right;
                 font-size: 1.2rem;
             ">{title}</h3>
@@ -154,7 +154,7 @@ def show_story():
         }
         .stMarkdown {
             color: #FFFFFF !important;
-            margin-bottom: 20px;  /* Added spacing */
+            margin-bottom: 10px;  /* Added spacing */
         }
         h1, h2 {
             margin-top: 40px !important;  /* Added top spacing for headers */
@@ -181,10 +181,10 @@ def show_story():
     create_styled_card(
         "הקדמה",
         """
-        <p style='margin-bottom: 20px;'>אוצ׳ו לוקו החל את פרויקט הסימולציה של חייו במשאית המזון המשפחתית האהובה. 
+        <p style='margin-bottom: 10px;'>אוצ׳ו לוקו החל את פרויקט הסימולציה של חייו במשאית המזון המשפחתית האהובה. 
         הוא יודע שבמשאית המזון שלו יש שלוש עמדות עיקריות שדרכן עובר כל לקוח.</p>
         
-        <p style='margin-bottom: 20px;'>אוצ׳ו מתכנן לחקור ולהבין מהם קצבי השירות בכל עמדה ומהם קצבי הגעת הלקוחות למשאית המזון. בעזרת הקצבים שיאסוף, יוכל דרך פרויקט סימולציה קפדני שיבצע אוצ׳ו, להבין מהם צווארי הבקבוק במערכת שלו וכך ידע לנהל את עובדיו בצורה האופטימלית.</p>
+        <p style='margin-bottom: 10px;'>אוצ׳ו מתכנן לחקור ולהבין מהם קצבי השירות בכל עמדה ומהם קצבי הגעת הלקוחות למשאית המזון. בעזרת הקצבים שיאסוף, יוכל דרך פרויקט סימולציה קפדני שיבצע אוצ׳ו, להבין מהם צווארי הבקבוק במערכת שלו וכך ידע לנהל את עובדיו בצורה האופטימלית.</p>
         
         <p>בכדי להבין את קצבי השירות ב-״לוקו טאקו״, אוצ׳ו תשאל את אביו חולייסיטו, וביקש שיספר לו על התנהלות הלקוחות והעובדים במשאיתו האהובה.</p>
         """
@@ -210,7 +210,7 @@ def show_story():
                     justify-content: center;
                     margin: 30px 0;
                     background-color: #2D2D2D;
-                    padding: 20px;
+                    padding: 10px;
                     border-radius: 8px;
                 ">
                     {svg_content}
@@ -310,14 +310,14 @@ def show_story():
                     f"""
                     <div style='
                         background-color: #2D2D2D; 
-                        padding: 20px; 
+                        padding: 10px; 
                         border-radius: 8px; 
-                        margin-bottom: 20px;
+                        margin-bottom: 10px;
                         border: 1px solid #8B0000;
                     '>
                         <div style='
                             color: white; 
-                            font-size: 20px; 
+                            font-size: 10px; 
                             font-weight: bold; 
                             margin-bottom: 15px; 
                             text-align: right;
@@ -361,7 +361,7 @@ def show_story():
         """
         <ol style='
             margin: 0; 
-            padding-right: 20px;
+            padding-right: 10px;
             line-height: 1.6;
         '>
             <li style='margin-bottom: 10px;'>כל לקוח מתחיל בדלפק ההזמנות</li>
