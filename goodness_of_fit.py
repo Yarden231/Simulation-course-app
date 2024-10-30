@@ -125,7 +125,7 @@ def show_introduction():
     st.markdown("""
         <div class="custom-card rtl-content" style="margin-top: 20px;">
             <h3 class="section-header">3. זמני הגעה</h3>
-            <p> הצוות ביצעע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
+            <p> הצוות ביצע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -135,7 +135,7 @@ def show_business_context():
     """Display the business context and importance of the analysis."""
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h3>
+            <h1 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
             <p>
                 כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                 המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
