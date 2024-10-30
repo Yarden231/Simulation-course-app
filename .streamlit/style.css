@@ -1,0 +1,149 @@
+/* Base Dark Mode Styling */
+body, 
+.css-1lcbmhc, 
+.css-1e5imcs, 
+.css-1wif8ho,
+.element-container,
+.stMarkdown p {
+    direction: rtl;
+    text-align: right;
+    background-color: #1E1E1E;
+    color: #FFFFFF;
+}
+
+/* Base Typography */
+* {
+    font-family: 'sans-serif';
+    color: #FFFFFF;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+    color: #FFFFFF !important;
+    font-weight: 600;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    text-align: right;
+    direction: rtl;
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.4rem; }
+
+/* Streamlit Specific Styling */
+.stMarkdown {
+    color: #FFFFFF !important;
+}
+
+/* Button Styling with Full-Width Background */
+.stButton button {
+    background-color: #8B0000;
+    color: white;
+    width: 100%;  /* Make the button full width */
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    direction: rtl;
+    display: block; /* Ensure the button spans the container width */
+    text-align: center;
+}
+
+.stButton button:hover {
+    background-color: #A52A2A;
+}
+
+/* Ensure Sidebar Container Adjusts to Button Width */
+.css-1d391kg {
+    padding: 0; /* Remove padding to align with button width */
+}
+
+/* DataFrame Styling */
+.stDataFrame {
+    border: 1px solid #333333;
+    background-color: #2D2D2D;
+    color: #FFFFFF;
+    border-radius: 5px;
+}
+
+/* Sidebar on Right Side */
+.css-1d391kg {
+    background-color: #333333;
+    color: #FFFFFF;
+    direction: rtl;
+    text-align: right;
+    right: 0; /* Forces sidebar to the right */
+    position: fixed;
+    z-index: 100;
+}
+
+/* Move sidebar toggle arrow to top right */
+.css-1d391kg .css-18e3th9 {
+    top: 1rem;
+    right: 1rem;
+}
+
+/* Sidebar Toggle Arrow when Closed */
+.css-18e3th9 {
+    top: 1rem;
+    right: 1rem;
+}
+
+/* Input Elements */
+.stTextInput input, 
+.stSelectbox select {
+    direction: rtl;
+    text-align: right;
+    color: #FFFFFF;
+    background-color: #333333;
+    border: 1px solid #666666;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    color: #FFFFFF;
+}
+
+th, td {
+    padding: 8px;
+    text-align: right;  /* RTL for content */
+    border-bottom: 1px solid #666666;
+}
+
+th {
+    background-color: #444444;
+    font-weight: 600;
+}
+
+/* Alerts/Info Boxes */
+.stAlert {
+    padding: 1rem;
+    margin: 1rem 0;
+    background-color: #333333;
+    border-radius: 5px;
+    color: #FFFFFF;
+    direction: rtl;
+    text-align: right;
+}
+
+/* Progress Bar */
+.stProgress > div > div {
+    background-color: #8B0000;
+}
+
+/* Right-aligned RTL Elements */
+.main .block-container {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Charts and Plots in LTR */
+.stPlot, 
+.stGraph,
+canvas {
+    direction: ltr !important;
+}
