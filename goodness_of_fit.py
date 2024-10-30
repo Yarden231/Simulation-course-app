@@ -313,65 +313,66 @@ def display_samples(samples):
         st.pyplot(fig)
 
 def visualize_samples_and_qqplots(samples):
-    """Display enhanced histograms and QQ plots with better visualization and interpretation."""
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">ניתוח גרפי של ההתפלגות</h3>
-            <p>להלן ניתוח גרפי של הנתונים באמצעות היסטוגרמה ותרשימי Q-Q:</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Create a grid of 2x2 with better proportions
-    fig = plt.figure(figsize=(15, 12))
-    gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
-    axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
-
-    # Enhanced Histogram with KDE
-    sns.histplot(data=samples, kde=True, stat='density', ax=axs[0])
-    axs[0].set_title('התפלגות זמני ההכנה')
-    axs[0].set_xlabel('זמן (דקות)')
-    axs[0].set_ylabel('צפיפות')
-
-    # QQ Plots with confidence bands
-    distributions = [
-        ('norm', 'Normal Distribution', axs[1]),
-        ('uniform', 'Uniform Distribution', axs[2]),
-        ('expon', 'Exponential Distribution', axs[3])
-    ]
-
-    for dist_name, title, ax in distributions:
-        # Calculate QQ plot
-        qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
+    """Display enhanced histograms and QQ plots in a two-column layout."""
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">ניתוח גרפי של ההתפלגות</h3>
+                <p>להלן ניתוח גרפי של הנתונים באמצעות היסטוגרמה ותרשימי Q-Q:</p>
+            </div>
+        """, unsafe_allow_html=True)
         
-        # Add confidence bands
-        x = qq[0][0]
-        y = qq[0][1]
-        slope, intercept = qq[1][0], qq[1][1]
-        y_fit = slope * x + intercept
-        
-        # Calculate confidence bands (approximation)
-        n = len(samples)
-        sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
-        conf_band = 1.96 * sigma  # 95% confidence interval
-        
-        ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='gray')
-        ax.set_title(f'Q-Q Plot - {title}')
-        ax.grid(True, alpha=0.3)
+        # Add interpretation guide
+        st.markdown("""
+            <div class="info-box rtl-content">
+                <h4>כיצד לפרש את הגרפים:</h4>
+                <ul>
+                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה. הקו הכחול מראה את אומדן צפיפות הגרעין (KDE).</li>
+                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
+                    <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
 
-    plt.tight_layout()
-    st.pyplot(fig)
+    with col2:
+        # Create a grid of 2x2 with better proportions
+        fig = plt.figure(figsize=(12, 10))
+        gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
+        axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
-    # Add interpretation guide
-    st.markdown("""
-        <div class="info-box rtl-content">
-            <h4>כיצד לפרש את הגרפים:</h4>
-            <ul>
-                <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה. הקו הכחול מראה את אומדן צפיפות הגרעין (KDE).</li>
-                <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
-                <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
-            </ul>
-        </div>
-    """, unsafe_allow_html=True)
+        # Enhanced Histogram with KDE
+        sns.histplot(data=samples, kde=False, stat='density', ax=axs[0])
+        axs[0].set_title('התפלגות זמני ההכנה')
+        axs[0].set_xlabel('זמן (דקות)')
+        axs[0].set_ylabel('צפיפות')
+
+        # QQ Plots with confidence bands
+        distributions = [
+            ('norm', 'Normal Distribution', axs[1]),
+            ('uniform', 'Uniform Distribution', axs[2]),
+            ('expon', 'Exponential Distribution', axs[3])
+        ]
+
+        for dist_name, title, ax in distributions:
+            qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
+            
+            x = qq[0][0]
+            y = qq[0][1]
+            slope, intercept = qq[1][0], qq[1][1]
+            y_fit = slope * x + intercept
+            
+            n = len(samples)
+            sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
+            conf_band = 1.96 * sigma
+            
+            ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='gray')
+            ax.set_title(f'Q-Q Plot - {title}')
+            ax.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        st.pyplot(fig)
 
 def estimate_parameters(samples, distribution):
     """Enhanced parameter estimation with confidence intervals and visual explanation."""
