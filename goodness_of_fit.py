@@ -812,113 +812,97 @@ def show():
     show_introduction()
 
     # Show the introduction card
-    # Main Card with all content
     st.markdown("""
-        <div style="
+        <style>
+        .main-card {
             background-color: #1A1A1A;
             border: 1px solid #8B0000;
             border-radius: 8px;
             padding: 30px;
             margin: 20px 0;
-        ">
-            <!-- Title Section -->
+        }
+        .section-title {
+            color: #FFFFFF;
+            text-align: right;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .section-text {
+            color: #CCCCCC;
+            text-align: right;
+            line-height: 1.6;
+        }
+        .two-column {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .column-left {
+            flex: 1;
+        }
+        .column-right {
+            flex: 2;
+        }
+        .inner-card {
+            background-color: #2D2D2D;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .list-rtl {
+            color: #CCCCCC;
+            padding-right: 20px;
+            margin: 0;
+            text-align: right;
+        }
+        .list-item {
+            margin-bottom: 10px;
+        }
+        </style>
+
+        <div class="main-card">
             <div style="margin-bottom: 30px;">
-                <h1 style="
-                    color: #FFFFFF;
-                    text-align: right;
-                    font-size: 1.8rem;
-                    margin-bottom: 15px;
-                ">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
-                <p style="
-                    color: #CCCCCC;
-                    text-align: right;
-                    line-height: 1.6;
-                ">
+                <h1 class="section-title">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
+                <p class="section-text">
                     כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                     המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
                 </p>
             </div>
 
-            <!-- Two Column Layout -->
-            <div style="
-                display: flex;
-                gap: 30px;
-                margin-bottom: 30px;
-            ">
-                <!-- Left Column -->
-                <div style="flex: 1;">
-                    <div style="
-                        background-color: #2D2D2D;
-                        padding: 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                    ">
-                        <h4 style="
-                            color: #FFFFFF;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">תהליך הניתוח:</h4>
-                        <ol style="
-                            color: #CCCCCC;
-                            padding-right: 20px;
-                            margin: 0;
-                            text-align: right;
-                        ">
-                            <li style="margin-bottom: 10px;">1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
-                            <li style="margin-bottom: 10px;">2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
-                            <li style="margin-bottom: 10px;">3️⃣ התאמת מודל סטטיסטי לנתונים</li>
-                            <li style="margin-bottom: 10px;">4️⃣ בדיקת טיב ההתאמה של המודל</li>
+            <div class="two-column">
+                <div class="column-left">
+                    <div class="inner-card">
+                        <h4 class="section-title">תהליך הניתוח:</h4>
+                        <ol class="list-rtl">
+                            <li class="list-item">1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
+                            <li class="list-item">2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
+                            <li class="list-item">3️⃣ התאמת מודל סטטיסטי לנתונים</li>
+                            <li class="list-item">4️⃣ בדיקת טיב ההתאמה של המודל</li>
                         </ol>
                     </div>
                 </div>
 
-                <!-- Right Column -->
-                <div style="flex: 2;">
-                    <div style="
-                        background-color: #2D2D2D;
-                        padding: 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                    ">
-                        <h3 style="
-                            color: #FFFFFF;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">מטרת הניתוח הסטטיסטי</h3>
-                        <p style="
-                            color: #CCCCCC;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">
+                <div class="column-right">
+                    <div class="inner-card">
+                        <h3 class="section-title">מטרת הניתוח הסטטיסטי</h3>
+                        <p class="section-text">
                             כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                             דרך ניתוח הנתונים נוכל:
                         </p>
-                        <ul style="
-                            color: #CCCCCC;
-                            padding-right: 20px;
-                            margin: 0;
-                            text-align: right;
-                        ">
-                            <li style="margin-bottom: 10px;">🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
-                            <li style="margin-bottom: 10px;">👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
-                            <li style="margin-bottom: 10px;">⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
-                            <li style="margin-bottom: 10px;">📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
+                        <ul class="list-rtl">
+                            <li class="list-item">🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
+                            <li class="list-item">👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
+                            <li class="list-item">⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
+                            <li class="list-item">📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Section -->
-            <div style="
-                background-color: #2D2D2D;
-                padding: 20px;
-                border-radius: 8px;
-            ">
-                <h3 style="
-                    color: #FFFFFF;
-                    text-align: right;
-                    margin-bottom: 0;
-                ">לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
+            <div class="inner-card">
+                <h3 class="section-title" style="margin-bottom: 0;">
+                    לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.
+                </h3>
             </div>
         </div>
     """, unsafe_allow_html=True)
