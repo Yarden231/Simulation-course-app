@@ -39,7 +39,7 @@ def main():
         "דף הבית": show_home,
         "סיפור מערכת טאקו לוקו": show_story,
         "התאמת התפלגות למודל": show_googness,
-        "שיטות דגימה": show_sampling_methods,
+        "אלגוריתמי דגימה": show_sampling_methods,
         "תכנות אירועים": show_food_truck,
     }
 

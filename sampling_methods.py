@@ -130,6 +130,130 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         progress = min(1.0, end_idx / num_samples)
         progress_bar.progress(progress)
 
+def show_sampling_intro():
+    # Main header
+    st.markdown("""
+        <div style="
+            background-color: #1A1A1A;
+            border: 1px solid #8B0000;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        ">
+            <!-- Title Section -->
+            <div style="margin-bottom: 30px;">
+                <h1 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    font-size: 1.8rem;
+                    margin-bottom: 15px;
+                ">שיטות דגימה - הדרך ליצירת סימולציה מדויקת 🎲</h1>
+                <p style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                ">
+                    כדי לדמות את פעילות משאית המזון של משפחת לוקו בצורה מדויקת, אנחנו צריכים להבין כיצד ליצור מספרים אקראיים 
+                    שמתנהגים בדיוק כמו הנתונים האמיתיים שאספנו.
+                </p>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div style="
+                display: flex;
+                gap: 30px;
+                margin-bottom: 30px;
+            ">
+                <!-- Left Column -->
+                <div style="flex: 1;">
+                    <div style="
+                        background-color: #2D2D2D;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    ">
+                        <h4 style="
+                            color: #FFFFFF;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">למה זה חשוב?</h4>
+                        <ul style="
+                            color: #CCCCCC;
+                            padding-right: 20px;
+                            margin: 0;
+                            text-align: right;
+                            list-style-type: none;
+                        ">
+                            <li style="margin-bottom: 10px;">🎯 דיוק בחיזוי זמני המתנה</li>
+                            <li style="margin-bottom: 10px;">⚡ שיפור יעילות התהליך</li>
+                            <li style="margin-bottom: 10px;">📊 תכנון משמרות מדויק</li>
+                            <li style="margin-bottom: 10px;">💡 קבלת החלטות מבוססות נתונים</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div style="flex: 2;">
+                    <div style="
+                        background-color: #2D2D2D;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    ">
+                        <h3 style="
+                            color: #FFFFFF;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">מה נלמד בעמוד זה?</h3>
+                        <p style="
+                            color: #CCCCCC;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">
+                            בעמוד זה נלמד את השיטות השונות לדגימת מספרים אקראיים עבור:
+                        </p>
+                        <ul style="
+                            color: #CCCCCC;
+                            padding-right: 20px;
+                            margin: 0;
+                            text-align: right;
+                        ">
+                            <li style="margin-bottom: 10px;">⏰ זמני הגעת לקוחות למשאית</li>
+                            <li style="margin-bottom: 10px;">🍽️ זמני הכנת מנות שונות</li>
+                            <li style="margin-bottom: 10px;">⌛ זמני המתנה מקסימליים של לקוחות</li>
+                            <li style="margin-bottom: 10px;">🔄 זמני מעבר בין עמדות השירות</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div style="
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+            ">
+                <h4 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    margin-bottom: 15px;
+                ">כיצד נשתמש בשיטות הדגימה?</h4>
+                <p style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                    margin-bottom: 0;
+                ">
+                    בהמשך, נשתמש בשיטות אלו כדי ליצור סימולציה מדויקת של פעילות המשאית. 
+                    הסימולציה תאפשר לנו לבחון תרחישים שונים ולקבל החלטות מושכלות לגבי תפעול המשאית.
+                    נתחיל בהבנת השיטות הבסיסיות ונתקדם לשיטות מורכבות יותר.
+                </p>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+ 
+
 def show_sampling_methods():
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -142,6 +266,8 @@ def show_sampling_methods():
         </div>
     """, unsafe_allow_html=True)
 
+    # Show the introduction
+    show_sampling_intro()
 
     num_samples = st.slider("מספר דגימות", min_value=1000, max_value=10000, value=1000, step=1000)
 
