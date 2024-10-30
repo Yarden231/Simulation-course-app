@@ -118,7 +118,7 @@ def create_styled_card(title, content, border_color="#8B0000"):
     st.markdown(
         f"""
         <div style="
-            background-color: #2D2D2D;
+            background-color: #1E1E1E;
             border: 1px solid {border_color};
             border-radius: 8px;
             padding: 20px;
