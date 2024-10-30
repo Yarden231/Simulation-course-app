@@ -126,11 +126,9 @@ def show_introduction():
         <div class="custom-card rtl-content" style="margin-top: 30px;">
             <h3 class="section-header">3. זמני הגעה</h3>
             <div style="color: #CCCCCC;">
-                <p>הצוות שכח לבצע מדידות של זמני ההגעה אבל מכיוון שזמני הגעה הם רציפים ובדרך כלל מעריכיים, 
-                נתייחס לדברי הבעלים כי בשעה מגיעים 10 לקוחות (כלומר 6 דקות זמן בין מופעים).</p>
-                <p style="margin-top: 15px;">נרצה לבצע מבחן טיב התאמה שאכן מדובר בהתפלגות מעריכית עם פרמטר 6.</p>
-                <p style="margin-top: 15px;">ברשותינו כמות מדידות כרצוננו של זמני ההגעה ונוכל לבחון האם אכן ההתפלגות 
-                הינה מעריכית עם פרמטר 6 וויזואלית וכמו כן באמצעות מבחנים סטטיסטיים (קולמוגורוב וחי בריבוע).</p>
+                <p הצוות ביצעע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם.    </p>
+                <p style="margin-top: 15px;"> בעמוד זה נצלול יחד עם אוצ'ו למשימה של התאמת התפלגות ידועה לדגימות שבידינו</p>
+                <p style="margin-top: 15px;">לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</p>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -140,7 +138,7 @@ def show_business_context():
     """Display the business context and importance of the analysis."""
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header">ניתוח זמני ההכנה במשאית המזון 🚚</h3>
+            <h3 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h3>
             <p>
                 כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                 המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
@@ -278,6 +276,31 @@ def display_samples(samples):
         }).set_index('Sample #')
         
         st.dataframe(sample_df, height=300)
+
+        # Display summary statistics with business context
+        st.markdown("""
+            <div class="info-box rtl-content">
+                <h4> סטטיסטיקה תיאורית של דגימות זמני ההכנה שנמדדו:</h4>
+                <ul class="custom-list">
+                    <li>מספר מדידות: {:d}</li>
+                    <li>זמן הכנה ממוצע: {:.2f} דקות</li>
+                    <li>זמן הכנה מינימלי: {:.2f} דקות</li>
+                    <li>זמן הכנה מקסימלי: {:.2f} דקות</li>
+                    <li>סטיית תקן: {:.2f} דקות</li>
+                    <li>חציון: {:.2f} דקות</li>
+                </ul>
+                <p>נתונים אלו מסייעים לנו להבין את טווח זמני ההכנה הטיפוסיים ואת מידת השונות בתהליך.</p>
+            </div>
+        """.format(
+            len(samples),
+            np.mean(samples),
+            np.min(samples),
+            np.max(samples),
+            np.std(samples),
+            np.median(samples)
+        ), unsafe_allow_html=True)
+        
+
 
     with col2:
         # Create a simple line plot of all samples
@@ -852,29 +875,6 @@ def show():
     samples = st.session_state.samples
     display_samples(samples)
 
-    
-    # Display summary statistics with business context
-    st.markdown("""
-        <div class="info-box rtl-content">
-            <h4> סטטיסטיקה תיאורית של דגימות זמני ההכנה שנמדדו:</h4>
-            <ul class="custom-list">
-                <li>מספר מדידות: {:d}</li>
-                <li>זמן הכנה ממוצע: {:.2f} דקות</li>
-                <li>זמן הכנה מינימלי: {:.2f} דקות</li>
-                <li>זמן הכנה מקסימלי: {:.2f} דקות</li>
-                <li>סטיית תקן: {:.2f} דקות</li>
-                <li>חציון: {:.2f} דקות</li>
-            </ul>
-            <p>נתונים אלו מסייעים לנו להבין את טווח זמני ההכנה הטיפוסיים ואת מידת השונות בתהליך.</p>
-        </div>
-    """.format(
-        len(samples),
-        np.mean(samples),
-        np.min(samples),
-        np.max(samples),
-        np.std(samples),
-        np.median(samples)
-    ), unsafe_allow_html=True)
     
 
     #st.markdown(f"""
