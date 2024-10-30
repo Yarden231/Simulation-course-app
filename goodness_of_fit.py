@@ -43,7 +43,7 @@ def show_introduction():
 
     with col1:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style= "color: #FFFFFF;text-align: center; margin-bottom: 15px;">סוג א'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">50% מהלקוחות</p>
@@ -55,7 +55,7 @@ def show_introduction():
 
     with col2:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ב'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
@@ -67,7 +67,7 @@ def show_introduction():
 
     with col3:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ג'</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">25% מהלקוחות</p>
@@ -90,7 +90,7 @@ def show_introduction():
 
     with col1:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">N(5, 1)</p>
@@ -101,7 +101,7 @@ def show_introduction():
 
     with col2:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 2</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">N(8, 2)</p>
@@ -112,7 +112,7 @@ def show_introduction():
 
     with col3:
         st.markdown("""
-            <div style="background-color: #2D2D2D; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
+            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
                 <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 3</h4>
                 <div style="text-align: center; color: #CCCCCC;">
                     <p style="margin-bottom: 10px;">N(10, 3)</p>
