@@ -10,6 +10,130 @@ def load_css():
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+def show_introduction():
+    # Title and main description
+    st.markdown("""
+        <div class="custom-header rtl-content">
+            <h1>התאמת התפלגות למודל 📊</h1>
+            <p>ניתוח וביצוע מבחני טיב התאמה לנתוני משאית המזון</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Background card
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">רקע</h3>
+            <p>
+                על סמך תיאור הבעלים, צוות סימולציה ערך מדידות, התאים התפלגויות וערך מבחני טיב התאמה 
+                לצורך שיערוך טיב התאמת ההתפלגות.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Customer Types Section
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">1. הזמנות</h3>
+            <p>לקוחות עם דחיפויות והעדפות שונות משפיעים על זמני עיבוד ההזמנות.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Create three columns for customer types
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("""
+            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג א'</h4>
+                <div style="text-align: center; color: #CCCCCC;">
+                    <p style="margin-bottom: 10px;">50% מהלקוחות</p>
+                    <p>אחיד (3-4 דקות)</p>
+                    <p class="highlight">המהיר ביותר</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ב'</h4>
+                <div style="text-align: center; color: #CCCCCC;">
+                    <p style="margin-bottom: 10px;">25% מהלקוחות</p>
+                    <p>משולש (4-6 דקות)</p>
+                    <p class="highlight">בינוני</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ג'</h4>
+                <div style="text-align: center; color: #CCCCCC;">
+                    <p style="margin-bottom: 10px;">25% מהלקוחות</p>
+                    <p>קבוע (10 דקות)</p>
+                    <p class="highlight">האיטי ביותר</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Cooking Times Section
+    st.markdown("""
+        <div class="custom-card rtl-content" style="margin-top: 30px;">
+            <h3 class="section-header">2. זמני בישול סטוכסטיים</h3>
+            <p>הזמן הנדרש להכנת כל מנה עוקב אחר התפלגות נורמלית, המשתנה לפי גודל המנה:</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Create three columns for meal types
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("""
+            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
+                <div style="text-align: center; color: #CCCCCC;">
+                    <p style="margin-bottom: 10px;">N(5, 1)</p>
+                    <p>הכנה מהירה לשירות מותאם אישית</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 2</h4>
+                <div style="text-align: center; color: #CCCCCC;">
+                    <p style="margin-bottom: 10px;">N(8, 2)</p>
+                    <p>זמן הכנה מאוזן לנפח בינוני</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+            <div style="background-color: #2D2D2D; padding: 20px; border-radius: 8px; border: 1px solid #8B0000;">
+                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 3</h4>
+                <div style="text-align: center; color: #CCCCCC;">
+                    <p style="margin-bottom: 10px;">N(10, 3)</p>
+                    <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Arrival Times Section
+    st.markdown("""
+        <div class="custom-card rtl-content" style="margin-top: 30px;">
+            <h3 class="section-header">3. זמני הגעה</h3>
+            <div style="color: #CCCCCC;">
+                <p>הצוות שכח לבצע מדידות של זמני ההגעה אבל מכיוון שזמני הגעה הם רציפים ובדרך כלל מעריכיים, 
+                נתייחס לדברי הבעלים כי בשעה מגיעים 10 לקוחות (כלומר 6 דקות זמן בין מופעים).</p>
+                <p style="margin-top: 15px;">נרצה לבצע מבחן טיב התאמה שאכן מדובר בהתפלגות מעריכית עם פרמטר 6.</p>
+                <p style="margin-top: 15px;">ברשותינו כמות מדידות כרצוננו של זמני ההגעה ונוכל לבחון האם אכן ההתפלגות 
+                הינה מעריכית עם פרמטר 6 וויזואלית וכמו כן באמצעות מבחנים סטטיסטיים (קולמוגורוב וחי בריבוע).</p>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 def show_business_context():
@@ -688,7 +812,8 @@ def show():
     # Call this at the start of your app
     load_css()
     #  st.markdown(get_custom_css(), unsafe_allow_html=True)
-    
+    # Show introduction section
+    show_introduction()
     # Header section with business context
     st.markdown("""
         <div class="custom-header rtl-content">
