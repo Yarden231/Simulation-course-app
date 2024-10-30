@@ -20,7 +20,7 @@ from food_truck import show_food_truck
 from sampling_methods import show_sampling_methods
 from  goodness_of_fit import show as show_googness
 from Random_Number_Generators import show_random_generator
-
+from story import show_story
 
 def main():
     with open('.streamlit/style.css') as f:
@@ -37,6 +37,7 @@ def main():
     # Define the available pages and their corresponding functions
     pages = {
         "דף הבית": show_home,
+        "סיפור מערכת טאקו לוקו": show_story,
         "התאמת התפלגות למודל": show_googness,
         "שיטות דגימה": show_sampling_methods,
         "מחולל מספרים אקראיים": show_random_generator,
