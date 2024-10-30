@@ -327,7 +327,7 @@ def visualize_samples_and_qqplots(samples):
         ]
 
         for dist_name, title, ax in distributions:
-            qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax,color='darkred')
+            qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
             
             x = qq[0][0]
             y = qq[0][1]
