@@ -803,7 +803,15 @@ def show_simulation_next_steps():
         </div>
     """, unsafe_allow_html=True)
 
-def show_intro_section():
+
+def show():
+    # Call this at the start of your app
+    load_css()
+    #  st.markdown(get_custom_css(), unsafe_allow_html=True)
+    # Show introduction section
+    show_introduction()
+
+    # Show the introduction card
     # Main Card with all content
     st.markdown("""
         <div style="
@@ -914,16 +922,6 @@ def show_intro_section():
             </div>
         </div>
     """, unsafe_allow_html=True)
-
-def show():
-    # Call this at the start of your app
-    load_css()
-    #  st.markdown(get_custom_css(), unsafe_allow_html=True)
-    # Show introduction section
-    show_introduction()
-
-    # Show the introduction card
-    show_intro_section()
         
     # Generate new samples
     if 'samples' not in st.session_state or st.button('יצירת מדגם חדש'):
