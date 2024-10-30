@@ -854,7 +854,7 @@ def show():
     # Analysis section
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header"></h3>
+            <h1 class="section-header"></h1>
             <p>כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</p>
         </div>
     """, unsafe_allow_html=True)
