@@ -1,9 +1,274 @@
+
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
-from utils import set_rtl, set_ltr_sliders
+from utils import set_rtl
+from utils import set_ltr_sliders
 import time
+
+def plot_qqplot(samples, title):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    stats.probplot(samples, dist="norm", plot=ax)
+    ax.set_title(f"{title} - QQ Plot")
+    ax.set_xlabel("Theoretical Quantiles")
+    ax.set_ylabel("Sample Quantiles")
+    ax.grid(True)
+    return fig
+
+def sample_uniform(a, b, size):
+    return np.random.uniform(a, b, size)
+
+def sample_normal(mu, sigma, size):
+    """Sample from normal distribution"""
+    samples = np.random.normal(mu, sigma, size)
+    return np.clip(samples, 2, 15)  # Clip to realistic food prep times
+
+def sample_exponential(lambda_param, size):
+    """Sample from exponential distribution"""
+    samples = np.random.exponential(1/lambda_param, size)
+    return np.clip(samples, 2, 15)  # Clip to realistic food prep times
+
+def sample_composite(size):
+    """Sample from mixture of two normal distributions"""
+    n_simple = int(0.2 * size)
+    n_complex = size - n_simple
+    
+    simple_orders = np.random.normal(5, 1, n_simple)
+    complex_orders = np.random.normal(10, 1.5, n_complex)
+    
+    all_orders = np.concatenate([simple_orders, complex_orders])
+    return np.clip(all_orders, 2, 15)
+
+def plot_histogram(samples, title, distribution_func=None, true_density=None):
+    """Plot histogram with better styling."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    
+    bins = np.linspace(min(samples), max(samples), 30)
+    ax.hist(samples, bins=bins, density=True, alpha=0.7, color='pink', label='Sampled Data')
+    
+    if true_density:
+        x = np.linspace(min(samples), max(samples), 100)
+        ax.plot(x, true_density(x), 'darkred', linewidth=2, label='True Density')
+
+    if distribution_func:
+        x = np.linspace(0, 1, 100)
+        ax.plot(x, distribution_func(x), 'darkred', linewidth=2, linestyle='--', label='Target Distribution')
+
+    ax.set_title(title)
+    ax.set_xlabel("Time (minutes)")
+    ax.set_ylabel("Density")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    
+    return fig
+
+def plot_qqplot(samples, title):
+    """Plot QQ plot with better styling."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    
+    stats.probplot(samples, dist="norm", plot=ax)
+    
+    ax.get_lines()[0].set_markerfacecolor('pink')
+    ax.get_lines()[0].set_markeredgecolor('darkred')
+    ax.get_lines()[1].set_color('darkred')
+    
+    ax.set_title(f"{title}\nQ-Q Plot")
+    ax.grid(True, alpha=0.3)
+    
+    return fig
+
+def display_statistics(samples):
+    """Display statistics with better formatting."""
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(f"""
+            <div class="info-box rtl-content">
+                <h4>מדדי מרכז:</h4>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li>ממוצע: {np.mean(samples):.2f} דקות</li>
+                    <li>חציון: {np.median(samples):.2f} דקות</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+            <div class="info-box rtl-content">
+                <h4>מדדי פיזור:</h4>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li>סטיית תקן: {np.std(samples):.2f} דקות</li>
+                    <li>טווח: {np.min(samples):.2f} - {np.max(samples):.2f} דקות</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
+
+def show_sampling_intro():
+    # Main header
+    st.markdown("""
+        <div style="
+            background-color: #1A1A1A;
+            border: 1px solid #8B0000;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        ">
+            <!-- Title Section -->
+            <div style="margin-bottom: 30px;">
+                <h1 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    font-size: 1.8rem;
+                    margin-bottom: 15px;
+                ">שיטות דגימה - הדרך ליצירת סימולציה מדויקת 🎲</h1>
+                <p style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                ">
+                    כדי לדמות את פעילות משאית המזון של משפחת לוקו בצורה מדויקת, אנחנו צריכים להבין כיצד ליצור מספרים אקראיים 
+                    שמתנהגים בדיוק כמו הנתונים האמיתיים שאספנו.
+                </p>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div style="
+                display: flex;
+                gap: 30px;
+                margin-bottom: 30px;
+            ">
+                <!-- Left Column -->
+                <div style="flex: 1;">
+                    <div style="
+                        background-color: #2D2D2D;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    ">
+                        <h4 style="
+                            color: #FFFFFF;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">למה זה חשוב?</h4>
+                        <ul style="
+                            color: #CCCCCC;
+                            padding-right: 20px;
+                            margin: 0;
+                            text-align: right;
+                            list-style-type: none;
+                        ">
+                            <li style="margin-bottom: 10px;">🎯 דיוק בחיזוי זמני המתנה</li>
+                            <li style="margin-bottom: 10px;">⚡ שיפור יעילות התהליך</li>
+                            <li style="margin-bottom: 10px;">📊 תכנון משמרות מדויק</li>
+                            <li style="margin-bottom: 10px;">💡 קבלת החלטות מבוססות נתונים</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div style="flex: 2;">
+                    <div style="
+                        background-color: #2D2D2D;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                    ">
+                        <h3 style="
+                            color: #FFFFFF;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">מה נלמד בעמוד זה?</h3>
+                        <p style="
+                            color: #CCCCCC;
+                            margin-bottom: 15px;
+                            text-align: right;
+                        ">
+                            בעמוד זה נלמד את השיטות השונות לדגימת מספרים אקראיים עבור:
+                        </p>
+                        <ul style="
+                            color: #CCCCCC;
+                            padding-right: 20px;
+                            margin: 0;
+                            text-align: right;
+                        ">
+                            <li style="margin-bottom: 10px;">⏰ זמני הגעת לקוחות למשאית</li>
+                            <li style="margin-bottom: 10px;">🍽️ זמני הכנת מנות שונות</li>
+                            <li style="margin-bottom: 10px;">⌛ זמני המתנה מקסימליים של לקוחות</li>
+                            <li style="margin-bottom: 10px;">🔄 זמני מעבר בין עמדות השירות</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div style="
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+            ">
+                <h4 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    margin-bottom: 15px;
+                ">כיצד נשתמש בשיטות הדגימה?</h4>
+                <p style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                    margin-bottom: 0;
+                ">
+                    בהמשך, נשתמש בשיטות אלו כדי ליצור סימולציה מדויקת של פעילות המשאית. 
+                    הסימולציה תאפשר לנו לבחון תרחישים שונים ולקבל החלטות מושכלות לגבי תפעול המשאית.
+                    נתחיל בהבנת השיטות הבסיסיות ונתקדם לשיטות מורכבות יותר.
+                </p>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+from statsmodels.graphics.gofplots import qqplot
+import numpy as np
+
+def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
+    """Run sampling with visualization updates"""
+    # Generate all samples at once
+    all_samples = sampling_function(num_samples)
+    
+    # Calculate number of iterations
+    num_iterations = (num_samples + update_interval - 1) // update_interval
+    
+    # Process samples in batches
+    samples = []
+    for i in range(num_iterations):
+        start_idx = i * update_interval
+        end_idx = min(start_idx + update_interval, num_samples)
+        
+        batch_samples = all_samples[start_idx:end_idx]
+        samples.extend(batch_samples)
+        
+        # Generate Q-Q plot
+        qqplot_fig = qqplot(np.array(samples), line='s')
+        
+        with plot_placeholder.container():
+            col1, col2 = st.columns(2)
+            with col1:
+                st.pyplot(qqplot_fig)
+                plt.close(qqplot_fig)
+
+        # Update statistics placeholder
+        stats_placeholder.empty()
+        with stats_placeholder:
+            display_statistics(samples)
+        
+        # Optionally print sample values
+        if print_samples:
+            st.write(f"**Sample values (first {min(10, len(samples))} values):** {samples[:10]}")
+        
+        # Update progress
+        progress = min(1.0, end_idx / num_samples)
+        progress_bar.progress(progress)
+
 
 def show_sampling_methods():
     st.title("אלגוריתמי דגימה - מודלים סטטיסטיים למשאית טאקו לוקו")
@@ -24,8 +289,7 @@ def show_sampling_methods():
     if 'selected_sampling' not in st.session_state:
         st.session_state.selected_sampling = None
 
-    num_samples = st.slider("מספר דגימות", min_value=1000, max_value=1000000, value=1000, step=1000)
-    update_interval = st.slider("תדירות עדכון (מספר דגימות)", 100, 1000, 100)
+    num_samples = st.slider("מספר דגימות", min_value=5000, max_value=1000000, value=1000, step=1000)
 
     st.header("בחר שיטת דגימה")
     col1, col2, col3 = st.columns(3)
@@ -66,7 +330,7 @@ def show_sampling_methods():
         qqplot_placeholder = st.empty()
         stats_placeholder = st.empty()
         true_density = lambda x: np.ones_like(x) / (b - a)
-        run_sampling(lambda size: sample_uniform(a, b, size), num_samples, update_interval, 
+        run_sampling(lambda size: sample_uniform(a, b, size), num_samples, 100, 
                     "התפלגות זמני המתנה", progress_bar, plot_placeholder, 
                     qqplot_placeholder, stats_placeholder, print_samples=True, 
                     true_density=true_density)
