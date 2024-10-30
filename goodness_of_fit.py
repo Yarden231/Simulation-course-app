@@ -329,7 +329,7 @@ def visualize_samples_and_qqplots(samples):
             <div class="info-box rtl-content">
                 <h4>כיצד לפרש את הגרפים:</h4>
                 <ul>
-                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה. הקו הכחול מראה את אומדן צפיפות הגרעין (KDE).</li>
+                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה.</li>
                     <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
                     <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
                 </ul>
@@ -337,7 +337,7 @@ def visualize_samples_and_qqplots(samples):
         """, unsafe_allow_html=True)
 
     with col2:
-        fig = plt.figure(figsize=(6, 6))
+        fig = plt.figure(figsize=(8, 8))
         gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
         axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
 
@@ -366,7 +366,7 @@ def visualize_samples_and_qqplots(samples):
             conf_band = 1.96 * sigma
             
             ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='gray')
-            ax.set_title(f'Q-Q Plot - {title}')
+            ax.set_title(f'{title}')
             ax.grid(True, alpha=0.3)
 
         plt.tight_layout()
