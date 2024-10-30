@@ -813,97 +813,54 @@ def show():
 
     # Show the introduction card
     st.markdown("""
-        <style>
-        .main-card {
-            background-color: #1A1A1A;
-            border: 1px solid #8B0000;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 20px 0;
-        }
-        .section-title {
-            color: #FFFFFF;
-            text-align: right;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-        .section-text {
-            color: #CCCCCC;
-            text-align: right;
-            line-height: 1.6;
-        }
-        .two-column {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        .column-left {
-            flex: 1;
-        }
-        .column-right {
-            flex: 2;
-        }
-        .inner-card {
-            background-color: #2D2D2D;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .list-rtl {
-            color: #CCCCCC;
-            padding-right: 20px;
-            margin: 0;
-            text-align: right;
-        }
-        .list-item {
-            margin-bottom: 10px;
-        }
-        </style>
+        <div class="custom-card rtl-content">
+            <h1 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
+            <p>
+                כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
+                המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
-        <div class="main-card">
-            <div style="margin-bottom: 30px;">
-                <h1 class="section-title">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
-                <p class="section-text">
-                    כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                    המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
+    # Header section with business context
+    with st.container():
+        col1, col2 = st.columns([1,2])
+
+    with col1:
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h4>תהליך הניתוח:</h4>
+                <ol class="custom-list">
+                    <li>1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
+                    <li>2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
+                    <li>3️⃣ התאמת מודל סטטיסטי לנתונים</li>
+                    <li>4️⃣ בדיקת טיב ההתאמה של המודל</li>
+                </ol>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Emoji column
+    with col2:
+        # Business context explanation
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">מטרת הניתוח הסטטיסטי</h3>
+                <p>
+                    כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
+                    דרך ניתוח הנתונים נוכל:
                 </p>
+                <ul class="custom-list">
+                    <li>🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
+                    <li>👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
+                    <li>⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
+                    <li>📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
+                </ul>
             </div>
+        """, unsafe_allow_html=True)
 
-            <div class="two-column">
-                <div class="column-left">
-                    <div class="inner-card">
-                        <h4 class="section-title">תהליך הניתוח:</h4>
-                        <ol class="list-rtl">
-                            <li class="list-item">1️⃣ איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
-                            <li class="list-item">2️⃣ זיהוי דפוסים והתפלגויות אפשריות</li>
-                            <li class="list-item">3️⃣ התאמת מודל סטטיסטי לנתונים</li>
-                            <li class="list-item">4️⃣ בדיקת טיב ההתאמה של המודל</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div class="column-right">
-                    <div class="inner-card">
-                        <h3 class="section-title">מטרת הניתוח הסטטיסטי</h3>
-                        <p class="section-text">
-                            כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                            דרך ניתוח הנתונים נוכל:
-                        </p>
-                        <ul class="list-rtl">
-                            <li class="list-item">🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
-                            <li class="list-item">👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
-                            <li class="list-item">⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
-                            <li class="list-item">📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="inner-card">
-                <h3 class="section-title" style="margin-bottom: 0;">
-                    לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.
-                </h3>
-            </div>
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h3 class="section-header">  לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
         </div>
     """, unsafe_allow_html=True)
         
