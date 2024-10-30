@@ -816,16 +816,31 @@ def show():
     #  st.markdown(get_custom_css(), unsafe_allow_html=True)
     # Show introduction section
     show_introduction()
+
+
+    st.markdown("""
+    <div class="custom-card rtl-content">
+        <h1>ניתוח זמני שירות - עמדת הכנת המנות 👨‍🍳</h1>
+    </div>
+    """, unsafe_allow_html=True)
+                
     # Header section with business context
     with st.container():
-        col1, col2 = st.columns([1,1])
+        col1, col2 = st.columns([1,2])
     
     with col1:
 
         st.markdown("""
+            <style>
+            .custom-card {
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+            </style>
             <div class="custom-card rtl-content">
-                <h1>ניתוח זמני שירות - עמדת הכנת המנות 👨‍🍳</h1>
-                <h2 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h2>
+                <h3 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו על ידי צוות סימולציה, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h3>
             </div>
         """, unsafe_allow_html=True)
 
