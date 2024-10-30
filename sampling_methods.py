@@ -290,7 +290,7 @@ def display_statistics(samples):
             </div>
         """, unsafe_allow_html=True)
 
-def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
+def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
     """Run sampling with visualization updates."""
     # Generate all samples at once
     all_samples = sampling_function(num_samples)
@@ -307,23 +307,38 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         batch_samples = all_samples[start_idx:end_idx]
         samples.extend(batch_samples)
         
-        # Generate Q-Q plot
-        qqplot_fig, ax = plt.subplots()
-        qqplot(np.array(samples), line='s', ax=ax)
-        ax.get_lines()[0].set_markerfacecolor('#8B0000')
-        ax.get_lines()[0].set_markeredgecolor('#8B0000')
-        ax.get_lines()[1].set_color('#8B0000')
+        # Create a single figure with 1x2 grid for Q-Q plot and histogram
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))  # Consistent size for both subplots
         
-        with plot_placeholder.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                st.pyplot(qqplot_fig)
-                plt.close(qqplot_fig)
+        # Generate Q-Q plot in ax1
+        qqplot(np.array(samples), line='s', ax=ax1)
+        ax1.get_lines()[0].set_markerfacecolor('#8B0000')
+        ax1.get_lines()[0].set_markeredgecolor('#8B0000')
+        ax1.get_lines()[1].set_color('#8B0000')
+        ax1.set_title("Q-Q Plot")
+        ax1.set_xlabel("Theoretical Quantiles")
+        ax1.set_ylabel("Sample Quantiles")
+        ax1.grid(True, alpha=0.3)
+        
+        # Generate histogram in ax2
+        bins = np.linspace(min(samples), max(samples), 30)
+        ax2.hist(samples, bins=bins, density=True, color='#8B0000', edgecolor='black', alpha=0.7, label='Sampled Data')
+        if true_density:
+            x = np.linspace(min(samples), max(samples), 100)
+            ax2.plot(x, true_density(x), 'darkred', linewidth=2, label='True Density')
+        ax2.set_title("Sample Histogram")
+        ax2.set_xlabel("Value")
+        ax2.set_ylabel("Density")
+        ax2.legend()
+        ax2.grid(True, alpha=0.3)
 
-            with col2:
-                hist_fig = plot_histogram(samples, title)
-                st.pyplot(hist_fig)
-                plt.close(hist_fig)
+        # Add main title to the combined figure
+        fig.suptitle(title, fontsize=16, weight='bold')
+
+        # Display the combined figure in Streamlit
+        with plot_placeholder.container():
+            st.pyplot(fig)
+            plt.close(fig)
 
         # Update statistics placeholder
         stats_placeholder.empty()
@@ -333,7 +348,6 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         # Update progress
         progress = min(1.0, end_idx / num_samples)
         progress_bar.progress(progress)
-
 
 
 def show_sampling_methods():
@@ -404,8 +418,8 @@ def show_sampling_methods():
         stats_placeholder = st.empty()
         true_density = lambda x: np.ones_like(x) / (b - a)
         run_sampling(lambda size: sample_uniform(a, b, size), num_samples, 100, 
-                    "התפלגות זמני המתנה", progress_bar, plot_placeholder, 
-                    qqplot_placeholder, stats_placeholder, print_samples=True, 
+                    "Waiting Time Distribution", progress_bar, plot_placeholder, 
+                    qqplot_placeholder, stats_placeholder, 
                     true_density=true_density)
 
     elif st.session_state.selected_sampling == 'normal':
@@ -433,7 +447,7 @@ def show_sampling_methods():
         stats_placeholder = st.empty()
         true_density = lambda x: stats.norm.pdf(x, mu, sigma)
         run_sampling(lambda size: sample_normal(mu, sigma, size), num_samples, 100, 
-                    "התפלגות זמני הכנה", progress_bar, plot_placeholder, 
+                    "Preparation Time Distribution", progress_bar, plot_placeholder, 
                     qqplot_placeholder, stats_placeholder, print_samples=True, 
                     true_density=true_density)
 
@@ -462,7 +476,7 @@ def show_sampling_methods():
         stats_placeholder = st.empty()
         true_density = lambda x: lambda_minutes * np.exp(-lambda_minutes * x)
         run_sampling(lambda size: sample_exponential(lambda_minutes, size), 
-                    num_samples, 100, "התפלגות זמני הגעה", 
+                    num_samples, 100, "Arrival Time Distribution", 
                     progress_bar, plot_placeholder, qqplot_placeholder, 
                     stats_placeholder, print_samples=True, true_density=true_density)
 
