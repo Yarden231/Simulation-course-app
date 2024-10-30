@@ -817,32 +817,44 @@ def show():
     # Show introduction section
     show_introduction()
     # Header section with business context
-    st.markdown("""
-        <div class="custom-header rtl-content">
-            <h1>ניתוח זמני שירות - עמדת הכנת המנות 👨‍🍳</h1>
-            <h2 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h2>
-            <p>התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</p>
-        </div>
-    """, unsafe_allow_html=True)
+    with st.container():
+    col1, col2 = st.columns([1,1])
     
-    # Business context explanation
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">מטרת הניתוח הסטטיסטי</h3>
-            <p>
-                כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                דרך ניתוח הנתונים נוכל:
-            </p>
-            <ul class="custom-list">
-                <li>🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
-                <li>👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
-                <li>⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
-                <li>📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
-            </ul>
-            <p> style="margin-top: 15px;">לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
+    with col1:
+
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h1>ניתוח זמני שירות - עמדת הכנת המנות 👨‍🍳</h1>
+                <h2 style="margin-top: 15px;">בעמוד זה נשלים את ניתוח הדגימות שהושגו, ונצלול יחד עם אוצ'ו למשימה של התאמת מודל סטטיסטי לזמני הכנת מנות במשאית</h2>
+            </div>
+        """, unsafe_allow_html=True)
+
+
+    # Emoji column
+    with col2:
+        # Business context explanation
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">מטרת הניתוח הסטטיסטי</h3>
+                <p>
+                    כדי לבנות סימולציה מדויקת של פעילות משאית המזון, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
+                    דרך ניתוח הנתונים נוכל:
+                </p>
+                <ul class="custom-list">
+                    <li>🎯 לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
+                    <li>👥 לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
+                    <li>⚡ לזהות הזדמנויות לייעול תהליך ההכנה</li>
+                    <li>📊 לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">  לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
+            </div>
+        """, unsafe_allow_html=True)
+        
     # Generate new samples
     if 'samples' not in st.session_state or st.button('יצירת מדגם חדש'):
         samples, dist_info = generate_service_times()
