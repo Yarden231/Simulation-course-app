@@ -231,8 +231,67 @@ from statsmodels.graphics.gofplots import qqplot
 import numpy as np
 
 
+def plot_histogram(samples, title, distribution_func=None, true_density=None):
+    """Plot histogram with better styling."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    bins = np.linspace(min(samples), max(samples), 30)
+    ax.hist(samples, bins=bins, density=True, alpha=0.7, color='#8B0000', edgecolor='black', label='Sampled Data')
+    
+    if true_density:
+        x = np.linspace(min(samples), max(samples), 100)
+        ax.plot(x, true_density(x), 'darkred', linewidth=2, label='True Density')
+
+    if distribution_func:
+        x = np.linspace(0, 1, 100)
+        ax.plot(x, distribution_func(x), 'darkred', linewidth=2, linestyle='--', label='Target Distribution')
+
+    ax.set_title(title)
+    ax.set_xlabel("Time (minutes)")
+    ax.set_ylabel("Density")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    return fig
+
+def plot_qqplot(samples, title):
+    """Plot QQ plot with better styling."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    stats.probplot(samples, dist="norm", plot=ax)
+    
+    ax.get_lines()[0].set_markerfacecolor('#8B0000')
+    ax.get_lines()[0].set_markeredgecolor('#8B0000')
+    ax.get_lines()[1].set_color('#8B0000')
+    
+    ax.set_title(f"{title}\nQ-Q Plot")
+    ax.grid(True, alpha=0.3)
+    return fig
+
+def display_statistics(samples):
+    """Display statistics with better formatting."""
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"""
+            <div class="info-box rtl-content">
+                <h4>מדדי מרכז:</h4>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li>ממוצע: {np.mean(samples):.2f} דקות</li>
+                    <li>חציון: {np.median(samples):.2f} דקות</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+            <div class="info-box rtl-content">
+                <h4>מדדי פיזור:</h4>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li>סטיית תקן: {np.std(samples):.2f} דקות</li>
+                    <li>טווח: {np.min(samples):.2f} - {np.max(samples):.2f} דקות</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
 def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, qqplot_placeholder, stats_placeholder, print_samples=False, distribution_func=None, true_density=None):
-    """Run sampling with visualization updates"""
+    """Run sampling with visualization updates."""
     # Generate all samples at once
     all_samples = sampling_function(num_samples)
     
@@ -249,11 +308,11 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         samples.extend(batch_samples)
         
         # Generate Q-Q plot
-        qqplot_fig = plt.figure()
-        ax = qqplot(np.array(samples), line='s', ax=qqplot_fig.add_subplot(111))
-        ax.get_lines()[1].set_color('#8B0000')  # Set the color of the theoretical line
-        ax.get_lines()[0].set_markerfacecolor('#8B0000')  # Set the color of the sample points
-        ax.get_lines()[0].set_markeredgecolor('#8B0000')  # Set the edge color of the sample points
+        qqplot_fig, ax = plt.subplots()
+        qqplot(np.array(samples), line='s', ax=ax)
+        ax.get_lines()[0].set_markerfacecolor('#8B0000')
+        ax.get_lines()[0].set_markeredgecolor('#8B0000')
+        ax.get_lines()[1].set_color('#8B0000')
         
         with plot_placeholder.container():
             col1, col2 = st.columns(2)
@@ -262,12 +321,7 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
                 plt.close(qqplot_fig)
 
             with col2:
-                # Create histogram figure
-                hist_fig, ax = plt.subplots()
-                ax.hist(samples, bins=30, color='#8B0000', edgecolor='black', alpha=0.7)
-                ax.set_title("Sample Histogram")
-                ax.set_xlabel("Value")
-                ax.set_ylabel("Frequency")
+                hist_fig = plot_histogram(samples, title)
                 st.pyplot(hist_fig)
                 plt.close(hist_fig)
 
@@ -276,10 +330,6 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         with stats_placeholder:
             display_statistics(samples)
         
-        # Optionally print sample values
-        if print_samples:
-            st.write(f"**Sample values (first {min(10, len(samples))} values):** {samples[:10]}")
-        
         # Update progress
         progress = min(1.0, end_idx / num_samples)
         progress_bar.progress(progress)
@@ -287,7 +337,13 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
 
 
 def show_sampling_methods():
+    
+        # Apply custom CSS
+    with open('.streamlit/style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
     set_ltr_sliders()
+
     st.title("אלגוריתמי דגימה - מודלים סטטיסטיים למשאית טאקו לוקו")
 
     st.write("""
