@@ -276,168 +276,6 @@ def display_samples(samples):
         plt.grid(True, alpha=0.3)
         st.pyplot(fig)
 
-def visualize_samples_and_qqplots(samples):
-    """Display enhanced histograms and QQ plots in a two-column layout."""
-    col1, col2 = st.columns([1, 1])
-    
-    with col1:
-        st.markdown("""
-            <style>
-            .custom-card p {
-                line-height: 1.8;
-                margin-bottom: 1.5rem;
-            }
-            .info-box ul li {
-                line-height: 1.8;
-                margin-bottom: 1rem;
-            }
-            </style>
-            <div class="custom-card rtl-content">
-                <h3 class="section-header">ניתוח גרפי של ההתפלגות</h3>
-                <p>להלן ניתוח גרפי של הנתונים באמצעות היסטוגרמה ותרשימי Q-Q:</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-            <div class="info-box rtl-content">
-                <h4 style="font-family: Arial, sans-serif;">כיצד לפרש את הגרפים:</h4>
-                <ul>
-                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה.</li>
-                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
-                    <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        fig = plt.figure(figsize=(6, 6))
-        gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
-        axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
-
-        sns.histplot(data=samples, kde=False, stat='density', ax=axs[0])
-        axs[0].set_title('Arrival Time Distribution')
-        axs[0].set_xlabel('Time (minutes)')
-        axs[0].set_ylabel('Density')
-
-        # QQ Plots with confidence bands
-        distributions = [
-            ('norm', 'Normal Distribution', axs[1]),
-            ('uniform', 'Uniform Distribution', axs[2]),
-            ('expon', 'Exponential Distribution', axs[3])
-        ]
-
-        for dist_name, title, ax in distributions:
-            qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
-            
-            x = qq[0][0]
-            y = qq[0][1]
-            slope, intercept = qq[1][0], qq[1][1]
-            y_fit = slope * x + intercept
-            
-            n = len(samples)
-            sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
-            conf_band = 1.96 * sigma
-            
-            ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='gray')
-            ax.set_title(f'{title}')
-            ax.grid(True, alpha=0.3)
-
-        plt.tight_layout()
-        st.pyplot(fig)
-
-def visualize_samples_and_qqplots(samples):
-    # Set style for dark background
-    plt.style.use('dark_background')
-    
-    # Define color palette
-    colors = {
-        'main_red': '#8B0000',        # Dark red
-        'light_red': '#CD5C5C',       # Indian red
-        'darker_red': '#660000',      # Darker red
-        'pale_red': '#FFE4E1',        # Misty rose
-        'grid_color': '#3D0000'       # Very dark red for grid
-    }
-
-    # Create figure
-    fig = plt.figure(figsize=(6, 6))
-    gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
-    axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
-
-    # Histogram with custom colors
-    sns.histplot(
-        data=samples, 
-        kde=False, 
-        stat='density', 
-        ax=axs[0],
-        color=colors['main_red'],     # Bars color
-        edgecolor=colors['pale_red'], # Edge color
-        alpha=0.7
-    )
-    axs[0].set_title('Arrival Time Distribution', color=colors['pale_red'])
-    axs[0].set_xlabel('Time (minutes)', color=colors['pale_red'])
-    axs[0].set_ylabel('Density', color=colors['pale_red'])
-    axs[0].grid(True, alpha=0.3, color=colors['grid_color'])
-
-    # QQ Plots with custom colors
-    distributions = [
-        ('norm', 'Normal Distribution', axs[1]),
-        ('uniform', 'Uniform Distribution', axs[2]),
-        ('expon', 'Exponential Distribution', axs[3])
-    ]
-
-    for dist_name, title, ax in distributions:
-        # Calculate QQ plot
-        qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
-        
-        # Get the lines from the plot
-        ax.get_lines()[0].set_color(colors['light_red'])  # Scatter points
-        ax.get_lines()[1].set_color(colors['main_red'])   # Fit line
-        
-        # Calculate confidence bands
-        x = qq[0][0]
-        y = qq[0][1]
-        slope, intercept = qq[1][0], qq[1][1]
-        y_fit = slope * x + intercept
-        
-        n = len(samples)
-        sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
-        conf_band = 1.96 * sigma
-        
-        # Add confidence bands with custom color
-        ax.fill_between(
-            x, 
-            y_fit - conf_band, 
-            y_fit + conf_band, 
-            alpha=0.2, 
-            color=colors['main_red']
-        )
-        
-        # Style the plot
-        ax.set_title(f'{title}', color=colors['pale_red'])
-        ax.grid(True, alpha=0.3, color=colors['grid_color'])
-        ax.tick_params(colors=colors['pale_red'])
-        
-        # Set labels color
-        ax.xaxis.label.set_color(colors['pale_red'])
-        ax.yaxis.label.set_color(colors['pale_red'])
-
-    # Adjust layout
-    plt.tight_layout()
-    
-    # Add a dark background to the entire figure
-    fig.patch.set_facecolor('#1A1A1A')
-    for ax in axs:
-        ax.set_facecolor('#2D2D2D')
-        
-        # Set tick colors
-        ax.tick_params(axis='x', colors=colors['pale_red'])
-        ax.tick_params(axis='y', colors=colors['pale_red'])
-        
-        # Set spine colors
-        for spine in ax.spines.values():
-            spine.set_color(colors['grid_color'])
-
-    return fig
 
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and QQ plots in a two-column layout."""
@@ -968,8 +806,11 @@ def show_simulation_next_steps():
 
 
 def show():
-    # Call this at the start of your app
-    load_css()
+
+    with open('.streamlit/style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
+
     #  st.markdown(get_custom_css(), unsafe_allow_html=True)
     # Show introduction section
     show_introduction()
@@ -977,7 +818,7 @@ def show():
     # Show the introduction card
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h1 class="section-header">ניתוח זמני ההגעה למשאית המזון 🚚</h1>
+            <h1>ניתוח זמני ההגעה למשאית המזון 🚚</h1>
             <p>
                 כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
                 המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.

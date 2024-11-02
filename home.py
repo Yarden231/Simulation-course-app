@@ -11,6 +11,7 @@ def show():
     # Path to the SVG file
     image_path  = "home.svg"
 
+
     # Display the image with full width
     st.markdown(
         f"""

@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,253 +5,151 @@ from scipy import stats
 from utils import set_rtl
 from utils import set_ltr_sliders
 import time
+from statsmodels.graphics.gofplots import qqplot
 
-def plot_qqplot(samples, title):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    stats.probplot(samples, dist="norm", plot=ax)
-    ax.set_title(f"{title} - QQ Plot")
-    ax.set_xlabel("Theoretical Quantiles")
-    ax.set_ylabel("Sample Quantiles")
-    ax.grid(True)
-    return fig
 
-def sample_uniform(a, b, size):
-    return np.random.uniform(a, b, size)
+class LFSR:
+    def __init__(self, seed, taps):
+        """מאתחל את LFSR (רישום היסט מונע משוב) ליצירת מספרים אקראיים בעזרת ערך התחלתי ומיקומי XOR"""
+        self.state = seed
+        self.taps = taps
+        self.nbits = len(seed)
 
-def sample_normal(mu, sigma, size):
-    """Sample from normal distribution"""
-    samples = np.random.normal(mu, sigma, size)
-    return np.clip(samples, 2, 15)  # Clip to realistic food prep times
+    def next(self):
+        """מייצר את המצב הבא של ה-LFSR בעזרת פעולות XOR"""
+        xor = 0
+        for t in self.taps:
+            xor ^= int(self.state[t - 1])
+        self.state = str(xor) + self.state[:-1]
+        return self.state
 
-def sample_exponential(lambda_param, size):
-    """Sample from exponential distribution"""
-    samples = np.random.exponential(1/lambda_param, size)
-    return np.clip(samples, 2, 15)  # Clip to realistic food prep times
+    def random(self):
+        """ממיר את המצב הנוכחי למספר אקראי בין 0 ל-1"""
+        self.next()
+        return int(self.state, 2) / (2 ** self.nbits)
 
-def sample_composite(size):
-    """Sample from mixture of two normal distributions"""
-    n_simple = int(0.2 * size)
-    n_complex = size - n_simple
+class LCG:
+    def __init__(self, seed, a=1664525, c=1013904223, m=2**32):
+        """מאתחל את LCG (מחולל קונגרואנציאלי ליניארי) על פי פרמטרים קבועים ליצירת מספרים אקראיים"""
+        self.state = seed
+        self.a = a
+        self.c = c
+        self.m = m
+
+    def next(self):
+        """מחשב את המצב הבא של ה-LCG לפי נוסחת מחולל קונגרואנציאלי"""
+        self.state = (self.a * self.state + self.c) % self.m
+        return self.state
+
+    def random(self):
+        """ממיר את המצב הנוכחי למספר אקראי בין 0 ל-1"""
+        return self.next() / self.m
+
+
+# Update the create_styled_card function with better spacing
+def create_styled_card(title, content, border_color="#2D2D2D"):
+    st.markdown(
+        f"""
+        <div style="
+            background-color: #1E1E1E;
+            border: 1px solid {border_color};
+            border-radius: 8px;
+            padding: 10px;
+            margin: 25px 0;  /* Increased margin */
+        ">
+            <h3 style="
+                color: #FFFFFF;
+                margin-bottom: 10px;  /* Increased margin */
+                text-align: right;
+                font-size: 1.2rem;
+            ">{title}</h3>
+            <div style="
+                color: #FFFFFF;
+                text-align: right;
+                line-height: 1.6;  /* Added line height */
+            ">{content}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Update the create_styled_card function with better spacing
+def create_styled_card_left(title, content, border_color="#2D2D2D"):
+    st.markdown(
+        f"""
+        <div style="
+            background-color: #1E1E1E;
+            border: 1px solid {border_color};
+            border-radius: 8px;
+            padding: 10px;
+            margin: 25px 0;  /* Increased margin */
+        ">
+            <h3 style="
+                color: #FFFFFF;
+                margin-bottom: 10px;  /* Increased margin */
+                text-align: left;
+                font-size: 1.2rem;
+            ">{title}</h3>
+            <div style="
+                color: #FFFFFF;
+                text-align: left;
+                line-height: 1.6;  /* Added line height */
+            ">{content}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+def create_station_grid():
+    stations = [
+        ("👥", "הזמנה"),
+        ("👨‍🍳", "הכנה"),
+        ("📦", "אריזה")
+    ]
     
-    simple_orders = np.random.normal(5, 1, n_simple)
-    complex_orders = np.random.normal(10, 1.5, n_complex)
-    
-    all_orders = np.concatenate([simple_orders, complex_orders])
-    return np.clip(all_orders, 2, 15)
+    cols = st.columns(3)
+    for idx, (emoji, name) in enumerate(stations):
+        with cols[idx]:
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #2D2D2D;
+                    border: 1px solid #8B0000;
+                    border-radius: 8px;
+                    padding: 10px;
+                    text-align: center;
+                    height: 100%;
+                ">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">{emoji}</div>
+                    <h4 style="color: #FFFFFF; margin: 0; font-size: 1.1rem;">{name}</h4>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-def plot_histogram(samples, title, distribution_func=None, true_density=None):
-    """Plot histogram with better styling."""
-    fig, ax = plt.subplots(figsize=(8, 5))
-    
-    bins = np.linspace(min(samples), max(samples), 30)
-    ax.hist(samples, bins=bins, density=True, alpha=0.7, color='pink', label='Sampled Data')
-    
-    if true_density:
-        x = np.linspace(min(samples), max(samples), 100)
-        ax.plot(x, true_density(x), 'darkred', linewidth=2, label='True Density')
-
-    if distribution_func:
-        x = np.linspace(0, 1, 100)
-        ax.plot(x, distribution_func(x), 'darkred', linewidth=2, linestyle='--', label='Target Distribution')
-
-    ax.set_title(title)
-    ax.set_xlabel("Time (minutes)")
-    ax.set_ylabel("Density")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    
-    return fig
-
-def plot_qqplot(samples, title):
-    """Plot QQ plot with better styling."""
-    fig, ax = plt.subplots(figsize=(8, 5))
-    
-    stats.probplot(samples, dist="norm", plot=ax)
-    
-    ax.get_lines()[0].set_markerfacecolor('pink')
-    ax.get_lines()[0].set_markeredgecolor('darkred')
-    ax.get_lines()[1].set_color('darkred')
-    
-    ax.set_title(f"{title}\nQ-Q Plot")
-    ax.grid(True, alpha=0.3)
-    
-    return fig
-
-def display_statistics(samples):
-    """Display statistics with better formatting."""
-    col1, col2 = st.columns(2)
+def create_sampling_methods_grid():
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>מדדי מרכז:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>ממוצע: {np.mean(samples):.2f} דקות</li>
-                    <li>חציון: {np.median(samples):.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-    
+        create_styled_card(
+            "טרנספורם הופכי",
+            "שיטה לדגימת מספרים אקראיים מהתפלגות המעריכית, המשמשת לדגימת זמני הגעת לקוחות.",
+            border_color="#2D2D2D"
+        )
     with col2:
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>מדדי פיזור:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>סטיית תקן: {np.std(samples):.2f} דקות</li>
-                    <li>טווח: {np.min(samples):.2f} - {np.max(samples):.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+        create_styled_card(
+            "דגימת קבלה-דחייה",
+            "שיטה לדגימת מספרים מהתפלגות מורכבת, כגון דגימת זמני הכנה שונים למנות שונות.",
+            border_color="#2D2D2D"
+        )
+    with col3:
+        create_styled_card(
+            "שיטת הקומפוזיציה",
+            "שיטה לדגימת זמני המתנה של לקוחות לפי רמות סבלנות שונות, על ידי שילוב של התפלגויות.",
+            border_color="#2D2D2D"
+        )
 
-
-def show_sampling_intro():
-    # Main header
-    st.markdown("""
-        <div style="
-            background-color: #1A1A1A;
-            border: 1px solid #8B0000;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 20px 0;
-        ">
-            <!-- Title Section -->
-            <div style="margin-bottom: 30px;">
-                <h1 style="
-                    color: #FFFFFF;
-                    text-align: right;
-                    font-size: 1.8rem;
-                    margin-bottom: 15px;
-                ">שיטות דגימה - הדרך ליצירת סימולציה מדויקת 🎲</h1>
-                <p style="
-                    color: #CCCCCC;
-                    text-align: right;
-                    line-height: 1.6;
-                ">
-                    כדי לדמות את פעילות משאית המזון של משפחת לוקו בצורה מדויקת, אנחנו צריכים להבין כיצד ליצור מספרים אקראיים 
-                    שמתנהגים בדיוק כמו הנתונים האמיתיים שאספנו.
-                </p>
-            </div>
-
-            <!-- Two Column Layout -->
-            <div style="
-                display: flex;
-                gap: 30px;
-                margin-bottom: 30px;
-            ">
-                <!-- Left Column -->
-                <div style="flex: 1;">
-                    <div style="
-                        background-color: #2D2D2D;
-                        padding: 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                    ">
-                        <h4 style="
-                            color: #FFFFFF;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">למה זה חשוב?</h4>
-                        <ul style="
-                            color: #CCCCCC;
-                            padding-right: 20px;
-                            margin: 0;
-                            text-align: right;
-                            list-style-type: none;
-                        ">
-                            <li style="margin-bottom: 10px;">🎯 דיוק בחיזוי זמני המתנה</li>
-                            <li style="margin-bottom: 10px;">⚡ שיפור יעילות התהליך</li>
-                            <li style="margin-bottom: 10px;">📊 תכנון משמרות מדויק</li>
-                            <li style="margin-bottom: 10px;">💡 קבלת החלטות מבוססות נתונים</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div style="flex: 2;">
-                    <div style="
-                        background-color: #2D2D2D;
-                        padding: 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                    ">
-                        <h3 style="
-                            color: #FFFFFF;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">מה נלמד בעמוד זה?</h3>
-                        <p style="
-                            color: #CCCCCC;
-                            margin-bottom: 15px;
-                            text-align: right;
-                        ">
-                            בעמוד זה נלמד את השיטות השונות לדגימת מספרים אקראיים עבור:
-                        </p>
-                        <ul style="
-                            color: #CCCCCC;
-                            padding-right: 20px;
-                            margin: 0;
-                            text-align: right;
-                        ">
-                            <li style="margin-bottom: 10px;">⏰ זמני הגעת לקוחות למשאית</li>
-                            <li style="margin-bottom: 10px;">🍽️ זמני הכנת מנות שונות</li>
-                            <li style="margin-bottom: 10px;">⌛ זמני המתנה מקסימליים של לקוחות</li>
-                            <li style="margin-bottom: 10px;">🔄 זמני מעבר בין עמדות השירות</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Section -->
-            <div style="
-                background-color: #2D2D2D;
-                padding: 20px;
-                border-radius: 8px;
-            ">
-                <h4 style="
-                    color: #FFFFFF;
-                    text-align: right;
-                    margin-bottom: 15px;
-                ">כיצד נשתמש בשיטות הדגימה?</h4>
-                <p style="
-                    color: #CCCCCC;
-                    text-align: right;
-                    line-height: 1.6;
-                    margin-bottom: 0;
-                ">
-                    בהמשך, נשתמש בשיטות אלו כדי ליצור סימולציה מדויקת של פעילות המשאית. 
-                    הסימולציה תאפשר לנו לבחון תרחישים שונים ולקבל החלטות מושכלות לגבי תפעול המשאית.
-                    נתחיל בהבנת השיטות הבסיסיות ונתקדם לשיטות מורכבות יותר.
-                </p>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-from statsmodels.graphics.gofplots import qqplot
-import numpy as np
-
-
-def plot_histogram(samples, title, distribution_func=None, true_density=None):
-    """Plot histogram with better styling."""
-    fig, ax = plt.subplots(figsize=(8, 5))
-    bins = np.linspace(min(samples), max(samples), 30)
-    ax.hist(samples, bins=bins, density=True, alpha=0.7, color='#8B0000', edgecolor='black', label='Sampled Data')
-    
-    if true_density:
-        x = np.linspace(min(samples), max(samples), 100)
-        ax.plot(x, true_density(x), 'darkred', linewidth=2, label='True Density')
-
-    if distribution_func:
-        x = np.linspace(0, 1, 100)
-        ax.plot(x, distribution_func(x), 'darkred', linewidth=2, linestyle='--', label='Target Distribution')
-
-    ax.set_title(title)
-    ax.set_xlabel("Time (minutes)")
-    ax.set_ylabel("Density")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    return fig
-
-def plot_qqplot(samples, title):
+def plot_qq(samples, title):
     """Plot QQ plot with better styling."""
     fig, ax = plt.subplots(figsize=(8, 5))
     stats.probplot(samples, dist="norm", plot=ax)
@@ -265,32 +162,7 @@ def plot_qqplot(samples, title):
     ax.grid(True, alpha=0.3)
     return fig
 
-def display_statistics(samples):
-    """Display statistics with better formatting."""
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>מדדי מרכז:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>ממוצע: {np.mean(samples):.2f} דקות</li>
-                    <li>חציון: {np.median(samples):.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown(f"""
-            <div class="info-box rtl-content">
-                <h4>מדדי פיזור:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>סטיית תקן: {np.std(samples):.2f} דקות</li>
-                    <li>טווח: {np.min(samples):.2f} - {np.max(samples):.2f} דקות</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-
-def run_sampling(sampling_function, num_samples, update_interval, title, progress_bar, plot_placeholder, stats_placeholder,  distribution_func=None, true_density=None):
+def run_sampling(sampling_function, num_samples, update_interval, title, plot_placeholder, stats_placeholder,  distribution_func=None, true_density=None):
     """Run sampling with visualization updates."""
     # Generate all samples at once
     all_samples = sampling_function(num_samples)
@@ -345,157 +217,668 @@ def run_sampling(sampling_function, num_samples, update_interval, title, progres
         with stats_placeholder:
             display_statistics(samples)
         
-        # Update progress
-        progress = min(1.0, end_idx / num_samples)
-        progress_bar.progress(progress)
+def show_sampling_intro():
+    create_styled_card(
+        "אלגוריתמי דגימה  🎲",
+        """
+        דגימה היא תהליך קריטי ליצירת סימולציות המסייעות בקבלת החלטות עסקיות. בעמוד זה נלמד את השיטות השונות לדגימת מספרים אקראיים
+        אשר מסייעות בסימולציה של תהליכי שירות, כמו תכנון זמני המתנה של לקוחות ותפעול יעיל של משמרות.
+        """,
+        border_color="#2D2D2D"
+    )
 
 
-def show_sampling_methods():
+def display_inverse_transform_method():
+    create_styled_card(
+        "טרנספורם הופכי - דגימת זמני הגעה",
+        """
+        שיטת הטרנספורם ההופכי מאפשרת דגימה מהתפלגות מעריכית, אשר מתארת את זמני ההגעה של לקוחות למשאית. 
+        בעזרת נוסחת ההפוך של ההתפלגות, אנו ממירים מספרים אקראיים בהתפלגות אחידה למספרים המתאימים להתפלגות המעריכית.
+        """,
+        border_color="#2D2D2D"
+    )
     
-        # Apply custom CSS
-    with open('.streamlit/style.css') as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    # Displaying LaTeX equations outside of HTML block
+    st.markdown(
+        """
+        <div dir="rtl" style="text-align: right;">
+            <ul style="list-style-type: none; padding-right: 20px;">
+                <li>פונקציית הצפיפות:</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.latex(r"f(x) = \lambda e^{-\lambda x}")
     
-    set_ltr_sliders()
-
-    st.title("אלגוריתמי דגימה - מודלים סטטיסטיים למשאית טאקו לוקו")
-
-    st.write("""
-    ### מבוא לדגימה בסימולציה
-    בשלב זה של הקורס, נלמד כיצד לדגום נתונים שישמשו אותנו בסימולציית משאית הטאקו. 
+    st.markdown(
+        """
+        <div dir="rtl" style="text-align: right;">
+            <ul style="list-style-type: none; padding-right: 20px;">
+                <li>פונקציה מצטברת:</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.latex(r"F(x) = 1 - e^{-\lambda x}")
     
-    ### למה אנחנו צריכים לדגום?
-    במשאית הטאקו שלנו יש מספר תהליכים אקראיים:
-    - 🕒 **זמני הגעת לקוחות** - לא ניתן לדעת בדיוק מתי יגיע הלקוח הבא
-    - ⏱️ **זמני הכנת מנות** - משתנים בהתאם למורכבות ההזמנה
-    - ⌛ **זמני המתנת לקוחות** - כל לקוח מוכן להמתין זמן שונה
-    
-    כדי לייצג תהליכים אלו בסימולציה, נשתמש בהתפלגויות סטטיסטיות שונות.
-    """)
+    st.markdown(
+        """
+        <div dir="rtl" style="text-align: right;">
+            <ul style="list-style-type: none; padding-right: 20px;">
+                <li>טרנספורם הופכי:</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.latex(r"x = -\frac{\ln(1-U)}{\lambda}")
 
-    if 'selected_sampling' not in st.session_state:
-        st.session_state.selected_sampling = None
 
-    num_samples = st.slider("מספר דגימות", min_value=5000, max_value=1000000, value=1000, step=1000)
 
-    st.header("בחר שיטת דגימה")
+    lambda_param = st.slider("קצב הגעה (לקוחות לשעה)", 1.0, 20.0, 10.0)
+    num_samples = st.slider("מספר דגימות", 100, 10000, 1000)
+
+    if st.button("הרץ סימולציה"):
+        samples = run_inverse_transform_simulation(lambda_param, num_samples)
+        plot_histogram(samples, "התפלגות זמני הגעה")
+
+def display_rejection_method():
+    create_styled_card(
+        "דגימת קבלה-דחייה - זמני הכנת מנות",
+        """
+        שיטה זו משמשת לדגימת זמני הכנה למנות בעלות זמני הכנה משתנים. בעזרת פונקציית מעטפת המכסה את ההתפלגות הרצויה,
+        ניתן לדגום מתוך התפלגות המייצגת זמני הכנה שונים. 
+        
+        <ul dir="rtl" style="text-align: right;">
+            <li>מנה מהירה: התפלגות אחידה (3-4 דקות)</li>
+            <li>מנה רגילה: התפלגות משולשית (4-6 דקות)</li>
+            <li>מנה מורכבת: זמן קבוע (10 דקות)</li>
+        </ul>
+        """,
+        border_color="#2D2D2D"
+    )
+
+    num_samples = st.slider("מספר דגימות", 100, 10000, 1000)
+    if st.button("הרץ סימולציה"):
+        samples = run_rejection_simulation(num_samples)
+        plot_histogram(samples, "זמני הכנת מנות")
+
+def display_composition_method():
+    create_styled_card(
+        "שיטת הקומפוזיציה - זמני המתנה",
+        """
+        שיטה זו משמשת לדגימת זמני המתנה של לקוחות בעלי רמות סבלנות שונות. לדוגמה:
+        
+        <ul dir="rtl" style="text-align: right;">
+            <li>לקוחות בעלי סבלנות נמוכה (30%): 5-10 דקות</li>
+            <li>לקוחות בעלי סבלנות בינונית (40%): 10-15 דקות</li>
+            <li>לקוחות בעלי סבלנות גבוהה (30%): 15-20 דקות</li>
+        </ul>
+        השיטה משלבת בין מספר התפלגויות פשוטות כדי לייצר התפלגות מורכבת המייצגת את זמני ההמתנה.
+        """,
+        border_color="#2D2D2D"
+    )
+
+    num_samples = st.slider("מספר דגימות", 100, 10000, 1000)
+    if st.button("הרץ סימולציה"):
+        samples = run_composition_simulation(num_samples)
+        plot_histogram(samples, "זמני המתנה של לקוחות")
+
+def composition_sample_wait_time():
+    """Generate a sample based on customer patience levels."""
+    patience_level = np.random.choice(
+        ["low", "medium", "high"], 
+        p=[0.3, 0.4, 0.3]  # Probabilities for each patience level
+    )
+
+    if patience_level == "low":
+        # Low patience: Sample uniformly between 5 and 10 minutes
+        sample = np.random.uniform(5, 10)
+    elif patience_level == "medium":
+        # Medium patience: Sample uniformly between 10 and 15 minutes
+        sample = np.random.uniform(10, 15)
+    elif patience_level == "high":
+        # High patience: Sample uniformly between 15 and 20 minutes
+        sample = np.random.uniform(15, 20)
+
+    return sample
+
+def display_statistics(samples):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("התפלגות אחידה\nזמני המתנת לקוחות"):
-            st.session_state.selected_sampling = 'uniform'
-            
+        create_styled_card(
+            "מדדי מרכז",
+            f"""
+            <div dir="rtl" style="text-align: right;">
+                ממוצע: {np.mean(samples):.2f} דקות<br>
+                חציון: {np.median(samples):.2f} דקות
+            </div>
+            """,
+            border_color="#2D2D2D"
+        )
+    
     with col2:
-        if st.button("התפלגות נורמלית\nזמני הכנת מנות"):
-            st.session_state.selected_sampling = 'normal'
-            
+        create_styled_card(
+            "מדדי פיזור",
+            f"""
+            <div dir="rtl" style="text-align: right;">
+                סטיית תקן: {np.std(samples):.2f}<br>
+                טווח: {np.min(samples):.2f} - {np.max(samples):.2f}
+            </div>
+            """,
+            border_color="#2D2D2D"
+        )
+    
     with col3:
-        if st.button("התפלגות מעריכית\nזמני הגעת לקוחות"):
-            st.session_state.selected_sampling = 'exponential'
+        create_styled_card(
+            "מדדי צורה",
+            f"""
+            <div dir="rtl" style="text-align: right;">
+                אסימטריה: {stats.skew(samples):.2f}<br>
+                קורטוזיס: {stats.kurtosis(samples):.2f}
+            </div>
+            """,
+            border_color="#2D2D2D"
+        )
 
-    if st.session_state.selected_sampling == 'uniform':
-        st.header("התפלגות אחידה - מודל זמני המתנת לקוחות")
-        st.write("""
-        ### מהי התפלגות אחידה?
-        התפלגות אחידה מייצגת מצב בו כל ערך בטווח מסוים הוא בעל סיכוי שווה להופיע.
-        
-        ### איך זה קשור למשאית הטאקו?
-        במקרה שלנו, הלקוחות מוכנים להמתין בין 5 ל-20 דקות:
-        - זמן המתנה מינימלי: 5 דקות
-        - זמן המתנה מקסימלי: 20 דקות
-        - כל זמן המתנה בטווח זה הוא אפשרי באופן שווה
-        
-        ### הפונקציה המתמטית:
-        """)
-        st.latex(r"f(x) = \frac{1}{b-a}, \quad a \leq x \leq b")
-        
-        a = st.slider("זמן המתנה מינימלי (דקות)", 0.0, 10.0, 5.0)
-        b = st.slider("זמן המתנה מקסימלי (דקות)", a + 0.1, 30.0, 20.0)
-        
-        progress_bar = st.progress(0)
-        plot_placeholder = st.empty()
-        qqplot_placeholder = st.empty()
-        stats_placeholder = st.empty()
-        true_density = lambda x: np.ones_like(x) / (b - a)
-        run_sampling(lambda size: sample_uniform(a, b, size), num_samples, 100, 
-                    "Waiting Time Distribution", progress_bar, plot_placeholder, 
-                    qqplot_placeholder, stats_placeholder, 
-                    true_density=true_density)
 
-    elif st.session_state.selected_sampling == 'normal':
-        st.header("התפלגות נורמלית - מודל זמני הכנת מנות")
-        st.write("""
-        ### מהי התפלגות נורמלית?
-        התפלגות נורמלית (או גאוסיאנית) היא התפלגות פעמון המתארת תהליכים טבעיים רבים.
-        
-        ### איך זה קשור למשאית הטאקו?
-        זמני ההכנה של טאקו לוקוסיטו:
-        - ממוצע: 5 דקות
-        - סטיית תקן: כדקה אחת
-        - רוב ההכנות נמשכות בין 4-6 דקות
-        
-        ### הפונקציה המתמטית:
-        """)
-        st.latex(r"f(x) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(x - \mu)^2}{2\sigma^2}}")
-        
-        mu = st.slider("זמן הכנה ממוצע (דקות)", 1.0, 10.0, 5.0)
-        sigma = st.slider("סטיית תקן (דקות)", 0.1, 3.0, 1.0)
-        
-        progress_bar = st.progress(0)
-        plot_placeholder = st.empty()
-        qqplot_placeholder = st.empty()
-        stats_placeholder = st.empty()
-        true_density = lambda x: stats.norm.pdf(x, mu, sigma)
-        run_sampling(lambda size: sample_normal(mu, sigma, size), num_samples, 100, 
-                    "Preparation Time Distribution", progress_bar, plot_placeholder, 
-                    qqplot_placeholder, stats_placeholder, 
-                    true_density=true_density)
-
-    elif st.session_state.selected_sampling == 'exponential':
-        st.header("התפלגות מעריכית - מודל הגעת לקוחות")
-        st.write("""
-        ### מהי התפלגות מעריכית?
-        התפלגות מעריכית מתארת את הזמן בין אירועים אקראיים עוקבים.
-        
-        ### איך זה קשור למשאית הטאקו?
-        הגעת לקוחות למשאית:
-        - ממוצע: 10 לקוחות בשעה
-        - λ = 1/6 (בממוצע לקוח כל 6 דקות)
-        - זמני ההגעה בין לקוחות הם בלתי תלויים
-        
-        ### הפונקציה המתמטית:
-        """)
-        st.latex(r"f(x) = \lambda e^{-\lambda x}, \quad x \geq 0")
-        
-        lambda_param = st.slider("קצב הגעה (לקוחות לשעה)", 1.0, 20.0, 10.0)
-        lambda_minutes = lambda_param / 60  # Convert to per-minute rate
-        
-        progress_bar = st.progress(0)
-        plot_placeholder = st.empty()
-        qqplot_placeholder = st.empty()
-        stats_placeholder = st.empty()
-        true_density = lambda x: lambda_minutes * np.exp(-lambda_minutes * x)
-        run_sampling(lambda size: sample_exponential(lambda_minutes, size), 
-                    num_samples, 100, "Arrival Time Distribution", 
-                    progress_bar, plot_placeholder, qqplot_placeholder, 
-                    stats_placeholder,  true_density=true_density)
-
-    st.write("""
-    ### 📚 קשר לחומר הקורס
     
-    בקורס סימולציה אנו לומדים כיצד:
-    1. **לזהות התפלגויות מתאימות** - התאמת מודל סטטיסטי לנתונים אמיתיים
-    2. **לדגום מהתפלגויות** - שימוש באלגוריתמים ליצירת מספרים אקראיים
-    3. **לבדוק את טיב ההתאמה** - שימוש במבחנים סטטיסטיים ובדיקות ויזואליות
+    st.markdown(
+        """
+        <h2 dir="rtl" style="text-align: right; margin: 30px 0 20px;">בחר שיטת דגימה להמחשה:</h2>
+        """,
+        unsafe_allow_html=True
+    )
     
-    ### 🎯 יישום במשאית הטאקו
+    method = st.radio("", [
+        "טרנספורם הופכי - זמני הגעת לקוחות",
+        "דגימת קבלה-דחייה - זמני הכנת מנות",
+        "שיטת הקומפוזיציה - זמני המתנה"
+    ], index=0)
+
+    if "טרנספורם הופכי" in method:
+        display_inverse_transform_method()
+    elif "קבלה-דחייה" in method:
+        display_rejection_method()
+    elif "קומפוזיציה" in method:
+        display_composition_method()
+
+def run_inverse_transform_simulation(lambda_param, num_samples):
+    # Simulate exponential distribution using inverse transform
+    u = np.random.uniform(0, 1, num_samples)
+    samples = -np.log(1-u) / lambda_param
+    return samples
+
+def run_rejection_simulation(num_samples):
+    """Simulate using rejection sampling"""
+    samples = []
+
+    for i in range(num_samples):
+        sample = rejection_sample_prep_time()
+        samples.append(sample)
+
     
-    הדגימות שלמדנו ישמשו אותנו ב:
-    - חיזוי עומסים במשאית
-    - תכנון כוח אדם אופטימלי
-    - שיפור זמני המתנה
-    - הערכת רווחיות
-    """)
+    return np.array(samples)
+
+def run_composition_simulation(num_samples):
+    """Simulate using composition method"""
+    samples = []
+    
+    for i in range(num_samples):
+        sample = composition_sample_wait_time()
+        samples.append(sample)
+
+    
+    return np.array(samples)
+
+def plot_histogram(samples, title):
+    # Plot histogram with theoretical density
+    plt.figure(figsize=(6, 4))
+    plt.hist(samples, bins=30, density=True, alpha=0.6, color='skyblue', edgecolor='black')
+    
+    # Theoretical density overlay
+    x = np.linspace(0, np.max(samples), 1000)
+    plt.plot(x, stats.expon.pdf(x, scale=1/np.mean(samples)), 'r-', lw=2, label='Theoretical PDF')
+    plt.xlabel("Arrival Time")
+    plt.ylabel("Density")
+    plt.title(title)
+    plt.legend()
+    st.pyplot(plt)
+
+def display_statistics(samples):
+    """Display comprehensive statistics in three columns"""
+    
+    # Create three columns
+    col1, col2, col3 = st.columns(3)
+    
+    # First column - Central Tendency
+    with col1:
+        st.markdown(f"""
+            <div style="
+                background-color: #2D2D2D;
+                border: 1px solid #8B0000;
+                border-radius: 8px;
+                padding: 20px;
+                height: 100%;
+                font-family: 'Rubik', sans-serif;
+            ">
+                <h4 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    margin-bottom: 15px;
+                    font-size: 1.2rem;
+                    border-bottom: 1px solid #8B0000;
+                    padding-bottom: 10px;
+                ">מדדי מרכז</h4>
+                <div style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    font-size: 1rem;
+                ">
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                    ">
+                        <span>ממוצע:</span>
+                        <span>{np.mean(samples):.2f}</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                    ">
+                        <span>חציון:</span>
+                        <span>{np.median(samples):.2f}</span>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # Second column - Dispersion
+    with col2:
+        st.markdown(f"""
+            <div style="
+                background-color: #2D2D2D;
+                border: 1px solid #8B0000;
+                border-radius: 8px;
+                padding: 20px;
+                height: 100%;
+                font-family: 'Rubik', sans-serif;
+            ">
+                <h4 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    margin-bottom: 15px;
+                    font-size: 1.2rem;
+                    border-bottom: 1px solid #8B0000;
+                    padding-bottom: 10px;
+                ">מדדי פיזור</h4>
+                <div style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    font-size: 1rem;
+                ">
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                    ">
+                        <span>סטיית תקן:</span>
+                        <span>{np.std(samples):.2f}</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                    ">
+                        <span>טווח:</span>
+                        <span>{np.min(samples):.2f} - {np.max(samples):.2f}</span>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # Third column - Shape
+    with col3:
+        st.markdown(f"""
+            <div style="
+                background-color: #2D2D2D;
+                border: 1px solid #8B0000;
+                border-radius: 8px;
+                padding: 20px;
+                height: 100%;
+                font-family: 'Rubik', sans-serif;
+            ">
+                <h4 style="
+                    color: #FFFFFF;
+                    text-align: right;
+                    margin-bottom: 15px;
+                    font-size: 1.2rem;
+                    border-bottom: 1px solid #8B0000;
+                    padding-bottom: 10px;
+                ">מדדי צורה</h4>
+                <div style="
+                    color: #CCCCCC;
+                    text-align: right;
+                    font-size: 1rem;
+                ">
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                    ">
+                        <span>אסימטריה:</span>
+                        <span>{stats.skew(samples):.2f}</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                    ">
+                        <span>קורטוזיס:</span>
+                        <span>{stats.kurtosis(samples):.2f}</span>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+#good version of display_random_number_generators
+def display_random_number_generators():
+    create_styled_card(
+        "אלגוריתמים ליצירת מספרים פסאודו-אקראיים 🎲",
+        """
+        <div dir="rtl" style="text-align: right;">
+        מספרים פסאודו-אקראיים הם הבסיס לכל סימולציה. להלן שתי שיטות נפוצות ליצירת מספרים אקראיים בין 0 ל-1:
+        </div>
+        """,
+        border_color="#2D2D2D"
+    )
+
+
+    # הוספת דוגמה אינטראקטיבית
+    st.markdown("""
+        <h3 dir="rtl" style="text-align: right; margin: 30px 0 20px;">
+            הדגמה אינטראקטיבית
+        </h3>
+    """, unsafe_allow_html=True)
+    
+    generator_type = st.radio("בחר סוג מחולל:", ["LCG", "LFSR"])
+    num_samples = st.slider("מספר דגימות להצגה:", 1, 20, 10)
+    
+    if generator_type == "LCG":
+        lcg = LCG(seed=12345)
+        numbers = [lcg.random() for _ in range(num_samples)]
+        show_random_numbers(numbers, "LCG")
+    else:
+        lfsr = LFSR("1010", [1, 3])  # 4-bit LFSR with taps at positions 1 and 3
+        numbers = [lfsr.random() for _ in range(num_samples)]
+        show_random_numbers(numbers, "LFSR")
+
+def display_generator_state(generator_type, last_step, iteration):
+    """Display the current state of the generator with improved layout."""
+    if generator_type == "LCG":
+        content = f"""
+        <div dir="ltr" style="text-align: left;">
+            <strong>Current State:</strong> {last_step['old_state']}<br>
+            <strong>Calculation:</strong> {last_step['calculation']}<br>
+            <strong>New State:</strong> {last_step['next_state']}<br>
+            <strong>Random Number:</strong> {last_step['random_value']:.4f}
+        </div>
+        """
+    else:
+        content = f"""
+        <div dir="ltr" style="text-align: left;">
+            <strong>Current Bit State:</strong> {last_step['old_state']}<br>
+            <strong>XOR Result:</strong> {last_step['xor_result']}<br>
+            <strong>New Bit State:</strong> {last_step['next_state']}<br>
+            <strong>Random Number:</strong> {last_step['random_value']:.4f}
+        </div>
+        """
+    
+    create_styled_card_left(
+        f"Current State - Iteration {iteration}",
+        content=content,
+        border_color="#2D2D2D"
+    )
+
+# expiramental version
+def display_interactive_sampling():
+
+        # Create three columns for customer types
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        # הסברים על סוגי המחוללים
+        create_styled_card(
+            "Linear Congruential Generator (LCG) - מחולל ליניארי מודולרי",
+            """
+            <div dir="rtl" style="text-align: right;">
+            LCG הוא אלגוריתם נפוץ ליצירת רצף מספרים אקראיים. הוא משתמש בנוסחה רקורסיבית ליצירת רצף מספרים בתחום מוגדר, על בסיס ערך ראשוני (seed).
+            <ul>
+                <li><strong>הגדרת פרמטרים:</strong> ל-LCG יש 4 פרמטרים - a (הכפל), c (הזזה), m (מודולו), ו-seed (הערך הראשוני).</li>
+                <li><strong>חישוב מצב חדש:</strong> מצב חדש מחושב באמצעות הנוסחה Xn+1 = (a ⋅ Xn + c) mod m, כאשר Xn הוא המצב הנוכחי ו-Xn+1 הוא המצב הבא.</li>
+                <li><strong>חישוב ערך אקראי:</strong> כדי לקבל מספר אקראי בתחום (0, 1), מחלקים את המצב הנוכחי ב-m, כלומר: Random Value = Xn / m.</li>
+                <li><strong>חזרה:</strong> חזרה על השלב הקודם ליצירת רצף מספרים אקראיים.</li>
+            </ul>
+            <strong>פסאודו-קוד:</strong>
+            <pre>
+        initialize(seed, a, c, m)
+        X = seed
+        while True:
+            X = (a * X + c) % m
+            random_value = X / m
+            yield random_value
+                </pre>
+                </div>
+                """,
+            border_color="#2D2D2D"
+        )
+
+    with col2:
+
+        create_styled_card(
+            "Linear Feedback Shift Register (LFSR) - רישום משמרת ליניארי",
+            """
+            <div dir="rtl" style="text-align: right;">
+            ה-LFSR הוא מחולל אקראי שמתבסס על מצבי ביטים והחזרת מצב בתדירות קבועה. LFSR משתמש ב"ברזים" (taps) כדי לבצע פעולות XOR בין ביטים שונים במצב.
+            <ul>
+                <li><strong>הגדרת מצב ראשוני וברזים:</strong> מציבים את המצב הראשוני ומגדירים את מיקומי הברזים (מיקומי הביטים עליהם נבצע XOR).</li>
+                <li><strong>חישוב XOR:</strong> מבצעים XOR בין הביטים הנבחרים (הברזים) ומאחסנים את התוצאה.</li>
+                <li><strong>הזזת מצב הביטים:</strong> מזיזים את כל הביטים ב-1 ימינה, ומוסיפים את תוצאת ה-XOR כביט השמאלי החדש.</li>
+                <li><strong>חישוב ערך אקראי:</strong> ממירים את המצב הנוכחי של הביטים לערך מספרי.</li>
+                <li><strong>חזרה:</strong> חוזרים על התהליך עבור כל איטרציה כדי לייצר רצף של מספרים אקראיים.</li>
+            </ul>
+            <strong>פסאודו-קוד:</strong>
+            <pre>
+    initialize(seed, taps)
+    state = seed
+    while True:
+        xor_result = 0
+        for tap in taps:
+            xor_result ^= state[tap - 1]
+        state = (state >> 1) | (xor_result << (len(state) - 1))
+        random_value = convert_to_decimal(state)
+        yield random_value
+            </pre>
+            </div>
+            """,
+            border_color="#2D2D2D"
+        )
+
+    # Initialize session state keys if they do not exist
+    if 'random_generator' not in st.session_state:
+        st.session_state.random_generator = None
+        st.session_state.samples = []
+        st.session_state.current_iteration = 0
+        st.session_state.steps = []
+        st.session_state.generator_type = "LCG"  # Default to LCG
+
+    # Allow user to select generator type, and update session state
+    generator_type = st.radio("Choose Generator Type:", ["LCG", "LFSR"], index=0)
+
+    # Update session state only if generator type has changed or generator is None
+    if st.session_state.random_generator is None or st.session_state.generator_type != generator_type:
+        st.session_state.generator_type = generator_type
+        if generator_type == "LCG":
+            st.session_state.random_generator = LCG(seed=12345)
+        else:
+            st.session_state.random_generator = LFSR("1010", [1, 3])
+        # Reset iteration and sample history
+        st.session_state.samples = []
+        st.session_state.current_iteration = 0
+        st.session_state.steps = []
+
+    # Set up layout for generator states and sampling steps
+    col1, col2, col3 = st.columns([2, 2, 1])
+
+    # Placeholder for previous step
+    previous_step_placeholder = col1.empty()
+
+    # Placeholder for current state
+    current_state_placeholder = col2.empty()
+
+    # Set up placeholders for plot and statistics
+    plot_col, stats_col = st.columns([4, 1])
+
+    with col3:
+        if st.button("Sample Next Number", key="sample_button"):
+            # Ensure random_generator is initialized
+            if st.session_state.random_generator is not None:
+                st.session_state.current_iteration += 1
+                if generator_type == "LCG":
+                    old_state = st.session_state.random_generator.state
+                    next_state = st.session_state.random_generator.next()
+                    random_value = st.session_state.random_generator.random()
+                    
+                    step = {
+                        'iteration': st.session_state.current_iteration,
+                        'old_state': old_state,
+                        'calculation': f"({st.session_state.random_generator.a} × {old_state} + {st.session_state.random_generator.c}) mod {st.session_state.random_generator.m}",
+                        'next_state': next_state,
+                        'random_value': random_value
+                    }
+                else:
+                    old_state = st.session_state.random_generator.state
+                    xor_result = 0
+                    for t in st.session_state.random_generator.taps:
+                        xor_result ^= int(old_state[t - 1])
+                    
+                    next_state = st.session_state.random_generator.next()
+                    random_value = st.session_state.random_generator.random()
+                    
+                    step = {
+                        'iteration': st.session_state.current_iteration,
+                        'old_state': old_state,
+                        'xor_result': xor_result,
+                        'next_state': next_state,
+                        'random_value': random_value
+                    }
+                
+                # Append step to session state and update samples
+                if len(st.session_state.steps) > 0:
+                    previous_step = st.session_state.steps[-1]
+                    with previous_step_placeholder:
+                        display_generator_state(st.session_state.generator_type, previous_step, st.session_state.current_iteration - 1)
+                
+                st.session_state.steps.append(step)
+                st.session_state.samples.append(random_value)
+                
+                # Display current state
+                with current_state_placeholder:
+                    display_generator_state(st.session_state.generator_type, step, st.session_state.current_iteration)
+
+    # Display plot in the left column and summary in the right column
+    if st.session_state.samples:
+        with plot_col:
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+            
+            # Histogram
+            ax1.hist(st.session_state.samples, bins=min(20, len(st.session_state.samples)), 
+                    color='#8B0000', alpha=0.7, edgecolor='black')
+            ax1.set_title('Random Numbers Histogram')
+            ax1.set_xlabel('Value')
+            ax1.set_ylabel('Frequency')
+            
+            # Trace Plot
+            ax2.plot(range(len(st.session_state.samples)), st.session_state.samples, 
+                    marker='o', markersize=4, linestyle='-', color='#8B0000')
+            ax2.set_title('Random Numbers Trace Plot')
+            ax2.set_xlabel('Iteration')
+            ax2.set_ylabel('Value')
+            ax2.grid(True, alpha=0.3)
+
+            plt.tight_layout()
+            st.pyplot(fig)
+
+    # Display statistical summary in the right column
+    if len(st.session_state.samples) > 1:
+        with stats_col:
+            create_styled_card(
+                "Statistical Summary",
+                f"""
+                <div dir="ltr" style="text-align: left;">
+                    <strong>Sample Count:</strong> {len(st.session_state.samples)}<br>
+                    <strong>Mean:</strong> {np.mean(st.session_state.samples):.4f}<br>
+                    <strong>Median:</strong> {np.median(st.session_state.samples):.4f}<br>
+                    <strong>Standard Deviation:</strong> {np.std(st.session_state.samples):.4f}<br>
+                    <strong>Minimum:</strong> {min(st.session_state.samples):.4f}<br>
+                    <strong>Maximum:</strong> {max(st.session_state.samples):.4f}
+                </div>
+                """,
+                border_color="#2D2D2D"
+            )
+
+def display_random_number_generators():
+    create_styled_card(
+        "אלגוריתמים ליצירת מספרים פסאודו-אקראיים 🎲",
+        """
+        <div dir="rtl" style="text-align: right;">
+        מספרים פסאודו-אקראיים הם הבסיס לכל סימולציה. להלן שתי שיטות נפוצות ליצירת מספרים אקראיים בין 0 ל-1:
+        </div>
+        """,
+        border_color="#2D2D2D"
+    )
+
+    # הצגת ההדגמה האינטראקטיבית
+    display_interactive_sampling()
+
+def show_sampling_methods():
+    # Apply custom CSS
+    with open('.streamlit/style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    set_rtl()
+    set_ltr_sliders()
+
+    #display_random_number_generators()
+
+    show_sampling_intro()
+    create_sampling_methods_grid()
+    
+    
+        # הצגת המחוללים האקראיים
+
+
+    st.markdown(
+        """
+        <h2 dir="rtl" style="text-align: right; margin: 30px 0 20px;">בחר שיטת דגימה להמחשה:</h2>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    method = st.radio("", [
+        "טרנספורם הופכי - זמני הגעת לקוחות",
+        "דגימת קבלה-דחייה - זמני הכנת מנות",
+        "שיטת הקומפוזיציה - זמני המתנה"
+    ], index=0)
+
+    if "טרנספורם הופכי" in method:
+        display_inverse_transform_method()
+    elif "קבלה-דחייה" in method:
+        display_rejection_method()
+    elif "קומפוזיציה" in method:
+        display_composition_method()    
 
 if __name__ == "__main__":
     show_sampling_methods()

@@ -21,7 +21,10 @@ from sampling_methods import show_sampling_methods
 from  goodness_of_fit import show as show_googness
 from Random_Number_Generators import show_random_generator
 from story import show_story
-
+from flow import show as show_flow
+from lcg import show_lcg
+from lfsr import show_lfsr
+from random_generator import show_rng_demo
 def main():
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -41,6 +44,10 @@ def main():
         "התאמת התפלגות למודל": show_googness,
         "אלגוריתמי דגימה": show_sampling_methods,
         "תכנות אירועים": show_food_truck,
+        #"Flow": show_flow,
+        #"lcg": show_lcg,
+        #"lfsr": show_lfsr,
+        "מחולל מספרים אקראיים": show_rng_demo
     }
 
     # Add buttons for each page in the sidebar

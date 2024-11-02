@@ -1,7 +1,7 @@
 
 [theme]
-primaryColor = "#580000"  # Dark Red
+primaryColor = "#440a0a"  # Dark Red
 backgroundColor = "#1E1E1E"  # Dark Grey/Black
 secondaryBackgroundColor = "#333333"  # Darker Grey
 textColor = "#FFFFFF"  # White
-font = "Arial"
+font = "sans serif"

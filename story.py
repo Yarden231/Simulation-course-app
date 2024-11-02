@@ -62,19 +62,19 @@ def show_menu():
         {
             'emoji': '🌮',
             'name': 'טאקו לוקוסיטו',
-            'prep_time': '4-6 דקות',
+            'prep_time': '3-4 דקות',
             'percentage': '50% מההזמנות'
         },
         {
             'emoji': '🌯',
             'name': 'טאקו לוקוסיצ׳ימו',
-            'prep_time': '10 דקות',
+            'prep_time': '4-6 דקות',
             'percentage': '25% מההזמנות'
         },
         {
             'emoji': '🥙',
             'name': 'מתקטאקו',
-            'prep_time': 'משתנה',
+            'prep_time': '10 דקות',
             'percentage': '25% מההזמנות',
             'warning': 'תלונות על בישול חסר ב-30% מהמקרים'
         }
