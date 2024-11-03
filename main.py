@@ -42,12 +42,12 @@ def main():
         "דף הבית": show_home,
         "סיפור מערכת טאקו לוקו": show_story,
         "התאמת התפלגות למודל": show_googness,
-        "אלגוריתמי דגימה": show_sampling_methods,
-        "תכנות אירועים": show_food_truck,
+        "אלגוריתמי דגימה": show_rng_demo
+        #"תכנות אירועים": show_food_truck,
         #"Flow": show_flow,
         #"lcg": show_lcg,
         #"lfsr": show_lfsr,
-        "מחולל מספרים אקראיים": show_rng_demo
+        #"מחולל מספרים אקראיים": show_rng_demo
     }
 
     # Add buttons for each page in the sidebar

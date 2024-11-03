@@ -47,7 +47,7 @@ class LCG:
 
 
 # Update the create_styled_card function with better spacing
-def create_styled_card(title, content, border_color="#2D2D2D"):
+def create_styled_card(title, content, border_color= '#2D2D2D' ):
     st.markdown(
         f"""
         <div style="
@@ -74,7 +74,7 @@ def create_styled_card(title, content, border_color="#2D2D2D"):
     )
 
 # Update the create_styled_card function with better spacing
-def create_styled_card_left(title, content, border_color="#2D2D2D"):
+def create_styled_card_left(title, content, ):
     st.markdown(
         f"""
         <div style="
@@ -133,20 +133,17 @@ def create_sampling_methods_grid():
     with col1:
         create_styled_card(
             "טרנספורם הופכי",
-            "שיטה לדגימת מספרים אקראיים מהתפלגות המעריכית, המשמשת לדגימת זמני הגעת לקוחות.",
-            border_color="#2D2D2D"
+            "שיטה לדגימת מספרים אקראיים מהתפלגות המעריכית, המשמשת לדגימת זמני הגעת לקוחות."
         )
     with col2:
         create_styled_card(
             "דגימת קבלה-דחייה",
-            "שיטה לדגימת מספרים מהתפלגות מורכבת, כגון דגימת זמני הכנה שונים למנות שונות.",
-            border_color="#2D2D2D"
+            "שיטה לדגימת מספרים מהתפלגות מורכבת, כגון דגימת זמני הכנה שונים למנות שונות."
         )
     with col3:
         create_styled_card(
             "שיטת הקומפוזיציה",
-            "שיטה לדגימת זמני המתנה של לקוחות לפי רמות סבלנות שונות, על ידי שילוב של התפלגויות.",
-            border_color="#2D2D2D"
+            "שיטה לדגימת זמני המתנה של לקוחות לפי רמות סבלנות שונות, על ידי שילוב של התפלגויות."
         )
 
 def plot_qq(samples, title):
@@ -223,8 +220,7 @@ def show_sampling_intro():
         """
         דגימה היא תהליך קריטי ליצירת סימולציות המסייעות בקבלת החלטות עסקיות. בעמוד זה נלמד את השיטות השונות לדגימת מספרים אקראיים
         אשר מסייעות בסימולציה של תהליכי שירות, כמו תכנון זמני המתנה של לקוחות ותפעול יעיל של משמרות.
-        """,
-        border_color="#2D2D2D"
+        """
     )
 
 
@@ -234,8 +230,7 @@ def display_inverse_transform_method():
         """
         שיטת הטרנספורם ההופכי מאפשרת דגימה מהתפלגות מעריכית, אשר מתארת את זמני ההגעה של לקוחות למשאית. 
         בעזרת נוסחת ההפוך של ההתפלגות, אנו ממירים מספרים אקראיים בהתפלגות אחידה למספרים המתאימים להתפלגות המעריכית.
-        """,
-        border_color="#2D2D2D"
+        """
     )
     
     # Displaying LaTeX equations outside of HTML block
@@ -275,6 +270,17 @@ def display_inverse_transform_method():
     )
     st.latex(r"x = -\frac{\ln(1-U)}{\lambda}")
 
+    st.markdown(
+        """
+        <div dir="rtl" style="text-align: right;">
+            <ul style="list-style-type: none; padding-right: 20px;">
+                <li>כאשר U הוא מספר אקראי בין 0 ל-1.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 
     lambda_param = st.slider("קצב הגעה (לקוחות לשעה)", 1.0, 20.0, 10.0)
@@ -296,8 +302,7 @@ def display_rejection_method():
             <li>מנה רגילה: התפלגות משולשית (4-6 דקות)</li>
             <li>מנה מורכבת: זמן קבוע (10 דקות)</li>
         </ul>
-        """,
-        border_color="#2D2D2D"
+        """
     )
 
     num_samples = st.slider("מספר דגימות", 100, 10000, 1000)
@@ -317,8 +322,7 @@ def display_composition_method():
             <li>לקוחות בעלי סבלנות גבוהה (30%): 15-20 דקות</li>
         </ul>
         השיטה משלבת בין מספר התפלגויות פשוטות כדי לייצר התפלגות מורכבת המייצגת את זמני ההמתנה.
-        """,
-        border_color="#2D2D2D"
+        """
     )
 
     num_samples = st.slider("מספר דגימות", 100, 10000, 1000)
@@ -356,8 +360,7 @@ def display_statistics(samples):
                 ממוצע: {np.mean(samples):.2f} דקות<br>
                 חציון: {np.median(samples):.2f} דקות
             </div>
-            """,
-            border_color="#2D2D2D"
+            """
         )
     
     with col2:
@@ -368,8 +371,7 @@ def display_statistics(samples):
                 סטיית תקן: {np.std(samples):.2f}<br>
                 טווח: {np.min(samples):.2f} - {np.max(samples):.2f}
             </div>
-            """,
-            border_color="#2D2D2D"
+            """
         )
     
     with col3:
@@ -380,8 +382,7 @@ def display_statistics(samples):
                 אסימטריה: {stats.skew(samples):.2f}<br>
                 קורטוזיס: {stats.kurtosis(samples):.2f}
             </div>
-            """,
-            border_color="#2D2D2D"
+            """
         )
 
 
@@ -437,7 +438,7 @@ def run_composition_simulation(num_samples):
 def plot_histogram(samples, title):
     # Plot histogram with theoretical density
     plt.figure(figsize=(6, 4))
-    plt.hist(samples, bins=30, density=True, alpha=0.6, color='skyblue', edgecolor='black')
+    plt.hist(samples, bins=30, density=True, alpha=0.6, color='darkred', edgecolor='black')
     
     # Theoretical density overlay
     x = np.linspace(0, np.max(samples), 1000)
@@ -592,7 +593,7 @@ def display_random_number_generators():
         מספרים פסאודו-אקראיים הם הבסיס לכל סימולציה. להלן שתי שיטות נפוצות ליצירת מספרים אקראיים בין 0 ל-1:
         </div>
         """,
-        border_color="#2D2D2D"
+        
     )
 
 
@@ -639,7 +640,7 @@ def display_generator_state(generator_type, last_step, iteration):
     create_styled_card_left(
         f"Current State - Iteration {iteration}",
         content=content,
-        border_color="#2D2D2D"
+        
     )
 
 # expiramental version
@@ -672,8 +673,7 @@ def display_interactive_sampling():
             yield random_value
                 </pre>
                 </div>
-                """,
-            border_color="#2D2D2D"
+                """
         )
 
     with col2:
@@ -703,8 +703,7 @@ def display_interactive_sampling():
         yield random_value
             </pre>
             </div>
-            """,
-            border_color="#2D2D2D"
+            """
         )
 
     # Initialize session state keys if they do not exist
@@ -827,7 +826,7 @@ def display_interactive_sampling():
                     <strong>Maximum:</strong> {max(st.session_state.samples):.4f}
                 </div>
                 """,
-                border_color="#2D2D2D"
+                
             )
 
 def display_random_number_generators():
@@ -838,7 +837,7 @@ def display_random_number_generators():
         מספרים פסאודו-אקראיים הם הבסיס לכל סימולציה. להלן שתי שיטות נפוצות ליצירת מספרים אקראיים בין 0 ל-1:
         </div>
         """,
-        border_color="#2D2D2D"
+        
     )
 
     # הצגת ההדגמה האינטראקטיבית

@@ -80,10 +80,10 @@ def show_lfsr():
         st.markdown("""
         <div dir="rtl" style="text-align: right;">
             <p>
-            אוגר הזזה עם משוב לינארי (LFSR) <a href="https://he.wikipedia.org/wiki/LFSR">למידע נוסף</a>
-            הוא אוגר הזזה שבו ביט הקלט הוא פונקציה לינארית של שניים או יותר ממצביו הקודמים.</p>
+            רגיסטר הזזה עם משוב לינארי (LFSR) <a href="https://he.wikipedia.org/wiki/LFSR">למידע נוסף</a>
+            הוא רגיסטר הזזה שבו ביט הקלט הוא פונקציה לינארית של שניים או יותר ממצביו הקודמים.</p>
             <p>
-            האוגר מייצר רצף של סיביות פסאודו-אקראיות באמצעות הנוסחה:
+            הרגיסטר מייצר רצף של סיביות פסאודו-אקראיות באמצעות הנוסחה:
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -102,7 +102,7 @@ def show_lfsr():
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        
+
         # Parameters input with Hebrew labels
         st.markdown('<div dir="rtl" style="text-align: right;">', unsafe_allow_html=True)
         # Create two-column layout for inputs
