@@ -5,6 +5,10 @@ import seaborn as sns
 import scipy.stats as stats
 import pandas as pd
 from utils import set_rtl, set_ltr_sliders
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import numpy as np
+import scipy.stats as stats
 
 def load_css():
     with open('.streamlit/style.css') as f:
@@ -14,8 +18,7 @@ def show_introduction():
     # Title and main description
     st.markdown("""
         <div class="custom-header rtl-content">
-            <h1>התאמת התפלגות למודל 📊</h1>
-            <p>ניתוח וביצוע מבחני טיב התאמה לנתוני משאית המזון</p>
+            <h1>התאמת התפלגות למודל 📉</h1>
         </div>
     """, unsafe_allow_html=True)
 
@@ -24,111 +27,125 @@ def show_introduction():
         <div class="custom-card rtl-content">
             <h3 class="section-header">רקע</h3>
             <p>
-                על סמך תיאור הבעלים, צוות סימולציה ערך מדידות, התאים התפלגויות וערך מבחני טיב התאמה 
-                לצורך שיערוך טיב התאמת ההתפלגות.
+                התאמת התפלגויות מדויקות היא שלב מכריע בתהליך הסימולציה של פעילות משאית המזון. על ידי בחינה של זמני הגעה, הכנה ועיבוד הזמנות, אנו מסוגלים ליצור מודל סטטיסטי המשקף את תפקוד המשאית בצורה ריאליסטית. תהליך זה מאפשר לנו להבין לעומק את דפוסי הפעילות היומיומיים, לחזות את זמני ההמתנה, ולבחון שיפורים בתהליך – כל זאת מתוך נתונים שנאספו מהשטח.
+            </p>
+            <p>
+                ניתוח והתאמת התפלגויות אינם מתמצים רק בסטטיסטיקה תיאורית; הם כוללים גם בדיקות של התאמת הנתונים להתפלגויות שונות. תהליך זה כולל בדיקת שונות הנתונים ובחירת מודלים שמתאימים למבנה ההזמנות והמנות, החל ממנות בודדות ועד ארוחות גדולות יותר. התוצאה היא תשתית מודלים שמאפשרת לנו לבצע תכנון יעיל של המשאבים, ולהתאים את פעילות המשאית לצורכי הלקוחות.
             </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # Customer Types Section
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">1. הזמנות</h3>
-            <p>לקוחות עם דחיפויות והעדפות שונות משפיעים על זמני עיבוד ההזמנות.</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Create three columns for customer types
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
+        # Create tabs for different RNG methods
+    tab1, tab2, tab3 = st.tabs(["3. זמני הגעה","2. זמני בישול סטוכסטיים", "1. הזמנות"])
+    
+    with tab1:
+            
+        # Customer Types Section
         st.markdown("""
-            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style= "color: #FFFFFF;text-align: center; margin-bottom: 15px;">סוג א'</h4>
-                <div style="text-align: center; color: #CCCCCC;">
-                    <p style="margin-bottom: 10px;">50% מהלקוחות</p>
-                    <p>אחיד (3-4 דקות)</p>
-                    <p class="highlight">המהיר ביותר</p>
-                </div style="text-align: center; color: #CCCCCC;">
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">1. הזמנות</h3>
+                <p>הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.</p>
             </div>
         """, unsafe_allow_html=True)
 
-    with col2:
+        # Create three columns for customer types
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("""
+                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
+                    <h4 style="color: #FFFFFF;text-align: center; margin-bottom: 15px;">סוג א'</h4>
+                    <div style="text-align: center; color: #CCCCCC;">
+                        <p style="margin-bottom: 10px;">50% מהלקוחות</p>
+                        <p>אחיד (3-4 דקות)</p>
+                        <p class="highlight">המהיר ביותר</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
+                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ב'</h4>
+                    <div style="text-align: center; color: #CCCCCC;">
+                        <p style="margin-bottom: 10px;">25% מהלקוחות</p>
+                        <p>משולש (4-6 דקות)</p>
+                        <p class="highlight">בינוני</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
+                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ג'</h4>
+                    <div style="text-align: center; color: #CCCCCC;">
+                        <p style="margin-bottom: 10px;">25% מהלקוחות</p>
+                        <p>קבוע (10 דקות)</p>
+                        <p class="highlight">האיטי ביותר</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+    
+    with tab2:
+
+        # Cooking Times Section
         st.markdown("""
-            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ב'</h4>
-                <div style="text-align: center; color: #CCCCCC;">
-                    <p style="margin-bottom: 10px;">25% מהלקוחות</p>
-                    <p>משולש (4-6 דקות)</p>
-                    <p class="highlight">בינוני</p>
+            <div class="custom-card rtl-content" style="margin-top: 30px;">
+                <h3 class="section-header">2. זמני בישול סטוכסטיים</h3>
+                <p>הזמן הנדרש להכנת כל מנה משתנה בהתאם לגודלה ועוקב אחר התפלגות נורמלית. התאמת התפלגות לזמני ההכנה מאפשרת לנו לייצג בצורה אמינה את השונות בתהליך הבישול ולחשב את זמני ההמתנה הצפויים.</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Create three columns for meal types
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("""
+                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
+                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
+                    <div style="text-align: center; color: #CCCCCC;">
+                        <p style="margin-bottom: 10px;">N(5, 1)</p>
+                        <p>הכנה מהירה לשירות מותאם אישית</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
+                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 2</h4>
+                    <div style="text-align: center; color: #CCCCCC;">
+                        <p style="margin-bottom: 10px;">N(8, 2)</p>
+                        <p>זמן הכנה מאוזן לנפח בינוני</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
+                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 3</h4>
+                    <div style="text-align: center; color: #CCCCCC;">
+                        <p style="margin-bottom: 10px;">N(10, 3)</p>
+                        <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+
+    with tab3:
+
+        # Arrival Times Section
+        st.markdown("""
+            <div class="custom-card rtl-content" style="margin-top: 10px;">
+                <h3 class="section-header">3. זמני הגעה</h3>
+                <p>הצוות ביצע מדידות של זמני הגעת הלקוחות למשאית המזון, אך מדידות אלו טרם נותחו. הבנת דפוסי הגעת הלקוחות תסייע לנו לזהות זמני שיא וצווארי בקבוק, ולתכנן את המשאבים בהתאם לצורך.</p>
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
-    with col3:
-        st.markdown("""
-            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ג'</h4>
-                <div style="text-align: center; color: #CCCCCC;">
-                    <p style="margin-bottom: 10px;">25% מהלקוחות</p>
-                    <p>קבוע (10 דקות)</p>
-                    <p class="highlight">האיטי ביותר</p>
-                </div style="text-align: center; color: #CCCCCC;">
-            </div>
-        """, unsafe_allow_html=True)
 
-    # Cooking Times Section
-    st.markdown("""
-        <div class="custom-card rtl-content" style="margin-top: 30px;">
-            <h3 class="section-header">2. זמני בישול סטוכסטיים</h3>
-            <p>הזמן הנדרש להכנת כל מנה עוקב אחר התפלגות נורמלית, המשתנה לפי גודל המנה:</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Create three columns for meal types
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown("""
-            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
-                <div style="text-align: center; color: #CCCCCC;">
-                    <p style="margin-bottom: 10px;">N(5, 1)</p>
-                    <p>הכנה מהירה לשירות מותאם אישית</p>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown("""
-            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 2</h4>
-                <div style="text-align: center; color: #CCCCCC;">
-                    <p style="margin-bottom: 10px;">N(8, 2)</p>
-                    <p>זמן הכנה מאוזן לנפח בינוני</p>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col3:
-        st.markdown("""
-            <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #8B0000;">
-                <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 3</h4>
-                <div style="text-align: center; color: #CCCCCC;">
-                    <p style="margin-bottom: 10px;">N(10, 3)</p>
-                    <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # Arrival Times Section
-    st.markdown("""
-        <div class="custom-card rtl-content" style="margin-top: 10px;">
-            <h3 class="section-header">3. זמני הגעה</h3>
-            <p> הצוות ביצע מדידות של זמני הגעת הלקוחות אך שכח לנתח אותם. </p>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
 
 def generate_service_times(size=1000, distribution_type=None):
     """Generate realistic food preparation times."""
@@ -215,10 +232,11 @@ def generate_random_samples(sample_size):
     
 def display_samples(samples):
     """Display the first few samples and a simple plot of all samples."""
+    # Display sample data and allow the user to fit distributions
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header"> דגימות זמני ההכנה בעמדה</h3>
-            <p> להלן מדגם מייצג של זמני ההכנה כפי שנמדדו על ידי עובד מסור של המשאית:</p>
+            <h4>תוצאות הדגימה הנוכחית:</h4>
+            <p>הנתונים שנאספו מוצגים להלן. בחרו את ההתפלגות המתאימה ביותר עבור הנתונים וודעו אם התאמתכם מייצגת בצורה מדויקת את דפוסי ההגעה של הלקוחות.</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -267,178 +285,243 @@ def display_samples(samples):
 
 
     with col2:
-        # Create a simple line plot of all samples
-        fig, ax = plt.subplots(figsize=(6, 6))
-        plt.plot(samples, marker='o', linestyle='None', alpha=0.5, markersize=3,color='darkred')
-        plt.title('Service Times')
-        plt.xlabel('Sample Number')
-        plt.ylabel('Time (minutes)')
-        plt.grid(True, alpha=0.3)
-        st.pyplot(fig)
+        fig = go.Figure()
+
+        # Add scatter plot for service times
+        fig.add_trace(
+            go.Scatter(
+                x=list(range(len(samples))),
+                y=samples,
+                mode='markers',
+                marker=dict(
+                    color='#8B0000',  # Dark red color
+                    size=6,
+                    opacity=0.6
+                ),
+                name="זמני שירות"
+            )
+        )
+
+        # Update layout to match styling
+        fig.update_layout(
+            title="זמני שירות",
+            xaxis_title="מספר מדגם",
+            yaxis_title="זמן (בדקות)",
+            height=400,
+            title_x=0.5,
+            xaxis=dict(showgrid=True, gridcolor='rgba(200, 200, 200, 0.2)'),
+            yaxis=dict(showgrid=True, gridcolor='rgba(200, 200, 200, 0.2)')
+        )
+
+        # Display plot
+        st.plotly_chart(fig, use_container_width=True)
+
 
 
 def visualize_samples_and_qqplots(samples):
-    """Display enhanced histograms and QQ plots in a two-column layout."""
-    col1, col2 = st.columns([1, 1])
-    
+    """Display enhanced histograms and Q-Q plots using Plotly for consistent styling."""
+
+    # Explanation Section
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h2 style="padding-bottom: 3rem; color: #452b2b;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h2>
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns([1,2])
+
     with col1:
+        # Instructions Section
         st.markdown("""
-            <style>
-            .custom-card p {
-                line-height: 1.8;
-                margin-bottom: 1.5rem;
-            }
-            .info-box ul li {
-                line-height: 1.8;
-                margin-bottom: 1rem;
-            }
-            </style>
             <div class="custom-card rtl-content">
-                <h3 class="section-header">ניתוח גרפי של ההתפלגות</h3>
-                <p>להלן ניתוח גרפי של הנתונים באמצעות היסטוגרמה ותרשימי Q-Q:</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-            <div class="info-box rtl-content">
-                <h4 style="font-family: Arial, sans-serif;">כיצד לפרש את הגרפים:</h4>
+                <h3>כיצד לפרש את הגרפים:</h3>
                 <ul>
-                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה.</li>
-                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות. ככל שהנקודות קרובות יותר לקו הישר, כך ההתאמה טובה יותר.</li>
-                    <li><strong>רצועות אמון:</strong> האזור האפור מציין רווח בר-סמך של 95%. נקודות מחוץ לרצועה מעידות על סטייה מההתפלגות.</li>
+                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה, ומאפשרת לבחון את צורת ההתפלגות.</li>
+                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות, כשהתאמה גבוהה מתבטאת בקו ישר.</li>
+                    <li><strong>רצועות אמון:</strong> האזור האפור מייצג רווח בר-סמך של 95% להתפלגות הנתונים.</li>
                 </ul>
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
-        fig = plt.figure(figsize=(6, 6))
-        gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
-        axs = [fig.add_subplot(gs[i, j]) for i in range(2) for j in range(2)]
+        # Create main figure with subplots for histogram and Q-Q plots
+        fig = make_subplots(
+            rows=2, cols=2,
+            subplot_titles=("התפלגות זמני הגעה", "התפלגות נורמלית", "התפלגות אחידה", "התפלגות מעריכית"),
+            vertical_spacing=0.15
+        )
 
-        sns.histplot(data=samples, kde=False, stat='density', ax=axs[0])
-        axs[0].set_title('Arrival Time Distribution')
-        axs[0].set_xlabel('Time (minutes)')
-        axs[0].set_ylabel('Density')
+        # Add Histogram (similar to PDF plot in `create_distribution_plot`)
+        fig.add_trace(
+            go.Histogram(
+                x=samples,
+                histnorm='probability density',
+                name='היסטוגרמה',
+                marker=dict(color='rgba(139, 0, 0, 0.5)')
+            ),
+            row=1, col=1
+        )
 
-        # QQ Plots with confidence bands
+        # Q-Q Plots for different distributions
         distributions = [
-            ('norm', 'Normal Distribution', axs[1]),
-            ('uniform', 'Uniform Distribution', axs[2]),
-            ('expon', 'Exponential Distribution', axs[3])
+            ('norm', 'Normal Distribution', 1, 2),
+            ('uniform', 'Uniform Distribution', 2, 1),
+            ('expon', 'Exponential Distribution', 2, 2)
         ]
 
-        for dist_name, title, ax in distributions:
-            qq = stats.probplot(samples, dist=dist_name, fit=True, plot=ax)
-            
-            x = qq[0][0]
-            y = qq[0][1]
+        for dist_name, dist_title, row, col in distributions:
+            qq = stats.probplot(samples, dist=dist_name)
+            x = qq[0][0]  # theoretical quantiles
+            y = qq[0][1]  # sample quantiles
             slope, intercept = qq[1][0], qq[1][1]
             y_fit = slope * x + intercept
-            
+
+            # Add Q-Q scatter plot
+            fig.add_trace(
+                go.Scatter(
+                    x=x, y=y, mode='markers', name=f'{dist_title}',
+                    marker=dict(color='#452b2b', size=5),
+                    showlegend=False
+                ),
+                row=row, col=col
+            )
+
+            # Add Q-Q fit line
+            fig.add_trace(
+                go.Scatter(
+                    x=x, y=y_fit, mode='lines', name=f'{dist_title} Fit Line',
+                    line=dict(color='#452b2b', width=2),
+                    showlegend=False
+                ),
+                row=row, col=col
+            )
+
+            # Add 95% confidence interval band
             n = len(samples)
             sigma = np.std((y - y_fit) / np.sqrt(1 - 1/n))
             conf_band = 1.96 * sigma
-            
-            ax.fill_between(x, y_fit - conf_band, y_fit + conf_band, alpha=0.1, color='gray')
-            ax.set_title(f'{title}')
-            ax.grid(True, alpha=0.3)
+            fig.add_trace(
+                go.Scatter(
+                    x=x, y=y_fit + conf_band, mode='lines', name='Upper Confidence',
+                    line=dict(color='gray', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=row, col=col
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=x, y=y_fit - conf_band, mode='lines', name='Lower Confidence',
+                    line=dict(color='gray', width=1, dash='dash'),
+                    fill='tonexty', fillcolor='rgba(200, 200, 200, 0.2)',
+                    showlegend=False
+                ),
+                row=row, col=col
+            )
 
-        plt.tight_layout()
-        st.pyplot(fig)
+        # Layout adjustments
+        fig.update_layout(
+            height=700,
+            title_text="ניתוח גרפי של התפלגות הנתונים",
+            title_x=0.5,
+            showlegend=True
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
 
 
 def estimate_parameters(samples, distribution):
     """Enhanced parameter estimation with confidence intervals and visual explanation."""
-    with st.container():
     
-        st.markdown("""
+    # Section header with explanation
+    st.markdown("""
     <div class="custom-card rtl-content">
-        <h1 class="section-header">אמידת פרמטרים לסימולציה</h1>
-        <h2>כדי לייצר זמני הכנה מציאותיים בסימולציה, נאמוד את הפרמטרים של ההתפלגות הנבחרת:</h2>
+        <h1 class="section-header" style="color: #8B0000;">אמידת פרמטרים לסימולציה</h1>
+        <p>כדי לייצר זמני הכנה מציאותיים בסימולציה, נבצע אמידה של הפרמטרים המרכזיים של ההתפלגות הנבחרת ונחשב רווחי בר-סמך לכל אחד מהם:</p>
     </div>
     """, unsafe_allow_html=True)
         
-    col1, col2 = st.columns([0.6, 0.3])
+    # Two-column layout for results and visuals
+    col1, col2 = st.columns([0.8, 0.2])
     
     if distribution == 'Normal':
-
-            # Emoji column
         with col1:
-            # Maximum Likelihood estimation for Normal distribution
+            # Parameter estimation using MLE for Normal distribution
             mu, sigma = stats.norm.fit(samples)
             
-            # Calculate confidence intervals using bootstrap
+            # Bootstrap confidence intervals for mean and standard deviation
             bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
             bootstrap_means = np.mean(bootstrap_samples, axis=1)
             bootstrap_stds = np.std(bootstrap_samples, axis=1)
-            
             mu_ci = np.percentile(bootstrap_means, [2.5, 97.5])
             sigma_ci = np.percentile(bootstrap_stds, [2.5, 97.5])
-            plot_likelihood(samples, distribution)
-        with col2:
             
+            plot_likelihood(samples, distribution)  # Visual plot of likelihood
+        
+        with col2:
+            # Display parameter estimates and confidence intervals
             st.markdown(f"""
                 <div class="info-box rtl-content">
-                    <h4>הפרמטרים שנאמדו עבור התפלגות נורמלית:</h4>
+                    <h4>פרמטרים עבור התפלגות נורמלית:</h4>
                     <ul>
-                        <li>ממוצע (μ): {mu:.2f} [CI: {mu_ci[0]:.2f}, {mu_ci[1]:.2f}]</li>
-                        <li>סטיית תקן (σ): {sigma:.2f} [CI: {sigma_ci[0]:.2f}, {sigma_ci[1]:.2f}]</li>
+                        <li><strong>ממוצע (μ):</strong> {mu:.2f} <span style="color:gray;">[CI: {mu_ci[0]:.2f}, {mu_ci[1]:.2f}]</span></li>
+                        <li><strong>סטיית תקן (σ):</strong> {sigma:.2f} <span style="color:gray;">[CI: {sigma_ci[0]:.2f}, {sigma_ci[1]:.2f}]</span></li>
                     </ul>
+                    <p>ממוצע משקף את זמן ההכנה הממוצע, בעוד סטיית התקן מציינת את רמת השונות בזמני ההכנה.</p>
                 </div>
             """, unsafe_allow_html=True)
         
         return mu, sigma
 
     elif distribution == 'Exponential':
-            
         with col1:
-            # Maximum Likelihood estimation for Exponential distribution
+            # Parameter estimation for Exponential distribution
             lambda_est = 1 / np.mean(samples)
             
-            # Calculate confidence interval for lambda using bootstrap
+            # Bootstrap confidence interval for lambda
             bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
             bootstrap_lambdas = 1 / np.mean(bootstrap_samples, axis=1)
             lambda_ci = np.percentile(bootstrap_lambdas, [2.5, 97.5])
-            plot_likelihood(samples, distribution)
             
+            plot_likelihood(samples, distribution)
+        
         with col2:
             st.markdown(f"""
                 <div class="info-box rtl-content">
-                    <h4>הפרמטרים שנאמדו עבור התפלגות מעריכית:</h4>
+                    <h4>פרמטרים עבור התפלגות מעריכית:</h4>
                     <ul>
-                        <li>קצב (λ): {lambda_est:.4f} [CI: {lambda_ci[0]:.4f}, {lambda_ci[1]:.4f}]</li>
-                        <li>זמן ממוצע (1/λ): {1/lambda_est:.2f} דקות</li>
+                        <li><strong>קצב (λ):</strong> {lambda_est:.4f} <span style="color:gray;">[CI: {lambda_ci[0]:.4f}, {lambda_ci[1]:.4f}]</span></li>
+                        <li><strong>זמן ממוצע (1/λ):</strong> {1/lambda_est:.2f} דקות</li>
                     </ul>
+                    <p>פרמטר הקצב (λ) מציין את התדירות המשוערת של אירועים, כמו זמני הכנה בתקופות עומס.</p>
                 </div>
             """, unsafe_allow_html=True)
         
         return lambda_est,
 
     elif distribution == 'Uniform':
-
         with col1:
-
-            # Maximum Likelihood estimation for Uniform distribution
+            # Parameter estimation for Uniform distribution
             a, b = np.min(samples), np.max(samples)
             
-            # Calculate confidence intervals using bootstrap
+            # Bootstrap confidence intervals for min and max values
             bootstrap_samples = np.random.choice(samples, size=(1000, len(samples)), replace=True)
             bootstrap_mins = np.min(bootstrap_samples, axis=1)
             bootstrap_maxs = np.max(bootstrap_samples, axis=1)
-            
             a_ci = np.percentile(bootstrap_mins, [2.5, 97.5])
             b_ci = np.percentile(bootstrap_maxs, [2.5, 97.5])
+            
             plot_likelihood(samples, distribution)
-
-        with col2:    
+        
+        with col2:
             st.markdown(f"""
                 <div class="info-box rtl-content">
-                    <h4> הפרמטרים שנאמדו עבור התפלגות אחידה: </h4>
+                    <h4>פרמטרים עבור התפלגות אחידה:</h4>
                     <ul>
-                        <li>מינימום (a): {a:.2f} [CI: {a_ci[0]:.2f}, {a_ci[1]:.2f}]</li>
-                        <li>מקסימום (b): {b:.2f} [CI: {b_ci[0]:.2f}, {b_ci[1]:.2f}]</li>
-                        <li>טווח: {b-a:.2f} דקות</li>
+                        <li><strong>מינימום (a):</strong> {a:.2f} <span style="color:gray;">[CI: {a_ci[0]:.2f}, {a_ci[1]:.2f}]</span></li>
+                        <li><strong>מקסימום (b):</strong> {b:.2f} <span style="color:gray;">[CI: {b_ci[0]:.2f}, {b_ci[1]:.2f}]</span></li>
+                        <li><strong>טווח:</strong> {b-a:.2f} דקות</li>
                     </ul>
+                    <p>התפלגות אחידה מתארת טווחי הכנה צפויים, ומתאימה לתנאים בהם זמני הכנה הם קבועים.</p>
                 </div>
             """, unsafe_allow_html=True)
         
@@ -552,103 +635,183 @@ def generate_service_times(size=1000, distribution_type=None):
     return samples, dist_info
 
 def plot_likelihood(samples, distribution):
-    """Enhanced likelihood function visualization with updated styling."""
+    """Enhanced likelihood function visualization with Plotly and consistent styling."""
+
     if distribution == 'Normal':
-        fig = plt.figure(figsize=(6, 4))
-        gs = fig.add_gridspec(1, 2, wspace=0.3)
-        ax1, ax2 = [fig.add_subplot(gs[0, i]) for i in range(2)]
+        # Set up figure with two subplots for μ and σ likelihoods
+        fig = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=("פונקציית לוג הנראות עבור הממוצע (μ)", "פונקציית לוג הנראות עבור סטיית התקן (σ)"),
+            horizontal_spacing=0.15
+        )
 
-        mu_vals = np.linspace(np.mean(samples) - 3*np.std(samples), 
-                             np.mean(samples) + 3*np.std(samples), 100)
-        sigma_vals = np.linspace(np.std(samples) * 0.2, 
-                                np.std(samples) * 2, 100)
+        # Range of parameter values
+        mu_vals = np.linspace(np.mean(samples) - 3 * np.std(samples), np.mean(samples) + 3 * np.std(samples), 100)
+        sigma_vals = np.linspace(0.2 * np.std(samples), 2 * np.std(samples), 100)
 
-        ll_mu = [np.sum(stats.norm.logpdf(samples, loc=mu, scale=np.std(samples))) 
-                 for mu in mu_vals]
-        ll_sigma = [np.sum(stats.norm.logpdf(samples, loc=np.mean(samples), scale=sigma)) 
-                   for sigma in sigma_vals]
+        # Log-Likelihood calculations
+        ll_mu = [np.sum(stats.norm.logpdf(samples, loc=mu, scale=np.std(samples))) for mu in mu_vals]
+        ll_sigma = [np.sum(stats.norm.logpdf(samples, loc=np.mean(samples), scale=sigma)) for sigma in sigma_vals]
 
-        ax1.plot(mu_vals, ll_mu, color='pink', linewidth=2)
-        ax1.axvline(np.mean(samples), color='darkred', linestyle='--', alpha=0.5)
-        ax1.set_title('Log-Likelihood for Mean (μ)')
-        ax1.set_xlabel('μ')
-        ax1.set_ylabel('Log-Likelihood')
-        ax1.grid(True, alpha=0.3)
+        # Plot Log-Likelihood for Mean (μ)
+        fig.add_trace(
+            go.Scatter(
+                x=mu_vals, y=ll_mu, mode='lines', name='Log-Likelihood for μ',
+                line=dict(color='#452b2b', width=2)
+            ),
+            row=1, col=1
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[np.mean(samples)], y=[max(ll_mu)], mode='markers', name='Estimated μ',
+                marker=dict(color='gray', size=8, symbol='x')
+            ),
+            row=1, col=1
+        )
 
-        ax2.plot(sigma_vals, ll_sigma, color='pink', linewidth=2)
-        ax2.axvline(np.std(samples), color='darkred', linestyle='--', alpha=0.5)
-        ax2.set_title('Log-Likelihood for Standard Deviation (σ)')
-        ax2.set_xlabel('σ')
-        ax2.set_ylabel('Log-Likelihood')
-        ax2.grid(True, alpha=0.3)
+        # Plot Log-Likelihood for Standard Deviation (σ)
+        fig.add_trace(
+            go.Scatter(
+                x=sigma_vals, y=ll_sigma, mode='lines', name='Log-Likelihood for σ',
+                line=dict(color='#452b2b', width=2)
+            ),
+            row=1, col=2
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[np.std(samples)], y=[max(ll_sigma)], mode='markers', name='Estimated σ',
+                marker=dict(color='gray', size=8, symbol='x')
+            ),
+            row=1, col=2
+        )
 
-        st.pyplot(fig)
+        # Update layout
+        fig.update_layout(
+            height=400,
+            title_text="פונקציות לוג הנראות עבור פרמטרים של התפלגות נורמלית",
+            title_x=0.5,
+            showlegend=False
+        )
+        fig.update_xaxes(title_text="μ", row=1, col=1)
+        fig.update_yaxes(title_text="Log-Likelihood", row=1, col=1)
+        fig.update_xaxes(title_text="σ", row=1, col=2)
+        fig.update_yaxes(title_text="Log-Likelihood", row=1, col=2)
+
+        st.plotly_chart(fig, use_container_width=True)
 
     elif distribution == 'Uniform':
-        fig = plt.figure(figsize=(10, 6))
-        gs = fig.add_gridspec(1, 2, wspace=0.3)
-        ax1, ax2 = [fig.add_subplot(gs[0, i]) for i in range(2)]
+        # Set up figure with two subplots for a and b likelihoods
+        fig = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=("פונקציית לוג הנראות עבור מינימום (a)", "פונקציית לוג הנראות עבור מקסימום (b)"),
+            horizontal_spacing=0.15
+        )
 
+        # Range of parameter values
         margin = (np.max(samples) - np.min(samples)) * 0.2
         a_vals = np.linspace(np.min(samples) - margin, np.min(samples) + margin, 100)
         b_vals = np.linspace(np.max(samples) - margin, np.max(samples) + margin, 100)
-
         fixed_b = np.max(samples)
         fixed_a = np.min(samples)
 
-        ll_a = [np.sum(stats.uniform.logpdf(samples, loc=a, scale=fixed_b - a))
-                if fixed_b > a else -np.inf for a in a_vals]
-        ll_b = [np.sum(stats.uniform.logpdf(samples, loc=fixed_a, scale=b - fixed_a))
-                if b > fixed_a else -np.inf for b in b_vals]
+        # Log-Likelihood calculations
+        ll_a = [np.sum(stats.uniform.logpdf(samples, loc=a, scale=fixed_b - a)) if fixed_b > a else -np.inf for a in a_vals]
+        ll_b = [np.sum(stats.uniform.logpdf(samples, loc=fixed_a, scale=b - fixed_a)) if b > fixed_a else -np.inf for b in b_vals]
 
-        ax1.plot(a_vals, ll_a, color='pink', linewidth=2)
-        ax1.axvline(np.min(samples), color='darkred', linestyle='--', alpha=0.5)
-        ax1.set_title('Log-Likelihood for Minimum (a)')
-        ax1.set_xlabel('a')
-        ax1.set_ylabel('Log-Likelihood')
-        ax1.grid(True, alpha=0.3)
+        # Plot Log-Likelihood for Minimum (a)
+        fig.add_trace(
+            go.Scatter(
+                x=a_vals, y=ll_a, mode='lines', name='Log-Likelihood for a',
+                line=dict(color='#452b2b', width=2)
+            ),
+            row=1, col=1
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[np.min(samples)], y=[max(ll_a)], mode='markers', name='Estimated a',
+                marker=dict(color='gray', size=8, symbol='x')
+            ),
+            row=1, col=1
+        )
 
-        ax2.plot(b_vals, ll_b, color='pink', linewidth=2)
-        ax2.axvline(np.max(samples), color='darkred', linestyle='--', alpha=0.5)
-        ax2.set_title('Log-Likelihood for Maximum (b)')
-        ax2.set_xlabel('b')
-        ax2.set_ylabel('Log-Likelihood')
-        ax2.grid(True, alpha=0.3)
+        # Plot Log-Likelihood for Maximum (b)
+        fig.add_trace(
+            go.Scatter(
+                x=b_vals, y=ll_b, mode='lines', name='Log-Likelihood for b',
+                line=dict(color='#452b2b', width=2)
+            ),
+            row=1, col=2
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[np.max(samples)], y=[max(ll_b)], mode='markers', name='Estimated b',
+                marker=dict(color='gray', size=8, symbol='x')
+            ),
+            row=1, col=2
+        )
 
-        st.pyplot(fig)
+        # Update layout
+        fig.update_layout(
+            height=400,
+            title_text="פונקציות לוג הנראות עבור פרמטרים של התפלגות אחידה",
+            title_x=0.5,
+            showlegend=False
+        )
+        fig.update_xaxes(title_text="a", row=1, col=1)
+        fig.update_yaxes(title_text="Log-Likelihood", row=1, col=1)
+        fig.update_xaxes(title_text="b", row=1, col=2)
+        fig.update_yaxes(title_text="Log-Likelihood", row=1, col=2)
+
+        st.plotly_chart(fig, use_container_width=True)
 
     elif distribution == 'Exponential':
-        fig = plt.figure(figsize=(10, 6))
-        ax = fig.add_subplot(111)
+        # Set up figure for λ likelihood
+        fig = go.Figure()
 
-        lambda_vals = np.linspace(1/(2*np.mean(samples)), 2/np.mean(samples), 100)
-        ll_lambda = [np.sum(stats.expon.logpdf(samples, scale=1/lambda_val)) 
-                    for lambda_val in lambda_vals]
+        # Range of parameter values for λ
+        lambda_vals = np.linspace(1 / (2 * np.mean(samples)), 2 / np.mean(samples), 100)
+        ll_lambda = [np.sum(stats.expon.logpdf(samples, scale=1 / lambda_val)) for lambda_val in lambda_vals]
 
-        ax.plot(lambda_vals, ll_lambda, color='pink', linewidth=2)
-        ax.axvline(1/np.mean(samples), color='darkred', linestyle='--', alpha=0.5)
-        ax.set_title('Log-Likelihood for Rate Parameter (λ)')
-        ax.set_xlabel('λ')
-        ax.set_ylabel('Log-Likelihood')
-        ax.grid(True, alpha=0.3)
+        # Plot Log-Likelihood for Rate Parameter (λ)
+        fig.add_trace(
+            go.Scatter(
+                x=lambda_vals, y=ll_lambda, mode='lines', name='Log-Likelihood for λ',
+                line=dict(color='#452b2b', width=2)
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[1 / np.mean(samples)], y=[max(ll_lambda)], mode='markers', name='Estimated λ',
+                marker=dict(color='gray', size=8, symbol='x')
+            )
+        )
 
-        st.pyplot(fig)
+        # Update layout
+        fig.update_layout(
+            height=400,
+            title="פונקציית לוג הנראות עבור פרמטר הקצב (λ)",
+            xaxis_title="λ",
+            yaxis_title="Log-Likelihood",
+            title_x=0.5,
+            showlegend=False
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 def perform_goodness_of_fit(samples, distribution, params):
+    # Header with explanation for goodness-of-fit testing
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h1 class="section-header">בדיקת התאמת המודל</h1>
-            <h3>לפני שנשתמש במודל בסימולציה, חשוב לוודא שהוא אכן מתאר היטב את המציאות במשאית המזון שלנו. נבצע מבחנים סטטיסטיים כדי לבדוק את מידת ההתאמה:</h3>
+            <h1 class="section-header" style="color: #8B0000;">בדיקת התאמת המודל</h1>
+            <p>לפני שימוש במודל בסימולציה, נוודא שהוא מתאר היטב את המציאות. נבצע מבחני טיב התאמה לבדיקת מידת ההתאמה:</p>
         </div>
     """, unsafe_allow_html=True)
-    """Improved goodness of fit testing with corrected hypothesis testing."""
-    
-    # Calculate number of bins using Freedman-Diaconis rule
+
+    # Calculate bins for histogram
     iqr = stats.iqr(samples)
     bin_width = 2 * iqr / (len(samples) ** (1/3))
-    n_bins = int(np.ceil((np.max(samples) - np.min(samples)) / bin_width))
-    n_bins = max(5, min(n_bins, 50))
-    
+    n_bins = max(5, min(int(np.ceil((np.max(samples) - np.min(samples)) / bin_width)), 50))
+
     # Perform Chi-Square Test
     observed_freq, bins = np.histogram(samples, bins=n_bins)
     bin_midpoints = (bins[:-1] + bins[1:]) / 2
@@ -656,7 +819,7 @@ def perform_goodness_of_fit(samples, distribution, params):
     if distribution == 'Normal':
         mu, sigma = params
         expected_probs = stats.norm.cdf(bins[1:], mu, sigma) - stats.norm.cdf(bins[:-1], mu, sigma)
-        dof = len(observed_freq) - 3  # subtracting parameters estimated + 1
+        dof = len(observed_freq) - 3
         theoretical_dist = stats.norm(mu, sigma)
         
     elif distribution == 'Exponential':
@@ -672,123 +835,104 @@ def perform_goodness_of_fit(samples, distribution, params):
         theoretical_dist = stats.uniform(a, b-a)
     
     expected_freq = expected_probs * len(samples)
-    
+
     # Combine bins with expected frequency < 5
     while np.any(expected_freq < 5) and len(expected_freq) > 2:
         min_idx = np.argmin(expected_freq)
-        if min_idx == 0:  # First bin
+        if min_idx == 0:
             observed_freq[0:2] = np.sum(observed_freq[0:2])
             expected_freq[0:2] = np.sum(expected_freq[0:2])
             observed_freq = np.delete(observed_freq, 1)
             expected_freq = np.delete(expected_freq, 1)
-        elif min_idx == len(expected_freq) - 1:  # Last bin
+        elif min_idx == len(expected_freq) - 1:
             observed_freq[-2:] = np.sum(observed_freq[-2:])
             expected_freq[-2:] = np.sum(expected_freq[-2:])
             observed_freq = np.delete(observed_freq, -1)
             expected_freq = np.delete(expected_freq, -1)
-        else:  # Middle bin
+        else:
             observed_freq[min_idx:min_idx+2] = np.sum(observed_freq[min_idx:min_idx+2])
             expected_freq[min_idx:min_idx+2] = np.sum(expected_freq[min_idx:min_idx+2])
             observed_freq = np.delete(observed_freq, min_idx+1)
             expected_freq = np.delete(expected_freq, min_idx+1)
     
-    # Perform Chi-Square test
+    # Chi-Square test
     chi_square_stat = np.sum((observed_freq - expected_freq) ** 2 / expected_freq)
     p_value_chi = 1 - stats.chi2.cdf(chi_square_stat, max(1, dof))
     
-    # Perform Kolmogorov-Smirnov test
+    # Kolmogorov-Smirnov test
     if distribution == 'Normal':
         ks_stat, p_value_ks = stats.kstest(stats.zscore(samples), 'norm')
     elif distribution == 'Exponential':
-        # Scale the data to standard exponential
         scaled_samples = samples * lambda_param
         ks_stat, p_value_ks = stats.kstest(scaled_samples, 'expon')
     elif distribution == 'Uniform':
-        # Scale the data to standard uniform
         scaled_samples = (samples - a) / (b - a)
         ks_stat, p_value_ks = stats.kstest(scaled_samples, 'uniform')
     
-    # Display results
+    # Display results in styled cards
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown(f"""
-            <style>
-            .custom-back-card {{
-                background-color: #3f0000;
-                padding: 10px;
-                border-radius: 8px;
-                margin-bottom: 10px;
-            }}
-            .custom-back-card ul {{
-                list-style-type: none;
-                padding-left: 0;
-                line-height: 1.6;
-            }}
-            </style>
-            <div class="custom-back-card rtl-content" padding: 15px; border-radius: 5px;">
-                <h4>Kolmogorov-Smirnov Test:</h4>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>Statistic: {ks_stat:.4f}</li>
-                    <li>p-value: {p_value_ks:.4f}</li>
-                    <li>Conclusion: {"Reject H0" if p_value_ks < 0.05 else "Fail to reject H0"}</li>
+            <div class="custom-back-card rtl-content" style="background-color: #3f0000; padding: 15px; border-radius: 8px;">
+                <h4>מבחן Kolmogorov-Smirnov</h4>
+                <ul style="list-style-type: none; padding-left: 0; color: white;">
+                    <li><strong>סטטיסטיקה:</strong> {ks_stat:.4f}</li>
+                    <li><strong>ערך-p:</strong> {p_value_ks:.4f}</li>
+                    <li><strong>מסקנה:</strong> {"דחיית H0" if p_value_ks < 0.05 else "כשלון לדחות H0"}</li>
                 </ul>
             </div>
         """, unsafe_allow_html=True)
-    
     
         st.markdown(f"""
-            <style>
-            .custom-back-card {{
-                background-color: #3f0000;
-                padding: 10px;
-                border-radius: 8px;
-                margin-bottom: 10px;
-            }}
-            .custom-back-card ul {{
-                list-style-type: none;
-                padding-left: 0;
-                line-height: 1.6;
-            }}
-            </style>
-            <div class="custom-back-card rtl-content">
-                <h4>Chi-Square Test:</h4>
-                <ul>
-                    <li>Statistic: {chi_square_stat:.4f}</li>
-                    <li>Degrees of freedom: {dof}</li>
-                    <li>p-value: {p_value_chi:.4f}</li>
-                    <li>Conclusion: {"Reject H0" if p_value_chi < 0.05 else "Fail to reject H0"}</li>
+            <div class="custom-back-card rtl-content" style="background-color: #3f0000; padding: 15px; border-radius: 8px;">
+                <h4>מבחן Chi-Square</h4>
+                <ul style="list-style-type: none; padding-left: 0; color: white;">
+                    <li><strong>סטטיסטיקה:</strong> {chi_square_stat:.4f}</li>
+                    <li><strong>דרגות חופש:</strong> {dof}</li>
+                    <li><strong>ערך-p:</strong> {p_value_chi:.4f}</li>
+                    <li><strong>מסקנה:</strong> {"דחיית H0" if p_value_chi < 0.05 else "כשלון לדחות H0"}</li>
                 </ul>
             </div>
         """, unsafe_allow_html=True)
     
+    # Visualization of the fit
     with col2:
-        # Visualization of the fit
-        fig, ax = plt.subplots(figsize=(6, 6))
-        
-        # Plot histogram of data
-        sns.histplot(data=samples, stat='density', alpha=0.5, ax=ax, label='Data', color='pink')
-        
-        # Plot fitted distribution
+        fig = go.Figure()
+
+        # Histogram of the data
+        fig.add_trace(
+            go.Histogram(
+                x=samples,
+                histnorm='probability density',
+                name='נתונים',
+                marker=dict(color='rgba(139, 0, 0, 0.5)')
+            )
+        )
+
+        # Fitted distribution line
         x = np.linspace(np.min(samples), np.max(samples), 100)
         if distribution == 'Normal':
             pdf = stats.norm.pdf(x, *params)
-            ax.plot(x, pdf, 'darkred', label='Fitted Normal')
+            fig.add_trace(go.Scatter(x=x, y=pdf, mode='lines', name='התפלגות נורמלית מותאמת', line=dict(color='darkred', width=2)))
         elif distribution == 'Exponential':
             pdf = stats.expon.pdf(x, scale=1/params[0])
-            ax.plot(x, pdf, 'darkred', label='Fitted Exponential')
+            fig.add_trace(go.Scatter(x=x, y=pdf, mode='lines', name='התפלגות מעריכית מותאמת', line=dict(color='darkred', width=2)))
         elif distribution == 'Uniform':
             pdf = stats.uniform.pdf(x, *params)
-            ax.plot(x, pdf, 'darkred', label='Fitted Uniform')
-        
-        ax.set_title('Distribution Fit to Data')
-        ax.set_xlabel('Values')
-        ax.set_ylabel('Density')
-        ax.legend()
-        
-        st.pyplot(fig)
+            fig.add_trace(go.Scatter(x=x, y=pdf, mode='lines', name='התפלגות אחידה מותאמת', line=dict(color='darkred', width=2)))
 
-    show_simulation_next_steps()
+        # Layout adjustments
+        fig.update_layout(
+            title="התאמת התפלגות לנתונים",
+            xaxis_title="ערכים",
+            yaxis_title="צפיפות",
+            height=400,
+            showlegend=True,
+            title_x=0.5
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 def show_simulation_next_steps():
     st.markdown("""
@@ -815,124 +959,88 @@ def show():
     # Show introduction section
     show_introduction()
 
-    # Show the introduction card
+
+    # Instructions for Interactive Tool
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h1>ניתוח זמני ההגעה למשאית המזון 🚚</h1>
-            <p>
-                כדי לייעל את פעילות משאית המזון שלנו, עלינו להבין תחילה את דפוסי זמני ההכנה של המנות.
-                המטרה היא לבנות מודל סטטיסטי מדויק שישמש אותנו בהמשך לסימולציה של פעילות המשאית.
-            </p>
+            <h2>כיצד להשתמש בכלי האינטראקטיבי:</h2>
+            <ol class="custom-list">
+                <li><b>יצירת מדגם חדש:</b> לחיצה על כפתור "יצירת מדגם חדש" תפיק דגימה עדכנית של זמני הגעה, המבוססת על הנתונים הקיימים.</li>
+                <li><b>התאמת התפלגות:</b> עבור כל מדגם, הכלי מציע מספר אפשרויות התאמת התפלגות (כגון התפלגות נורמלית, אחידה או מעריכית), כך שניתן לבחור את ההתפלגות המשקפת בצורה הטובה ביותר את דפוסי ההגעה.</li>
+                <li><b>בדיקת טיב ההתאמה:</b> הכלי מבצע בדיקה של טיב ההתאמה, כדי לוודא שההתפלגות שנבחרה מתאימה למאפייני המדגם, ובכך מאפשר ייצוג מדויק בסימולציה.</li>
+            </ol>
         </div>
     """, unsafe_allow_html=True)
 
-    # Header section with business context
-    with st.container():
-        col1, col2 = st.columns([1,1])
-
-    with col1:
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3>תהליך הניתוח:</h3>
-                <ol class="custom-list">
-                    <li> איסוף וניתוח ראשוני של נתוני זמני ההגעה</li>
-                    <li> זיהוי דפוסים והתפלגויות אפשריות</li>
-                    <li> התאמת מודל סטטיסטי לנתונים</li>
-                    <li> בדיקת טיב ההתאמה של המודל</li>
-                </ol>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # Emoji column
-    with col2:
-        # Business context explanation
-        st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3>מטרת הניתוח הסטטיסטי:</h3>
-                <ol class="custom-list">
-                    <li> לחזות טוב יותר את זמני ההמתנה של הלקוחות</li>
-                    <li> לתכנן טוב יותר את מספר העובדים הנדרש בכל משמרת</li>
-                    <li> לזהות הזדמנויות לייעול תהליך ההכנה</li>
-                    <li> לבדוק תרחישים שונים בסימולציה לפני יישומם בשטח</li>
-                </ol>
-            </div>
-        """, unsafe_allow_html=True)
-
+    # Objective of Interactive Simulation
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h3 class="section-header">  לנוחיותכם, ניתן לקבל מדגם חדש, ולבדוק כיצד באופן שיטתי מתאימים התפלגויות עבור דגימות מסוגים שונים.</h3>
+            <h4>מטרת הסימולציה האינטראקטיבית:</h4>
+            <p>באמצעות הסימולציה, תוכלו לבצע ניסויים על מדגמים שונים ולבדוק כיצד תכנון משאבים בהתאם להתפלגויות מתאימות עשוי לשפר את זמני השירות ולהפחית עומסים.
+            הכלי האינטראקטיבי מהווה חלק מרכזי בתהליך קבלת ההחלטות וייעול תפעול המשאית, תוך התאמה מתמשכת לתנאי השטח.</p>
         </div>
     """, unsafe_allow_html=True)
-        
-    # Generate new samples
+
+    # Interactive Sampling and Distribution Fitting Section
     if 'samples' not in st.session_state or st.button('יצירת מדגם חדש'):
         samples, dist_info = generate_service_times()
         st.session_state.samples = samples
         st.session_state.dist_info = dist_info
-        
-            # Display the samples
+
+
     
 
     
     samples = st.session_state.samples
     display_samples(samples)
 
-    st.markdown("""
-        <style>
-        .section-header {
-            padding-bottom: 2rem;
-        }
-        </style>
-        <div class="custom-card rtl-content">
-            <h1 class="section-header"></h1>
-            <h1 style="padding-bottom: 3rem;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h1>
-        </div>
-    """, unsafe_allow_html=True)
-
     visualize_samples_and_qqplots(samples)
 
-    # Distribution selection with business context
+
+    # Distribution selection section with business context
     st.markdown("""
         <div class="custom-card rtl-content">
             <h3 class="section-header">בחירת התפלגות מתאימה</h3>
             <p>
-                בהתבסס על הניתוח הגרפי, נבחר את ההתפלגות שמתארת בצורה הטובה ביותר את זמני ההכנה במשאית.
-                כל התפלגות מתאימה לתרחיש עסקי שונה:
+                על בסיס הניתוח הגרפי, יש לבחור את ההתפלגות המשקפת באופן המדויק ביותר את זמני ההכנה במשאית המזון.
+                כל התפלגות מתאימה לסוג שונה של תרחיש עסקי, ומאפשרת לנו לחזות את זמני ההמתנה בצורה מיטבית:
             </p>
         </div>
     """, unsafe_allow_html=True)
 
-
-
-    # Create three columns for the distribution buttons with business context
+    # Create three columns for the distribution options with enhanced business context and styling
     col1, col2, col3 = st.columns(3)
-    
+
+    # Normal Distribution option with improved styling and explanation
     with col1:
         st.markdown("""
-            <div class="metric-container rtl-content">
+            <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
                 <h4>התפלגות נורמלית</h4>
-                <p>מתאימה למנות סטנדרטיות עם זמן הכנה קבוע יחסית</p>
+                <p>מתאימה עבור מנות סטנדרטיות עם זמן הכנה עקבי יחסית, כמו הזמנות רגילות בימים ללא עומס.</p>
             </div>
         """, unsafe_allow_html=True)
-        normal_button = st.button("בחר התפלגות נורמלית")
+        normal_button = st.button("בחר התפלגות נורמלית", key="normal")
 
+    # Uniform Distribution option with clear explanation and improved style
     with col2:
         st.markdown("""
-            <div class="metric-container rtl-content">
+            <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
                 <h4>התפלגות אחידה</h4>
-                <p>מתאימה למנות פשוטות עם זמן הכנה גמיש</p>
+                <p>מתאימה עבור מנות פשוטות עם טווח זמן הכנה גמיש, המתאימות לתנאים משתנים.</p>
             </div>
         """, unsafe_allow_html=True)
-        uniform_button = st.button("בחר התפלגות אחידה")
+        uniform_button = st.button("בחר התפלגות אחידה", key="uniform")
 
+    # Exponential Distribution option with context-specific explanation and refined styling
     with col3:
         st.markdown("""
-            <div class="metric-container rtl-content">
+            <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
                 <h4>התפלגות מעריכית</h4>
-                <p>מתאימה למנות מורכבות או הזמנות בשעות עומס</p>
+                <p>מתאימה עבור מנות מורכבות או הזמנות שמתקבלות בשעות עומס, כשהזמן מתארך ככל שהעומס גובר.</p>
             </div>
         """, unsafe_allow_html=True)
-        exp_button = st.button("בחר התפלגות מעריכית")
+        exp_button = st.button("בחר התפלגות מעריכית", key="exponential")
+
 
     # Handle distribution selection
     distribution_choice = None

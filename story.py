@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-def create_styled_card(title, content, border_color="#8B0000"):
+def create_styled_card(title, content, border_color="#453232"):
     st.markdown(
         f"""
         <div style="
@@ -40,7 +40,7 @@ def create_station_grid():
                 f"""
                 <div style="
                     background-color: #2D2D2D;
-                    border: 1px solid #8B0000;
+                    border: 1px solid #453232;
                     border-radius: 8px;
                     padding: 10px;
                     text-align: center;
@@ -114,7 +114,7 @@ def show_menu():
             st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
 
 # Update the create_styled_card function with better spacing
-def create_styled_card(title, content, border_color="#8B0000"):
+def create_styled_card(title, content, border_color="#453232"):
     st.markdown(
         f"""
         <div style="
@@ -313,7 +313,7 @@ def show_story():
                         padding: 10px; 
                         border-radius: 8px; 
                         margin-bottom: 10px;
-                        border: 1px solid #8B0000;
+                        border: 1px solid #453232;
                     '>
                         <div style='
                             color: white; 
