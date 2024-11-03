@@ -82,8 +82,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Button Styling */
 .stButton button {
-    background-color: #4a0c0c;
-    color: white;
+    background-color: #e2daac;
+    color: rgb(21, 21, 21);
     width: 100%;
     padding: 0.5rem 1rem;
     border: none;
@@ -94,7 +94,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stButton button:hover {
-    background-color: #5b0b0b;
+    background-color: #867a50;
 }
 
 /* Tables */
@@ -102,7 +102,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin: 1rem 0;
-    color: #FFFFFF;
+    color: #ffffff;
     direction: rtl;
 }
 

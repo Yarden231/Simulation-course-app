@@ -43,7 +43,7 @@ def show_introduction():
         # Customer Types Section
         st.markdown("""
             <div class="custom-card rtl-content">
-                <h3 class="section-header">1. הזמנות</h3>
+                <h1 class="section-header">1. הזמנות</h1>
                 <p>הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.</p>
             </div>
         """, unsafe_allow_html=True)
@@ -53,38 +53,32 @@ def show_introduction():
 
         with col1:
             st.markdown("""
-                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
-                    <h4 style="color: #FFFFFF;text-align: center; margin-bottom: 15px;">סוג א'</h4>
+                    <h4 style="text-align: center; margin-bottom: 15px;">סוג א'</h4>
                     <div style="text-align: center; color: #CCCCCC;">
                         <p style="margin-bottom: 10px;">50% מהלקוחות</p>
                         <p>אחיד (3-4 דקות)</p>
                         <p class="highlight">המהיר ביותר</p>
-                    </div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col2:
             st.markdown("""
-                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
-                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ב'</h4>
+                    <h4 style=" text-align: center; margin-bottom: 15px;">סוג ב'</h4>
                     <div style="text-align: center; color: #CCCCCC;">
                         <p style="margin-bottom: 10px;">25% מהלקוחות</p>
                         <p>משולש (4-6 דקות)</p>
                         <p class="highlight">בינוני</p>
-                    </div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col3:
             st.markdown("""
-                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
-                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">סוג ג'</h4>
+                    <h4 style=" text-align: center; margin-bottom: 15px;">סוג ג'</h4>
                     <div style="text-align: center; color: #CCCCCC;">
                         <p style="margin-bottom: 10px;">25% מהלקוחות</p>
                         <p>קבוע (10 דקות)</p>
                         <p class="highlight">האיטי ביותר</p>
                     </div>
-                </div>
             """, unsafe_allow_html=True)
     
     with tab2:
@@ -92,7 +86,7 @@ def show_introduction():
         # Cooking Times Section
         st.markdown("""
             <div class="custom-card rtl-content" style="margin-top: 30px;">
-                <h3 class="section-header">2. זמני בישול סטוכסטיים</h3>
+                <h1 class="section-header">2. זמני בישול סטוכסטיים</h1>
                 <p>הזמן הנדרש להכנת כל מנה משתנה בהתאם לגודלה ועוקב אחר התפלגות נורמלית. התאמת התפלגות לזמני ההכנה מאפשרת לנו לייצג בצורה אמינה את השונות בתהליך הבישול ולחשב את זמני ההמתנה הצפויים.</p>
             </div>
         """, unsafe_allow_html=True)
@@ -102,8 +96,8 @@ def show_introduction():
 
         with col1:
             st.markdown("""
-                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
-                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
+
+                    <h4 style=" text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
                     <div style="text-align: center; color: #CCCCCC;">
                         <p style="margin-bottom: 10px;">N(5, 1)</p>
                         <p>הכנה מהירה לשירות מותאם אישית</p>
@@ -113,8 +107,8 @@ def show_introduction():
 
         with col2:
             st.markdown("""
-                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
-                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 2</h4>
+
+                    <h4 style=" text-align: center; margin-bottom: 15px;">מנה של 2</h4>
                     <div style="text-align: center; color: #CCCCCC;">
                         <p style="margin-bottom: 10px;">N(8, 2)</p>
                         <p>זמן הכנה מאוזן לנפח בינוני</p>
@@ -124,8 +118,8 @@ def show_introduction():
 
         with col3:
             st.markdown("""
-                <div style="background-color: #1E1E1E; padding: 10px; border-radius: 8px; border: 1px solid #453232;">
-                    <h4 style="color: #FFFFFF; text-align: center; margin-bottom: 15px;">מנה של 3</h4>
+
+                    <h4 style=" text-align: center; margin-bottom: 15px;">מנה של 3</h4>
                     <div style="text-align: center; color: #CCCCCC;">
                         <p style="margin-bottom: 10px;">N(10, 3)</p>
                         <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
@@ -139,7 +133,7 @@ def show_introduction():
         # Arrival Times Section
         st.markdown("""
             <div class="custom-card rtl-content" style="margin-top: 10px;">
-                <h3 class="section-header">3. זמני הגעה</h3>
+                <h1 class="section-header">3. זמני הגעה</h1>
                 <p>הצוות ביצע מדידות של זמני הגעת הלקוחות למשאית המזון, אך מדידות אלו טרם נותחו. הבנת דפוסי הגעת הלקוחות תסייע לנו לזהות זמני שיא וצווארי בקבוק, ולתכנן את המשאבים בהתאם לצורך.</p>
                 </div>
             </div>
@@ -328,20 +322,30 @@ def visualize_samples_and_qqplots(samples):
         </div>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1,2])
+    col1, col2 = st.columns([1,3])
 
     with col1:
         # Instructions Section
         st.markdown("""
             <div class="custom-card rtl-content">
                 <h3>כיצד לפרש את הגרפים:</h3>
-                <ul>
-                    <li><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה, ומאפשרת לבחון את צורת ההתפלגות.</li>
-                    <li><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות, כשהתאמה גבוהה מתבטאת בקו ישר.</li>
-                    <li><strong>רצועות אמון:</strong> האזור האפור מייצג רווח בר-סמך של 95% להתפלגות הנתונים.</li>
-                </ul>
+                    <p><strong>היסטוגרמה:</strong> מציגה את התפלגות זמני ההכנה, ומאפשרת לבחון את צורת ההתפלגות.</p>
             </div>
         """, unsafe_allow_html=True)
+
+                # Instructions Section
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                    <p><strong>תרשימי Q-Q:</strong> משווים את הנתונים להתפלגויות שונות, כשהתאמה גבוהה מתבטאת בקו ישר.</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                    <p><strong>רצועת אמון:</strong>האזור האפור מייצג רווח בר-סמך של 95% להתפלגות הנתונים.</p>
+            </div>
+        """, unsafe_allow_html=True)
+
 
     with col2:
         # Create main figure with subplots for histogram and Q-Q plots
@@ -798,6 +802,8 @@ def plot_likelihood(samples, distribution):
 
         st.plotly_chart(fig, use_container_width=True)
 
+import plotly.graph_objects as go
+
 def perform_goodness_of_fit(samples, distribution, params):
     # Header with explanation for goodness-of-fit testing
     st.markdown("""
@@ -934,6 +940,8 @@ def perform_goodness_of_fit(samples, distribution, params):
 
         st.plotly_chart(fig, use_container_width=True)
 
+
+
 def show_simulation_next_steps():
     st.markdown("""
         <div class="custom-card rtl-content">
@@ -1054,7 +1062,7 @@ def show():
     if distribution_choice:
         params = estimate_parameters(samples, distribution_choice)
         perform_goodness_of_fit(samples, distribution_choice, params)
-
+       
 # To show the app, call the show() function
 if __name__ == "__main__":
     show()
