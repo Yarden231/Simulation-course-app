@@ -60,7 +60,7 @@ def show_sampling_methods():
         show_composition()
 
 def show_inverse_transform():
-    col1, col2 = st.columns(2)
+    col1, col_space, col2 = st.columns([5,1,5])
 
     with col1:
         st.markdown("""
@@ -94,7 +94,7 @@ def show_inverse_transform():
 
 def show_box_muller():
 
-    col1, col2 = st.columns(2)
+    col1, col_space, col2 = st.columns([5,1,5])
     with col1:
         st.markdown("""
             <div style='text-align: right; direction: rtl;'>
@@ -128,7 +128,7 @@ def show_box_muller():
 
 def show_acceptance_rejection():
 
-    col1, col2 = st.columns(2)
+    col1, col_space, col2 = st.columns([5,1,5])
     with col1:
         st.markdown("""
             <div style='text-align: right; direction: rtl;'>
@@ -169,7 +169,7 @@ def show_acceptance_rejection():
 
 def show_composition():
 
-    col1, col2 = st.columns(2)
+    col1, col_space, col2 = st.columns([5,1,5])
     with col1:
         st.markdown("""
             <div style='text-align: right; direction: rtl;'>
@@ -213,7 +213,7 @@ def show_order_sampling():
     st.text(" ")
     st.text(" ")
 
-    col_intro, col_sam = st.columns(2)
+    col_intro, col_space, col_sam = st.columns([5,1,5])
 
     with col_intro:
         st.markdown("""
@@ -573,8 +573,6 @@ def show_rng_demo():
 
     set_ltr_sliders()
 
-    """Main function to display RNG demonstration."""
-    # Add custom CSS for RTL support
     st.markdown("""
         <style>
             .rtl { direction: rtl; text-align: right; }
@@ -583,130 +581,136 @@ def show_rng_demo():
         </style>
     """, unsafe_allow_html=True)
     
-    set_ltr_sliders()
-
     
     # Main title
     st.markdown("<h1 style='text-align: right; '>מחוללי מספרים אקראיים ואלגוריתמי דגימה</h1>", unsafe_allow_html=True)
     
-    # Purpose section using st.expander
-    with st.expander("מטרת העמוד", expanded=True):
-        st.markdown("""
-            <div dir='rtl'>
-                <h3>יצירת מספרים אקראיים והמרתם למשתנים אקראיים</h3>
-                <p>
-                    בעמוד זה נלמד כיצד לייצר מספרים אקראיים בטווח [0,1] ולהשתמש בהם כדי ליצור משתנים אקראיים מהתפלגויות שונות.
-                    תהליך זה הכרחי עבור סימולציית משאית המזון שלנו, שכן הוא מאפשר לנו לדמות תרחישים אקראיים כמו זמני הגעת לקוחות וזמני הכנת מנות.
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
 
-    # Process section using st.expander
-    with st.expander("תהליך העבודה", expanded=True):
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("""
-                <div dir='rtl'>
-                    <h4>שלב 1: יצירת מספרים אקראיים בסיסיים</h4>
-                    <ul>
-                        <li>מחולל קונגרואנטי לינארי (LCG)</li>
-                        <li>רגיסטר הזזה עם משוב לינארי (LFSR)</li>
-                    </ul>
-                </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown("""
-                <div dir='rtl'>
-                    <h4>שלב 2: המרה להתפלגויות רצויות</h4>
-                    <ul>
-                        <li>שיטת הטרנספורם ההופכי</li>
-                        <li>שיטת Box-Muller</li>
-                        <li>שיטת הקומפוזיציה</li>
-                        <li>שיטת קבלה-דחייה</li>
-                    </ul>
-                </div>
-            """, unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown("""
-                <div dir='rtl'>
-                    <h4>שלב 3: יישום מעשי</h4>
-                    <ul>
-                        <li>דגימת זמני הזמנה</li>
-                        <li>דוגמאות מעשיות לכל שיטה</li>
-                    </ul>
-                </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Title and introduction
     st.markdown("""
-        <h2 class='rtl'>1. מחוללי מספרים אקראיים עבור סימולציית טאקו לוקו</h2>
-        <div class='rtl'>
-            <p>בסימולציית משאית המזון , אנחנו זקוקים למספרים אקראיים עבור מגוון החלטות:</p>
-            <ul>
-                <li>זמני הגעת לקוחות</li>
-                <li>זמני הכנת מנות</li>
-                <li>בחירת סוג המנה מהתפריט</li>
-                <li>סבלנות הלקוחות וזמני המתנה</li>
-            </ul>
-            <p>בעמוד זה נראה כיצד ניתן לייצר מספרים אקראיים בין 0 ל- 1, ולאחר מכן להשתמש במספרים אלו כדי לייצר מספרים אקראיים שעוקבים אחר התפלגויות מסובכות יותר.</p>
-            <h4>כדי לדגום מספרים המתפלגים אחיד בין 0-1, נשתמש בשתי שיטות שונות לייצור מספרים פסאודו-אקראיים:</h4>
+        <div dir='rtl'>
+            <h6>
+                בעמוד זה נלמד כיצד לייצר מספרים אקראיים בטווח [0,1] ולהשתמש בהם כדי ליצור משתנים אקראיים מהתפלגויות שונות.
+                תהליך זה הכרחי עבור סימולציית משאית המזון שלנו, שכן הוא מאפשר לנו לדמות תרחישים אקראיים כמו זמני הגעת לקוחות וזמני הכנת מנות.
+            </h6>
         </div>
     """, unsafe_allow_html=True)
 
-    # Add space before tabs
+
+    st.markdown("""
+        <div dir='rtl'>
+            <h3>תהליך העבודה</h3>
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+            <div dir='rtl'>
+                <h4>שלב 1: יצירת מספרים אקראיים בסיסיים</h4>
+                <ul>
+                    <li>מחולל קונגרואנטי לינארי (LCG)</li>
+                    <li>רגיסטר הזזה עם משוב לינארי (LFSR)</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+            <div dir='rtl'>
+                <h4>שלב 2: המרה להתפלגויות רצויות</h4>
+                <ul>
+                    <li>שיטת הטרנספורם ההופכי</li>
+                    <li>שיטת Box-Muller</li>
+                    <li>שיטת הקומפוזיציה</li>
+                    <li>שיטת קבלה-דחייה</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+            <div dir='rtl'>
+                <h4>שלב 3: יישום מעשי</h4>
+                <ul>
+                    <li>דגימת זמני הזמנה</li>
+                    <li>דוגמאות מעשיות לכל שיטה</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("<br>", unsafe_allow_html=True)
-
-    # Create tabs for different RNG methods
-    tab1, tab2 = st.tabs(["מחולל קונגרואנטי לינארי (LCG)", "רגיסטר הזזה עם משוב לינארי (LFSR)"])
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    with tab1:
-        show_lcg()
-    
-    with tab2:
-        show_lfsr()
 
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
+    with st.expander("1. מחוללי מספרים אקראיים ", expanded=True):
+
+        # Title and introduction
+        st.markdown("""
+            <h2 class='rtl'>1. מחוללי מספרים אקראיים עבור סימולציית טאקו לוקו</h2>
+            <div class='rtl'>
+                <p>בסימולציית משאית המזון , אנחנו זקוקים למספרים אקראיים עבור מגוון החלטות:</p>
+                <ul>
+                    <li>זמני הגעת לקוחות</li>
+                    <li>זמני הכנת מנות</li>
+                    <li>בחירת סוג המנה מהתפריט</li>
+                    <li>סבלנות הלקוחות וזמני המתנה</li>
+                </ul>
+                <p>בעמוד זה נראה כיצד ניתן לייצר מספרים אקראיים בין 0 ל- 1, ולאחר מכן להשתמש במספרים אלו כדי לייצר מספרים אקראיים שעוקבים אחר התפלגויות מסובכות יותר.</p>
+                <h4>כדי לדגום מספרים המתפלגים אחיד בין 0-1, נשתמש בשתי שיטות שונות לייצור מספרים פסאודו-אקראיים:</h4>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Add space before tabs
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Create tabs for different RNG methods
+        tab1, tab2 = st.tabs(["מחולל קונגרואנטי לינארי (LCG)", "רגיסטר הזזה עם משוב לינארי (LFSR)"])
         
-    # Additional tabs for sampling methods
-    st.markdown("<h2 class='rtl'>2. הסבר על שיטות הדגימה</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='rtl'><p>בדוגמה זו נדגום זמני הגעת לקוחות בסימולציית משאית המזון. <p>כל שיטות הדגימה שנלמד משתמשות במספרים אקראיים בטווח 0-1 כבסיס להפקת דגימות מהתפלגויות שונות, כאשר כל שיטה ממירה את המספרים האקראיים בדרך שונה ובהתאם להתפלגות היעד.</p></div>", unsafe_allow_html=True)
-    # Create tabs with improved content
-    tab3, tab4, tab5, tab6 = st.tabs([
-        "טרנספורם הופכי",
-        "box muller",
-        "קומפוזיציה",
-        "קבלה-דחייה"
-    ])
-    
-    with tab3:
-        show_inverse_transform()
-    
-    with tab4:
-        show_box_muller()
-    
-    with tab6:
-        show_acceptance_rejection()
+        with tab1:
+            show_lcg()
+        
+        with tab2:
+            show_lfsr()
 
-    with tab5:
-        show_composition()
     st.text(" ")
     st.text(" ")
     st.text(" ")
     st.text(" ")
     st.text(" ")
     st.text(" ")
-    show_order_sampling()
+
+    with st.expander("2. הסבר על שיטות הדגימה", expanded=True):
+        # Additional tabs for sampling methods
+        st.markdown("<h2 class='rtl'>2. הסבר על שיטות הדגימה</h2>", unsafe_allow_html=True)
+        st.markdown("<div class='rtl'><p>בדוגמה זו נדגום זמני הגעת לקוחות בסימולציית משאית המזון. <p>כל שיטות הדגימה שנלמד משתמשות במספרים אקראיים בטווח 0-1 כבסיס להפקת דגימות מהתפלגויות שונות, כאשר כל שיטה ממירה את המספרים האקראיים בדרך שונה ובהתאם להתפלגות היעד.</p></div>", unsafe_allow_html=True)
+        # Create tabs with improved content
+        tab3, tab4, tab5, tab6 = st.tabs([
+            "טרנספורם הופכי",
+            "box muller",
+            "קומפוזיציה",
+            "קבלה-דחייה"
+        ])
+        
+        with tab3:
+            show_inverse_transform()
+        
+        with tab4:
+            show_box_muller()
+        
+        with tab6:
+            show_acceptance_rejection()
+
+        with tab5:
+            show_composition()
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    with st.expander("3. דגימת זמני הזמנות ", expanded=True):
+        show_order_sampling()
 
 if __name__ == "__main__":
     show_rng_demo()
