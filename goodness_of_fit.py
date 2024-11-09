@@ -50,9 +50,11 @@ def show_introduction():
             
         # Customer Types Section
         st.markdown("""
-            <div class="custom-card rtl-content">
-                <h3 class="section-header">1. הזמנות</h3>
-                <p>הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.</p>
+            <div style= 'background-color: #2D2D2D;padding: 15px; border-radius: 5px; height: 100%;'>
+                <div class="custom-card rtl-content">
+                    <h3 class="section-header">1. הזמנות</h3>
+                    <p>הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.</p>
+                </div>
             </div>
         """, unsafe_allow_html=True)
 
@@ -93,7 +95,8 @@ def show_introduction():
 
         # Cooking Times Section
         st.markdown("""
-            <div class="custom-card rtl-content" style="margin-top: 30px;">
+            <div style= 'background-color: #2D2D2D;padding: 15px; border-radius: 5px; height: 100%;'>
+            <div class="custom-card rtl-content">
                 <h3>2. זמני בישול סטוכסטיים</h3>
                 <p>הזמן הנדרש להכנת כל מנה משתנה בהתאם לגודלה ועוקב אחר התפלגות נורמלית. התאמת התפלגות לזמני ההכנה מאפשרת לנו לייצג בצורה אמינה את השונות בתהליך הבישול ולחשב את זמני ההמתנה הצפויים.</p>
             </div>
