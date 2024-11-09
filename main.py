@@ -25,6 +25,7 @@ from flow import show as show_flow
 from lcg import show_lcg
 from lfsr import show_lfsr
 from random_generator import show_rng_demo
+from intro import show as show_intro
 def main():
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -40,6 +41,7 @@ def main():
     # Define the available pages and their corresponding functions
     pages = {
         "דף הבית": show_home,
+        "הקדמה לסיפור דוגמאת הקורס": show_intro,
         "סיפור מערכת טאקו לוקו": show_story,
         "התאמת התפלגות למודל": show_googness,
         "אלגוריתמי דגימה": show_rng_demo

@@ -70,7 +70,7 @@ def generate_normalized_sequence(lfsr, length):
 def show_lfsr():
     """Main function to display LFSR demonstration interface."""
     # Add Hebrew title with RTL support
-    st.markdown('<h1 style="text-align: center; direction: ltr;">Linear Feedback Shift Register (LFSR)</h1>', 
+    st.markdown('<h2 style="text-align: center; direction: ltr;">Linear Feedback Shift Register (LFSR)</h2>', 
                 unsafe_allow_html=True)
     
 

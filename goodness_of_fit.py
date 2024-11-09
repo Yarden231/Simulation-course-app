@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 import scipy.stats as stats
+import plotly.graph_objects as go
 
 def load_css():
     with open('.streamlit/style.css') as f:
@@ -43,7 +44,7 @@ def show_introduction():
         # Customer Types Section
         st.markdown("""
             <div class="custom-card rtl-content">
-                <h1 class="section-header">1. הזמנות</h1>
+                <h3 class="section-header">1. הזמנות</h3>
                 <p>הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.</p>
             </div>
         """, unsafe_allow_html=True)
@@ -86,7 +87,7 @@ def show_introduction():
         # Cooking Times Section
         st.markdown("""
             <div class="custom-card rtl-content" style="margin-top: 30px;">
-                <h1 class="section-header">2. זמני בישול סטוכסטיים</h1>
+                <h3>2. זמני בישול סטוכסטיים</h3>
                 <p>הזמן הנדרש להכנת כל מנה משתנה בהתאם לגודלה ועוקב אחר התפלגות נורמלית. התאמת התפלגות לזמני ההכנה מאפשרת לנו לייצג בצורה אמינה את השונות בתהליך הבישול ולחשב את זמני ההמתנה הצפויים.</p>
             </div>
         """, unsafe_allow_html=True)
@@ -133,81 +134,21 @@ def show_introduction():
         # Arrival Times Section
         st.markdown("""
             <div class="custom-card rtl-content" style="margin-top: 10px;">
-                <h1 class="section-header">3. זמני הגעה</h1>
+                <h3>3. זמני הגעה</h3>
                 <p>הצוות ביצע מדידות של זמני הגעת הלקוחות למשאית המזון, אך מדידות אלו טרם נותחו. הבנת דפוסי הגעת הלקוחות תסייע לנו לזהות זמני שיא וצווארי בקבוק, ולתכנן את המשאבים בהתאם לצורך.</p>
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
-
-
-def generate_service_times(size=1000, distribution_type=None):
-    """Generate realistic food preparation times."""
-    np.random.seed(int(pd.Timestamp.now().timestamp()))
-    
-    if distribution_type is None:
-        distribution_type = np.random.choice(['normal', 'uniform', 'exponential', 'mixture'])
-    
-    def scale_times(times, min_time=2, max_time=15):
-        """Scale times to realistic food preparation times (2-15 minutes)"""
-        return (times - np.min(times)) * (max_time - min_time) / (np.max(times) - np.min(times)) + min_time
-    
-    if distribution_type == 'normal':
-        # Normal distribution for standard menu items
-        mu = np.random.uniform(7, 9)  # average prep time
-        sigma = np.random.uniform(1, 2)  # variation in prep time
-        samples = np.random.normal(mu, sigma, size)
-        samples = scale_times(samples)
-        dist_info = {
-            'type': 'Normal',
-            'description': 'מתאים למנות סטנדרטיות עם זמן הכנה קבוע יחסית',
-            'params': {'זמן ממוצע': f"{mu:.1f} דקות", 'סטיית תקן': f"{sigma:.1f} דקות"}
-        }
-        
-    elif distribution_type == 'uniform':
-        # Uniform distribution for simple items
-        a = np.random.uniform(2, 5)
-        b = np.random.uniform(10, 15)
-        samples = np.random.uniform(a, b, size)
-        dist_info = {
-            'type': 'Uniform',
-            'description': 'מתאים למנות פשוטות עם זמן הכנה גמיש',
-            'params': {'זמן מינימלי': f"{a:.1f} דקות", 'זמן מקסימלי': f"{b:.1f} דקות"}
-        }
-        
-    elif distribution_type == 'exponential':
-        # Exponential for rush orders or complex items
-        lambda_param = np.random.uniform(0.15, 0.25)
-        samples = np.random.exponential(1/lambda_param, size)
-        samples = scale_times(samples)
-        dist_info = {
-            'type': 'Exponential',
-            'description': 'מתאים למנות מורכבות או הזמנות בשעות עומס',
-            'params': {'קצב שירות': f"{lambda_param:.2f} לקוחות לדקה"}
-        }
-        
-    else:  # mixture
-        # Mix of regular and special orders
-        prop_regular = np.random.uniform(0.6, 0.8)
-        n_regular = int(size * prop_regular)
-        n_special = size - n_regular
-        
-        regular_samples = np.random.normal(8, 1.5, n_regular)
-        special_samples = np.random.exponential(2, n_special) + 5
-        samples = np.concatenate([regular_samples, special_samples])
-        samples = scale_times(samples)
-        
-        dist_info = {
-            'type': 'Mixture',
-            'description': 'שילוב של מנות רגילות ומנות מיוחדות',
-            'params': {'אחוז מנות רגילות': f"{prop_regular*100:.0f}%"}
-        }
-    
-    samples = np.clip(samples, 2, 15)  # Ensure realistic preparation times
+def generate_arrival_times(size=1000):
+    """Generate arrival times based on exponential distribution eith lambda parameter = 6."""
+    samples = np.random.exponential(scale=1/6, size=size)
+    dist_info = ('Exponential', (6,))
     return samples, dist_info
 
 def generate_random_samples(sample_size):
     """Generate samples from a random distribution with random parameters."""
+
     distribution = np.random.choice(['normal', 'uniform', 'exponential'])
     if distribution == 'normal':
         mu = np.random.uniform(-5, 5)
@@ -256,7 +197,7 @@ def display_samples(samples):
         # Display summary statistics with business context
         st.markdown("""
             <div class="info-box rtl-content">
-                <h4> סטטיסטיקה תיאורית של דגימות זמני ההכנה שנמדדו:</h4>
+                <h4> סטטיסטיקה תיאורית של דגימות זמני ההגעה שנמדדו:</h4>
                 <ul class="custom-list">
                     <li>מספר מדידות: {:d}</li>
                     <li>זמן הכנה ממוצע: {:.2f} דקות</li>
@@ -311,14 +252,13 @@ def display_samples(samples):
         st.plotly_chart(fig, use_container_width=True)
 
 
-
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and Q-Q plots using Plotly for consistent styling."""
 
     # Explanation Section
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h2 style="padding-bottom: 3rem; color: #452b2b;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h2>
+            <h3 style="padding-bottom: 3rem; color: #452b2b;">כעת נבחן את התפלגות הנתונים באמצעות כלים סטטיסטיים כדי לבחור את המודל המתאים ביותר לסימולציה:</h3>
         </div>
     """, unsafe_allow_html=True)
 
@@ -432,11 +372,29 @@ def visualize_samples_and_qqplots(samples):
         
         st.plotly_chart(fig, use_container_width=True)
 
-
 def estimate_parameters(samples, distribution):
-    """Enhanced parameter estimation with confidence intervals and visual explanation."""
+
     
     # Section header with explanation
+    """
+    Estimate parameters for a given distribution using Maximum Likelihood Estimation (MLE)
+    and compute 95% confidence intervals using bootstrapping.
+
+    Parameters
+    ----------
+    samples : array-like
+        Sample data from the distribution of interest
+    distribution : str
+        Name of the distribution (either 'Normal', 'Exponential', or 'Uniform')
+
+    Returns
+    -------
+    parameters : tuple
+        Estimated parameters for the given distribution (e.g., mean and standard deviation
+        for a Normal distribution, rate for an Exponential distribution, or minimum and
+        maximum values for a Uniform distribution)
+    """
+    
     st.markdown("""
     <div class="custom-card rtl-content">
         <h1 class="section-header" style="color: #8B0000;">אמידת פרמטרים לסימולציה</h1>
@@ -802,10 +760,28 @@ def plot_likelihood(samples, distribution):
 
         st.plotly_chart(fig, use_container_width=True)
 
-import plotly.graph_objects as go
-
 def perform_goodness_of_fit(samples, distribution, params):
     # Header with explanation for goodness-of-fit testing
+    """
+    Perform goodness-of-fit tests for a given distribution and sample data.
+
+    Parameters
+    ----------
+    samples : array-like
+        The sample data to be tested.
+    distribution : str
+        The distribution to test against. Can be one of 'Normal', 'Exponential',
+        or 'Uniform'.
+    params : tuple
+        The parameters for the given distribution.
+
+    Notes
+    -----
+    This function performs two tests: the Kolmogorov-Smirnov test and the Chi-Square
+    test. The results of each test are displayed in a styled card, and a visualization
+    of the fit is also displayed.
+    """
+
     st.markdown("""
         <div class="custom-card rtl-content">
             <h1 class="section-header" style="color: #8B0000;">בדיקת התאמת המודל</h1>
@@ -941,39 +917,63 @@ def perform_goodness_of_fit(samples, distribution, params):
         st.plotly_chart(fig, use_container_width=True)
 
 
-
-def show_simulation_next_steps():
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">השלב הבא: בניית הסימולציה 🎮</h3>
-            <p>כעת כשיש לנו מודל סטטיסטי מדויק לזמני ההכנה, נוכל:</p>
-            <ul class="custom-list">
-                <li>לייצר זמני הכנה מציאותיים בסימולציה</li>
-                <li>לבדוק תרחישים שונים של עומס במשאית</li>
-                <li>לבחון את ההשפעה של שינויים בתהליך העבודה</li>
-                <li>לקבל החלטות מבוססות נתונים לשיפור היעילות</li>
-            </ul>
+def create_styled_card(title, content, border_color="#453232"):
+    st.markdown(
+        f"""
+        <div style="
+            background-color: #2D2D2D;
+            border: 1px solid {border_color};
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        ">
+            <h3 style="
+                color: #FFFFFF;
+                margin-bottom: 15px;
+                text-align: right;
+                font-size: 1.2rem;
+            ">{title}</h3>
+            <div style="
+                color: #FFFFFF;
+                text-align: right;
+            ">{content}</div>
         </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 
 def show():
+    """
+    This function shows the interactive simulation page.
 
+    It displays the introduction section, instructions for using the interactive tool, and the objective of the simulation.
+    It also displays the three distribution options and the button to select each distribution.
+    Additionally, it displays the goodness of fit results if a distribution is selected.
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
+    samples = None
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
-
-    #  st.markdown(get_custom_css(), unsafe_allow_html=True)
     # Show introduction section
     show_introduction()
-
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
 
     # Instructions for Interactive Tool
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h2>כיצד להשתמש בכלי האינטראקטיבי:</h2>
+            <h3>בעמוד זה נחקור את השלבים הבאים:</h3>
             <ol class="custom-list">
-                <li><b>יצירת מדגם חדש:</b> לחיצה על כפתור "יצירת מדגם חדש" תפיק דגימה עדכנית של זמני הגעה, המבוססת על הנתונים הקיימים.</li>
+                <li><b>יצירת מדגם חדש:</b> לחיצה על אחד הכפתורים  מטה, תפיק דגימה עדכנית של זמני הגעה, או דגימה מהתפלגות רנדומלית עבור המשך תרגול. .</li>
                 <li><b>התאמת התפלגות:</b> עבור כל מדגם, הכלי מציע מספר אפשרויות התאמת התפלגות (כגון התפלגות נורמלית, אחידה או מעריכית), כך שניתן לבחור את ההתפלגות המשקפת בצורה הטובה ביותר את דפוסי ההגעה.</li>
                 <li><b>בדיקת טיב ההתאמה:</b> הכלי מבצע בדיקה של טיב ההתאמה, כדי לוודא שההתפלגות שנבחרה מתאימה למאפייני המדגם, ובכך מאפשר ייצוג מדויק בסימולציה.</li>
             </ol>
@@ -989,79 +989,106 @@ def show():
         </div>
     """, unsafe_allow_html=True)
 
-    # Interactive Sampling and Distribution Fitting Section
-    if 'samples' not in st.session_state or st.button('יצירת מדגם חדש'):
-        samples, dist_info = generate_service_times()
-        st.session_state.samples = samples
-        st.session_state.dist_info = dist_info
+    st.text(" ")
+    st.text(" ")
 
+    col_arrival_times, col_service_times = st.columns(2)
 
-    
+    # Initialize session state for samples if not already present
+    if 'samples' not in st.session_state:
+        st.session_state.samples = None
+    if 'dist_info' not in st.session_state:
+        st.session_state.dist_info = None
 
-    
+    with col_arrival_times:
+        arrival_button = st.button('יצירת מדגם מזמני ההגעה')
+        if arrival_button: 
+            st.session_state.samples, st.session_state.dist_info = generate_arrival_times()
+
+    with col_service_times:
+        random_button = st.button('יצירת מדגם מהתפלגות רנדומלית')
+        if random_button: 
+            st.session_state.samples, st.session_state.dist_info = generate_service_times()
+
+    # Use samples from session state
     samples = st.session_state.samples
-    display_samples(samples)
 
-    visualize_samples_and_qqplots(samples)
+    if samples is not None:
+        display_samples(samples)
+        visualize_samples_and_qqplots(samples)
 
-
-    # Distribution selection section with business context
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h3 class="section-header">בחירת התפלגות מתאימה</h3>
-            <p>
-                על בסיס הניתוח הגרפי, יש לבחור את ההתפלגות המשקפת באופן המדויק ביותר את זמני ההכנה במשאית המזון.
-                כל התפלגות מתאימה לסוג שונה של תרחיש עסקי, ומאפשרת לנו לחזות את זמני ההמתנה בצורה מיטבית:
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Create three columns for the distribution options with enhanced business context and styling
-    col1, col2, col3 = st.columns(3)
-
-    # Normal Distribution option with improved styling and explanation
-    with col1:
+        # Distribution selection section with business context
         st.markdown("""
-            <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
-                <h4>התפלגות נורמלית</h4>
-                <p>מתאימה עבור מנות סטנדרטיות עם זמן הכנה עקבי יחסית, כמו הזמנות רגילות בימים ללא עומס.</p>
+            <div class="custom-card rtl-content">
+                <h3 class="section-header">בחירת התפלגות מתאימה</h3>
+                <p>
+                    על בסיס הניתוח הגרפי, יש לבחור את ההתפלגות המשקפת באופן המדויק ביותר את זמני ההכנה במשאית המזון.
+                    כל התפלגות מתאימה לסוג שונה של תרחיש עסקי, ומאפשרת לנו לחזות את זמני ההמתנה בצורה מיטבית:
+                </p>
             </div>
         """, unsafe_allow_html=True)
-        normal_button = st.button("בחר התפלגות נורמלית", key="normal")
 
-    # Uniform Distribution option with clear explanation and improved style
-    with col2:
-        st.markdown("""
-            <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
-                <h4>התפלגות אחידה</h4>
-                <p>מתאימה עבור מנות פשוטות עם טווח זמן הכנה גמיש, המתאימות לתנאים משתנים.</p>
-            </div>
-        """, unsafe_allow_html=True)
-        uniform_button = st.button("בחר התפלגות אחידה", key="uniform")
+        # Create three columns for the distribution options
+        col1, col2, col3 = st.columns(3)
 
-    # Exponential Distribution option with context-specific explanation and refined styling
-    with col3:
-        st.markdown("""
-            <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
-                <h4>התפלגות מעריכית</h4>
-                <p>מתאימה עבור מנות מורכבות או הזמנות שמתקבלות בשעות עומס, כשהזמן מתארך ככל שהעומס גובר.</p>
-            </div>
-        """, unsafe_allow_html=True)
-        exp_button = st.button("בחר התפלגות מעריכית", key="exponential")
+        # Store distribution choice in session state
+        if 'distribution_choice' not in st.session_state:
+            st.session_state.distribution_choice = None
+        if 'goodness_of_fit_results' not in st.session_state:
+            st.session_state.goodness_of_fit_results = None
 
+        with col1:
+            st.markdown("""
+                <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
+                    <h4>התפלגות נורמלית</h4>
+                    <p>מתאימה עבור מנות סטנדרטיות עם זמן הכנה עקבי יחסית, כמו הזמנות רגילות בימים ללא עומס.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("בחר התפלגות נורמלית", key="normal"):
+                st.session_state.distribution_choice = 'Normal'
 
-    # Handle distribution selection
-    distribution_choice = None
-    if normal_button:
-        distribution_choice = 'Normal'
-    elif uniform_button:
-        distribution_choice = 'Uniform'
-    elif exp_button:
-        distribution_choice = 'Exponential'
+        with col2:
+            st.markdown("""
+                <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
+                    <h4>התפלגות אחידה</h4>
+                    <p>מתאימה עבור מנות פשוטות עם טווח זמן הכנה גמיש, המתאימות לתנאים משתנים.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("בחר התפלגות אחידה", key="uniform"):
+                st.session_state.distribution_choice = 'Uniform'
 
-    if distribution_choice:
-        params = estimate_parameters(samples, distribution_choice)
-        perform_goodness_of_fit(samples, distribution_choice, params)
+        with col3:
+            st.markdown("""
+                <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
+                    <h4>התפלגות מעריכית</h4>
+                    <p>מתאימה עבור מנות מורכבות או הזמנות שמתקבלות בשעות עומס, כשהזמן מתארך ככל שהעומס גובר.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("בחר התפלגות מעריכית", key="exponential"):
+                st.session_state.distribution_choice = 'Exponential'
+
+        # Perform goodness of fit test if distribution is selected
+        if st.session_state.distribution_choice and st.session_state.samples is not None:
+            params = estimate_parameters(st.session_state.samples, st.session_state.distribution_choice)
+            st.session_state.goodness_of_fit_results = perform_goodness_of_fit(
+                st.session_state.samples, 
+                st.session_state.distribution_choice, 
+                params
+            )
+            
+            # Display goodness of fit results
+            if st.session_state.goodness_of_fit_results:
+                st.markdown("""
+                    <div class="custom-card rtl-content">
+                        <h3>תוצאות בדיקת טיב ההתאמה</h3>
+                    </div>
+                """, unsafe_allow_html=True)
+                
+                # Display the results in a formatted way
+                st.write(st.session_state.goodness_of_fit_results)
+
+ 
+
        
 # To show the app, call the show() function
 if __name__ == "__main__":

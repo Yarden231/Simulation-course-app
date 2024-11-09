@@ -64,7 +64,7 @@ def create_animated_plots():
 def show_lcg():
     set_ltr_sliders()
 
-    st.markdown('<h1 style="text-align: right; direction: rtl;">Linear Congruential Generator (LCG)</h1>', unsafe_allow_html=True)
+    st.markdown('<h2 style="text-align: right; direction: rtl;">Linear Congruential Generator (LCG)</h2>', unsafe_allow_html=True)
     
     with st.container():
         st.markdown("""

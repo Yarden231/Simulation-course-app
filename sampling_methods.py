@@ -48,6 +48,25 @@ class LCG:
 
 # Update the create_styled_card function with better spacing
 def create_styled_card(title, content, border_color= '#2D2D2D' ):
+
+    """
+    Creates a styled card with a title and content, aligned to the right.
+
+    Parameters
+    ----------
+    title : str
+        The title of the card
+    content : str
+        The content of the card
+    border_color : str, optional
+        The color of the border (default is `#2D2D2D`)
+
+    Returns
+    -------
+    None
+    """
+    
+
     st.markdown(
         f"""
         <div style="
@@ -74,7 +93,24 @@ def create_styled_card(title, content, border_color= '#2D2D2D' ):
     )
 
 # Update the create_styled_card function with better spacing
-def create_styled_card_left(title, content, ):
+def create_styled_card_left(title, content, border_color= '#2D2D2D' ):
+    """
+    Creates a styled card with a title and content, aligned to the left.
+
+    Parameters
+    ----------
+    title : str
+        The title of the card
+    content : str
+        The content of the card
+    border_color : str, optional
+        The color of the border (default is `#2D2D2D`)
+
+    Returns
+    -------
+    None
+    """
+
     st.markdown(
         f"""
         <div style="
@@ -128,6 +164,17 @@ def create_station_grid():
             )
 
 def create_sampling_methods_grid():
+    """
+    Creates a grid of 3 columns with 3 cards each, explaining a different sampling method.
+
+    The sampling methods are:
+
+    1. טרנספורם הופכי - a method for sampling from the exponential distribution, used to sample customer arrival times.
+    2. דגימת קבלה-דחייה - a method for sampling from a complex distribution, used to sample preparation times for different dishes.
+    3. שיטת הקומפוזיציה - a method for sampling customer waiting times based on different levels of patience, by combining distributions.
+
+    The cards are styled with a red border and white text.
+    """
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -147,7 +194,22 @@ def create_sampling_methods_grid():
         )
 
 def plot_qq(samples, title):
-    """Plot QQ plot with better styling."""
+    """
+    Plot a Q-Q plot of the given samples, with a given title.
+
+    Parameters
+    ----------
+    samples : array_like
+        The samples to plot.
+    title : str
+        The title of the plot.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure containing the plot.
+    """
+    
     fig, ax = plt.subplots(figsize=(8, 5))
     stats.probplot(samples, dist="norm", plot=ax)
     
@@ -160,8 +222,35 @@ def plot_qq(samples, title):
     return fig
 
 def run_sampling(sampling_function, num_samples, update_interval, title, plot_placeholder, stats_placeholder,  distribution_func=None, true_density=None):
-    """Run sampling with visualization updates."""
+
     # Generate all samples at once
+    """
+    Run a sampling function, display results in batches, and update Streamlit 
+    placeholders for a Q-Q plot and histogram, as well as statistics.
+
+    Parameters
+    ----------
+    sampling_function : callable
+        The sampling function to run, which takes a single argument of the number
+        of samples to generate.
+    num_samples : int
+        The number of samples to generate.
+    update_interval : int
+        The number of samples to generate at a time before updating the Streamlit
+        placeholders.
+    title : str
+        The title for the combined figure.
+    plot_placeholder : streamlit.container.Container
+        The Streamlit container to display the figure in.
+    stats_placeholder : streamlit.container.Container
+        The Streamlit container to display the statistics in.
+    distribution_func : callable, optional
+        The distribution function to use for the true density of the sample data.
+        If None, the true density is not plotted.
+    true_density : callable, optional
+        The true density of the sample data. If None, the true density is not plotted.
+    """
+    
     all_samples = sampling_function(num_samples)
     
     # Calculate number of iterations
@@ -225,6 +314,7 @@ def show_sampling_intro():
 
 
 def display_inverse_transform_method():
+    
     create_styled_card(
         "טרנספורם הופכי - דגימת זמני הגעה",
         """
@@ -842,6 +932,160 @@ def display_random_number_generators():
 
     # הצגת ההדגמה האינטראקטיבית
     display_interactive_sampling()
+
+def rejection_sample_prep_time():
+    """
+    Performs rejection sampling for preparation time based on customer type and order complexity.
+    Uses envelope function t(x) = 0.5 for the rejection sampling algorithm.
+    """
+    def f(x):
+        """Target probability density function for order times."""
+        if 3 <= x < 4:
+            return 0.5  # Type A customers (50%)
+        elif 4 <= x < 5:
+            return (x - 4) / 4  # Type B customers (25%)
+        elif 5 <= x < 6:
+            return (6 - x) / 4  # Type B customers (25%)
+        elif x == 10:
+            return 0.25  # Type C customers (25%)
+        else:
+            return 0
+
+    while True:
+        # Generate a candidate y between 3 and 10
+        y = 7 * np.random.uniform(0, 1) + 3
+        u = np.random.uniform(0, 1)
+        
+        # Accept y if u <= f(y) / t(y), where t(y) = 0.5 is our envelope function
+        if u <= f(y) / 0.5:
+            return y
+
+def inverse_transform_prep_time():
+    """
+    Implements inverse transform sampling for preparation time based on the composite distribution.
+    """
+    u = np.random.uniform(0, 1)
+    
+    # Calculate x based on the value of u
+    if 0 <= u < 0.5:
+        x = 2 * u + 3
+    elif 0.5 <= u < 0.625:
+        x = (8 + np.sqrt(32 * u - 16)) / 2
+    elif 0.625 <= u < 0.75:
+        x = (12 + np.sqrt(24 - 32 * u)) / 2
+    elif 0.75 <= u <= 1:
+        x = 10
+    else:
+        x = None
+    
+    return x
+
+def composition_prep_time():
+    """
+    Implements composition sampling for preparation time based on customer types.
+    """
+    u1 = np.random.uniform(0, 1)
+    
+    if 0 <= u1 < 0.5:
+        # Type A customers: Uniform between 3 and 4 minutes
+        x = np.random.uniform(3, 4)
+    elif 0.5 <= u1 < 0.75:
+        # Type B customers: Triangular between 4 and 6, mode at 5
+        x = np.random.triangular(4, 6, 5)
+    else:
+        # Type C customers: Fixed 10 minutes
+        x = 10
+    
+    return x
+
+def display_order_time_sampling():
+    st.markdown("""
+        <div class="custom-card rtl-content">
+            <h2>דגימת זמני הזמנה</h2>
+            <p>
+                המערכת מדמה זמני הזמנה עבור שלושה סוגי לקוחות:
+                <ul>
+                    <li>סוג א' (50%): זמן הזמנה אחיד בין 3-4 דקות</li>
+                    <li>סוג ב' (25%): זמן הזמנה משולש בין 4-6 דקות</li>
+                    <li>סוג ג' (25%): זמן הזמנה קבוע של 10 דקות</li>
+                </ul>
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    sampling_method = st.radio(
+        "בחר שיטת דגימה:",
+        ["טרנספורם הופכי", "דגימת קבלה-דחייה", "שיטת הקומפוזיציה"],
+        key="order_sampling"
+    )
+
+    num_samples = st.slider("מספר דגימות:", 100, 5000, 1000, key="order_samples")
+
+    if st.button("הרץ סימולציה", key="order_simulation"):
+        if sampling_method == "טרנספורם הופכי":
+            samples = [inverse_transform_prep_time() for _ in range(num_samples)]
+        elif sampling_method == "דגימת קבלה-דחייה":
+            samples = [rejection_sample_prep_time() for _ in range(num_samples)]
+        else:  # Composition
+            samples = [composition_prep_time() for _ in range(num_samples)]
+
+        # Create visualization
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+
+        # Histogram
+        counts, bins, _ = ax1.hist(samples, bins=30, density=True, alpha=0.7, color='#8B0000', edgecolor='black')
+        ax1.set_title('התפלגות זמני הזמנה')
+        ax1.set_xlabel('זמן (דקות)')
+        ax1.set_ylabel('צפיפות')
+        ax1.grid(True, alpha=0.3)
+
+        # Q-Q plot
+        stats.probplot(samples, dist="norm", plot=ax2)
+        ax2.get_lines()[0].set_markerfacecolor('#8B0000')
+        ax2.get_lines()[0].set_markeredgecolor('#8B0000')
+        ax2.get_lines()[1].set_color('#8B0000')
+        ax2.set_title('Q-Q Plot')
+        ax2.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+        # Display statistics
+        st.markdown("""
+            <div class="custom-card rtl-content">
+                <h3>סטטיסטיקה תיאורית</h3>
+            </div>
+        """, unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown("""
+                <div class="stat-box">
+                    <h4>מדדי מרכז</h4>
+                    <p>ממוצע: {:.2f}</p>
+                    <p>חציון: {:.2f}</p>
+                </div>
+            """.format(np.mean(samples), np.median(samples)), unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown("""
+                <div class="stat-box">
+                    <h4>מדדי פיזור</h4>
+                    <p>סטיית תקן: {:.2f}</p>
+                    <p>טווח: {:.2f} - {:.2f}</p>
+                </div>
+            """.format(np.std(samples), min(samples), max(samples)), unsafe_allow_html=True)
+        
+        with col3:
+            st.markdown("""
+                <div class="stat-box">
+                    <h4>מדדי צורה</h4>
+                    <p>אסימטריה: {:.2f}</p>
+                    <p>קורטוזיס: {:.2f}</p>
+                </div>
+            """.format(stats.skew(samples), stats.kurtosis(samples)), unsafe_allow_html=True)
+
 
 def show_sampling_methods():
     # Apply custom CSS
