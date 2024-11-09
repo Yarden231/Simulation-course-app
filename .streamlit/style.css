@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Button Styling */
 .stButton button {
-    background-color: #e7b070;
+    background-color: #f7d989;
     color: rgb(21, 21, 21);
     width: 100%;
     padding: 0.5rem 1rem;
@@ -94,7 +94,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stButton button:hover {
-    background-color: #ffe589;
+    background-color: #f1b565;
     color: #551a1a;
 }
 

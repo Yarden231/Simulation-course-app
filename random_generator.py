@@ -395,7 +395,6 @@ def show_order_sampling():
         elif 0.75 <= u <= 1:
             x = 10
         return x'''
-            
             st.code(code, language='python')
         
         elif sampling_method == 'קבלה-דחייה':

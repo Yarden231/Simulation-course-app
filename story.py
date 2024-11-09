@@ -176,33 +176,42 @@ def show_story():
         '>פרויקט הסימולציה של אוצ׳ו לוקו</h1>
     """, unsafe_allow_html=True)
 
-    # Introduction with improved spacing
-    create_styled_card(
-        "הקדמה",
-        """
-        <p style='margin-bottom: 10px;'>אוצ׳ו לוקו החל את פרויקט הסימולציה של חייו במשאית המזון המשפחתית האהובה. 
-        </p>
-        
-        <p style='margin-bottom: 10px;'>אוצ׳ו מתכנן לחקור ולהבין מהם קצבי השירות בכל עמדה ומהם קצבי הגעת הלקוחות למשאית המזון. בעזרת הקצבים שיאסוף, יוכל דרך פרויקט סימולציה קפדני שיבצע אוצ׳ו, להבין מהם צווארי הבקבוק במערכת שלו וכך ידע לנהל את עובדיו בצורה האופטימלית.</p>
-        
-        <p>בכדי להבין את קצבי השירות ב-״לוקו טאקו״, אוצ׳ו תשאל את אביו חולייסיטו, וביקש שיספר לו על התנהלות הלקוחות והעובדים במשאיתו האהובה.</p>
-        """
-    )
+    col_r,col_m,col_l = st.columns([2,0.5,5])
 
-    # Questioning summary header
-    st.markdown("""
-        <h2 style='
-            color: #FFFFFF; 
-            text-align: right;
-            margin-top: 40px;
-            margin-bottom: 30px;
-        '>להלן סיכום התשאול:</h2>
-    """, unsafe_allow_html=True)
-    # Path to the SVG or PNG file
-    image_path = "story.svg"  # or change to "/mnt/data/image.png" if using PNG
 
-    # Display the image directly with Streamlit
-    st.image(image_path, use_column_width=True, width=600)
+
+    with col_r:
+        st.write(" "    )
+        st.write(" "    )
+        st.write(" "    )
+        st.write(" "    )
+        st.write(" "    )
+
+        # Introduction with improved spacing
+        create_styled_card(
+            "הקדמה",
+            """
+            <p style='margin-bottom: 10px;'>אוצ׳ו לוקו החל את פרויקט הסימולציה של חייו במשאית המזון המשפחתית האהובה.</p>
+            <p>אוצ׳ו מתכנן לחקור ולהבין מהם קצבי השירות בכל עמדה ומהם קצבי הגעת הלקוחות למשאית המזון. בעזרת הקצבים שיאסוף, יוכל דרך פרויקט סימולציה קפדני שיבצע אוצ׳ו, להבין מהם צווארי הבקבוק במערכת שלו וכך ידע לנהל את עובדיו בצורה האופטימלית.</p>
+            <p>בכדי להבין את קצבי השירות ב-״לוקו טאקו״, אוצ׳ו תשאל את אביו חולייסיטו, וביקש שיספר לו על התנהלות הלקוחות והעובדים במשאיתו האהובה.</p>
+            """
+        )
+
+    with col_l:
+        # Questioning summary header
+        st.markdown("""
+            <h2 style='
+                color: #FFFFFF; 
+                text-align: right;
+                margin-top: 40px;
+                margin-bottom: 30px;
+            '>להלן סיכום התשאול:</h2>
+        """, unsafe_allow_html=True)
+        # Path to the SVG or PNG file
+        image_path = "story.svg"  # or change to "/mnt/data/image.png" if using PNG
+
+        # Display the image directly with Streamlit
+        st.image(image_path, use_column_width=True)
 
     # Summary header with spacing
     st.markdown("""
