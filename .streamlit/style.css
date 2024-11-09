@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Button Styling */
 .stButton button {
-    background-color: #e2daac;
+    background-color: #e7b070;
     color: rgb(21, 21, 21);
     width: 100%;
     padding: 0.5rem 1rem;
@@ -94,7 +94,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stButton button:hover {
-    background-color: #867a50;
+    background-color: #ffe589;
+    color: #551a1a;
 }
 
 /* Tables */
@@ -109,7 +110,7 @@ table {
 th, td {
     padding: 8px;
     text-align: right;
-    border-bottom: 1px solid #666666;
+    border-bottom: 1px solid #702121;
 }
 
 /* Exception for Code Tables */
@@ -124,7 +125,7 @@ th, td {
 
 /* Progress Bar */
 .stProgress > div > div {
-    background-color: #e9be95;
+    background-color: #773327;
 }
 
 /* Ensure RTL for Main Content */

@@ -199,28 +199,11 @@ def show_story():
             margin-bottom: 30px;
         '>להלן סיכום התשאול:</h2>
     """, unsafe_allow_html=True)
+    # Path to the SVG or PNG file
+    image_path = "story.svg"  # or change to "/mnt/data/image.png" if using PNG
 
-    # Correct way to display SVG in Streamlit
-    try:
-        with open("story.svg", "r") as file:
-            svg_content = file.read()
-            st.markdown(f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    margin: 30px 0;
-                    background-color: #2D2D2D;
-                    padding: 10px;
-                    border-radius: 8px;
-                ">
-                    {svg_content}
-                </div>
-            """, unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning("קובץ ה-SVG לא נמצא. יש לוודא שהקובץ נמצא בתיקייה הנכונה.")
-
-    # Rest of your code remains the same, but add spacing between sections
-    st.markdown("<div style='margin: 40px 0;'></div>", unsafe_allow_html=True)
+    # Display the image directly with Streamlit
+    st.image(image_path, use_column_width=True)
 
     # Summary header with spacing
     st.markdown("""

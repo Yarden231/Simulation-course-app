@@ -999,6 +999,10 @@ def composition_prep_time():
     return x
 
 def display_order_time_sampling():
+    """
+    Displays a Streamlit app for simulating order times using inverse transform sampling, rejection sampling, and composition sampling.
+    The app displays a histogram and Q-Q plot of the samples, as well as statistical measures of central tendency, dispersion, and shape.
+    """
     st.markdown("""
         <div class="custom-card rtl-content">
             <h2>דגימת זמני הזמנה</h2>

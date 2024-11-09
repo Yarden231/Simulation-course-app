@@ -36,8 +36,15 @@ def show_introduction():
         </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("""
+        <div class="custom-header rtl-content">
+            <h4>בהמשך לתשאול של חולייסיטו בדף האפליקציה הקודם, אוצ'ו לוקו עבד עם צוות סימולציה, מדד ומידל את עמדת ההזמנות ועמדת הבישול, להלן המידול:</h4>
+        </div>
+    """, unsafe_allow_html=True)
+
+
         # Create tabs for different RNG methods
-    tab1, tab2, tab3 = st.tabs(["3. זמני הגעה","2. זמני בישול סטוכסטיים", "1. הזמנות"])
+    tab1, tab2 = st.columns(2)
     
     with tab1:
             
@@ -129,16 +136,16 @@ def show_introduction():
             """, unsafe_allow_html=True)
 
 
-    with tab3:
 
-        # Arrival Times Section
-        st.markdown("""
-            <div class="custom-card rtl-content" style="margin-top: 10px;">
-                <h3>3. זמני הגעה</h3>
-                <p>הצוות ביצע מדידות של זמני הגעת הלקוחות למשאית המזון, אך מדידות אלו טרם נותחו. הבנת דפוסי הגעת הלקוחות תסייע לנו לזהות זמני שיא וצווארי בקבוק, ולתכנן את המשאבים בהתאם לצורך.</p>
-                </div>
+    # Arrival Times Section
+    st.markdown("""
+        <div class="custom-card rtl-content" style="margin-top: 10px;">
+            <h4>בעמוד זה נעזור לאוצ'ו לוקו לסיים את מלאכתו ונתאים התפלגות לזמני הגעת הלקוחות במשאית המזון.</h4>
+            <h2>3. זמני הגעה</h2>
+            <p>הצוות ביצע מדידות של זמני הגעת הלקוחות למשאית המזון, אך מדידות אלו טרם נותחו. הבנת דפוסי הגעת הלקוחות תסייע לנו לזהות זמני שיא וצווארי בקבוק, ולתכנן את המשאבים בהתאם לצורך.</p>
             </div>
-        """, unsafe_allow_html=True)
+        </div>
+    """, unsafe_allow_html=True)
 
 def generate_arrival_times(size=1000):
     """Generate arrival times based on exponential distribution eith lambda parameter = 6."""
@@ -168,9 +175,11 @@ def generate_random_samples(sample_size):
 def display_samples(samples):
     """Display the first few samples and a simple plot of all samples."""
     # Display sample data and allow the user to fit distributions
+    st.text(" ")
+    st.text(" ")
     st.markdown("""
         <div class="custom-card rtl-content">
-            <h4>תוצאות הדגימה הנוכחית:</h4>
+            <h2>תוצאות הדגימה הנוכחית:</h2>
             <p>הנתונים שנאספו מוצגים להלן. בחרו את ההתפלגות המתאימה ביותר עבור הנתונים וודעו אם התאמתכם מייצגת בצורה מדויקת את דפוסי ההגעה של הלקוחות.</p>
         </div>
     """, unsafe_allow_html=True)
@@ -194,28 +203,6 @@ def display_samples(samples):
         
         st.dataframe(sample_df, height=250)
 
-        # Display summary statistics with business context
-        st.markdown("""
-            <div class="info-box rtl-content">
-                <h4> סטטיסטיקה תיאורית של דגימות זמני ההגעה שנמדדו:</h4>
-                <ul class="custom-list">
-                    <li>מספר מדידות: {:d}</li>
-                    <li>זמן הכנה ממוצע: {:.2f} דקות</li>
-                    <li>זמן הכנה מינימלי: {:.2f} דקות</li>
-                    <li>זמן הכנה מקסימלי: {:.2f} דקות</li>
-                    <li>סטיית תקן: {:.2f} דקות</li>
-                    <li>חציון: {:.2f} דקות</li>
-                </ul>
-                <p>נתונים אלו מסייעים לנו להבין את טווח זמני ההכנה הטיפוסיים ואת מידת השונות בתהליך.</p>
-            </div>
-        """.format(
-            len(samples),
-            np.mean(samples),
-            np.min(samples),
-            np.max(samples),
-            np.std(samples),
-            np.median(samples)
-        ), unsafe_allow_html=True)
         
 
 
@@ -251,10 +238,62 @@ def display_samples(samples):
         # Display plot
         st.plotly_chart(fig, use_container_width=True)
 
+        # Display summary statistics with business context
+    st.markdown("""
+        <div class="info-box rtl-content">
+            <h4 style='text-align: center; margin-bottom: 20px;'>סטטיסטיקה תיאורית של דגימות זמני ההגעה שנמדדו</h4>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Create three columns for statistics
+    col1, col2, col3 = st.columns(3)
+
+    # First column
+    with col1:
+        st.markdown(f"""
+            <div style= 'background-color: #2D2D2D;padding: 15px; border-radius: 5px; height: 100%;'>
+                <h5 style='text-align: center; color: #FF4B4B; margin-bottom: 15px;'>מדדי מרכז</h5>
+                <div style='text-align: right;'>
+                    <p><strong>מספר מדידות:</strong> {len(samples):d}</p>
+                    <p><strong>ממוצע:</strong> {np.mean(samples):.2f} דקות</p>
+                    <p><strong>חציון:</strong> {np.median(samples):.2f} דקות</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Second column
+    with col2:
+        st.markdown(f"""
+            <div style='background-color: #2D2D2D; padding: 15px; border-radius: 5px; height: 100%;'>
+                <h5 style='text-align: center; margin-bottom: 15px;'>מדדי פיזור</h5>
+                <div style='text-align: right;'>
+                    <p><strong>סטיית תקן:</strong> {np.std(samples):.2f} דקות</p>
+                    <p><strong>טווח בין-רבעוני:</strong> {np.percentile(samples, 75) - np.percentile(samples, 25):.2f} דקות</p>
+                    <p><strong>שונות:</strong> {np.var(samples):.2f}</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Third column
+    with col3:
+        st.markdown(f"""
+            <div style='background-color: #2D2D2D; padding: 15px; border-radius: 5px; height: 100%;'>
+                <h5 style='text-align: center; color: #FF4B4B; margin-bottom: 15px;'>ערכי קיצון</h5>
+                <div style='text-align: right;'>
+                    <p><strong>מינימום:</strong> {np.min(samples):.2f} דקות</p>
+                    <p><strong>מקסימום:</strong> {np.max(samples):.2f} דקות</p>
+                    <p><strong>טווח:</strong> {np.max(samples) - np.min(samples):.2f} דקות</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
 
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and Q-Q plots using Plotly for consistent styling."""
-
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
     # Explanation Section
     st.markdown("""
         <div class="custom-card rtl-content">
@@ -973,21 +1012,13 @@ def show():
         <div class="custom-card rtl-content">
             <h3>בעמוד זה נחקור את השלבים הבאים:</h3>
             <ol class="custom-list">
-                <li><b>יצירת מדגם חדש:</b> לחיצה על אחד הכפתורים  מטה, תפיק דגימה עדכנית של זמני הגעה, או דגימה מהתפלגות רנדומלית עבור המשך תרגול. .</li>
+                <li><b>יצירת מדגם חדש:</b> לחיצה על אחד הכפתורים  מטה, תפיק דגימה עדכנית של זמני הגעה, או דגימה מהתפלגות רנדומלית עבור המשך תרגול .</li>
                 <li><b>התאמת התפלגות:</b> עבור כל מדגם, הכלי מציע מספר אפשרויות התאמת התפלגות (כגון התפלגות נורמלית, אחידה או מעריכית), כך שניתן לבחור את ההתפלגות המשקפת בצורה הטובה ביותר את דפוסי ההגעה.</li>
                 <li><b>בדיקת טיב ההתאמה:</b> הכלי מבצע בדיקה של טיב ההתאמה, כדי לוודא שההתפלגות שנבחרה מתאימה למאפייני המדגם, ובכך מאפשר ייצוג מדויק בסימולציה.</li>
             </ol>
         </div>
     """, unsafe_allow_html=True)
 
-    # Objective of Interactive Simulation
-    st.markdown("""
-        <div class="custom-card rtl-content">
-            <h4>מטרת הסימולציה האינטראקטיבית:</h4>
-            <p>באמצעות הסימולציה, תוכלו לבצע ניסויים על מדגמים שונים ולבדוק כיצד תכנון משאבים בהתאם להתפלגויות מתאימות עשוי לשפר את זמני השירות ולהפחית עומסים.
-            הכלי האינטראקטיבי מהווה חלק מרכזי בתהליך קבלת ההחלטות וייעול תפעול המשאית, תוך התאמה מתמשכת לתנאי השטח.</p>
-        </div>
-    """, unsafe_allow_html=True)
 
     st.text(" ")
     st.text(" ")
