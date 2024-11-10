@@ -402,22 +402,25 @@ def show_order_sampling():
         if sampling_method == 'טרנספורם הופכי':
             samples = sample_inverse_transform_order(n_samples)
             
-            inverse_transform_code = '''def transpose():
-        u = random.uniform(0, 1)
-        if 0 <= u < 0.5:
-            x = 2 * u + 3
-        elif 0.5 <= u < 0.625:
-            x = (8 + math.sqrt(32 * u - 16)) / 2
-        elif 0.625 <= u < 0.75:
-            x = (12 + math.sqrt(24 - 32 * u)) / 2
-        elif 0.75 <= u <= 1:
-            x = 10
-        return x'''
+            # Hebrew title
+            st.markdown("<h3 style='text-align: right;'>טרנספורם הופכי לדגימת זמני הזמנה</h3>", unsafe_allow_html=True)
             
-            show_code_with_explanation(
-                "טרנספורם הופכי לדגימת זמני הזמנה",
-                inverse_transform_code
-            )
+            # Code display using markdown code block
+            st.markdown("""
+            ```python
+            def transpose():
+                u = random.uniform(0, 1)
+                if 0 <= u < 0.5:
+                    x = 2 * u + 3
+                elif 0.5 <= u < 0.625:
+                    x = (8 + math.sqrt(32 * u - 16)) / 2
+                elif 0.625 <= u < 0.75:
+                    x = (12 + math.sqrt(24 - 32 * u)) / 2
+                elif 0.75 <= u <= 1:
+                    x = 10
+                return x
+            ```
+            """)
         
         elif sampling_method == 'קבלה-דחייה':
             samples = sample_rejection_order(n_samples)
