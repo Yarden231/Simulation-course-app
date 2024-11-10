@@ -7,24 +7,28 @@ from plotly.subplots import make_subplots
 import scipy.stats as stats
 import plotly.graph_objects as go
 
-def show_code_with_explanation(title, description, code):
-    """Helper function to display code with consistent RTL/LTR handling"""
-    # RTL section for Hebrew title and description
-    st.markdown(f"""
-        <div style='text-align: left; direction: ltr;'>
-            <h3 style='text-align: left; direction: ltr;'>{title}</h3>
-            <p style='text-align: left; direction: ltr;'>{description}</p>
-        </div>
-    """, unsafe_allow_html=True)
+def show_code_with_explanation(title,  code):
+    # Display Hebrew title with RTL
+    st.markdown(f"<h3 style='text-align: right;'>{title}</h3>", unsafe_allow_html=True)
     
-    # LTR section for code with proper styling
+    # Create a container div that forces LTR for code
     st.markdown("""
-        <div style='direction: ltr; text-align: left;'>
+        <style>
+            .ltr-code {
+                direction: ltr !important;
+                text-align: left !important;
+                unicode-bidi: bidi-override;
+            }
+            .ltr-code * {
+                direction: ltr !important;
+                text-align: left !important;
+            }
+        </style>
     """, unsafe_allow_html=True)
     
-    st.code(code, language='python')
-    
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Wrap code in LTR container
+    with st.container():
+        st.code(code, language="python")
 
 def create_distribution_plot(x_data, y_data, hist_data=None, title="התפלגות", bins=100):
     """Create a plot with both PDF and histogram if provided."""
@@ -412,7 +416,6 @@ def show_order_sampling():
             
             show_code_with_explanation(
                 "טרנספורם הופכי לדגימת זמני הזמנה",
-                "נשתמש בפונקציית ההתפלגות המצטברת ההופכית:",
                 inverse_transform_code
             )
         
@@ -440,7 +443,6 @@ def show_order_sampling():
             
             show_code_with_explanation(
                 "דגימת קבלה-דחייה לזמני הזמנה",
-                "נשתמש בפונקציית צפיפות הסתברות יעד:",
                 rejection_code
             )
         
@@ -448,21 +450,20 @@ def show_order_sampling():
             samples = sample_composition_order(n_samples)
             
             composition_code = '''def composition():
-        u1 = random.uniform(0, 1)
-        if 0 <= u1 < 0.5:
-            # Type A: Uniform between 3 and 4
-            x = random.uniform(3, 4)
-        elif 0.5 <= u1 < 0.75:
-            # Type B: Triangular between 4 and 6
-            x = random.triangular(4, 5, 6)
-        else:
-            # Type C: Fixed 10 minutes
-            x = 10
-        return x'''
+    u1 = random.uniform(0, 1)
+    if 0 <= u1 < 0.5:
+        # Type A: Uniform between 3 and 4
+        x = random.uniform(3, 4)
+    elif 0.5 <= u1 < 0.75:
+        # Type B: Triangular between 4 and 6
+        x = random.triangular(4, 5, 6)
+    else:
+        # Type C: Fixed 10 minutes
+        x = 10
+    return x'''
             
             show_code_with_explanation(
                 "שיטת הקומפוזיציה לזמני הזמנה",
-                "נשתמש בשילוב של התפלגויות:",
                 composition_code
             )
 
