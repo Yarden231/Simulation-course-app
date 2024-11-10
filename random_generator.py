@@ -448,32 +448,26 @@ def show_order_sampling():
     '''
         """, unsafe_allow_html=True)
 
-            rejection_code = "def rejection_sample():\n    while True:\n        y = 7 * random.uniform(0, 1) + 3\n        u = random.uniform(0, 1)\n        if u <= f(y) / 0.5:\n            return y" 
-            show_code_with_explanation(
-                "דגימת קבלה-דחייה לזמני הזמנה",
-                rejection_code
-            )
-        
+
         else:  # Composition
             samples = sample_composition_order(n_samples)
             
-            composition_code = '''def composition():
-    u1 = random.uniform(0, 1)
-    if 0 <= u1 < 0.5:
-        # Type A: Uniform between 3 and 4
-        x = random.uniform(3, 4)
-    elif 0.5 <= u1 < 0.75:
-        # Type B: Triangular between 4 and 6
-        x = random.triangular(4, 5, 6)
-    else:
-        # Type C: Fixed 10 minutes
-        x = 10
-    return x'''
-            
-            show_code_with_explanation(
-                "שיטת הקומפוזיציה לזמני הזמנה",
-                composition_code
-            )
+            st.markdown("""
+    ```python
+    def composition():
+        u1 = random.uniform(0, 1)
+        if 0 <= u1 < 0.5:
+            # Type A: Uniform between 3 and 4
+            x = random.uniform(3, 4)
+        elif 0.5 <= u1 < 0.75:
+            # Type B: Triangular between 4 and 6
+            x = random.triangular(4, 5, 6)
+        else:
+            # Type C: Fixed 10 minutes
+            x = 10
+        return x
+    ```
+    """)
 
 
 
