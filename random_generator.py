@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 
 def show_code_with_explanation(title,  code):
     # Display Hebrew title with RTL
-    st.markdown(f"<h3 style='text-align: right;'>{title}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: left;'>{title}</h3>", unsafe_allow_html=True)
     
     # Create a container div that forces LTR for code
     st.markdown("""
