@@ -445,7 +445,7 @@ def show_order_sampling():
             u = random.uniform(0, 1)
             if u <= f(y) / 0.5:
                 return y
-    '''
+    ```
         """, unsafe_allow_html=True)
 
 
