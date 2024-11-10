@@ -14,11 +14,42 @@ import plotly.graph_objects as go
 
 
 def load_css():
+    """
+    Loads the CSS file stored in `.streamlit/style.css` and applies it to the Streamlit app.
+
+    The CSS file is read and its contents are wrapped in a `<style>` tag. The
+    resulting string is then passed to `st.markdown` to be rendered in the app.
+
+    This is used to apply custom CSS styles to the app, such as setting the
+    direction of text to right-to-left (RTL) and configuring the appearance of
+    the Streamlit components to match the desired visual design.
+
+    See the `style.css` file for the actual CSS rules being applied.
+    """
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def show_introduction():
     # Title and main description
+    """
+    Displays the introduction section for the goodness-of-fit module in the Streamlit app.
+
+    This function presents a detailed description of distribution fitting in the context
+    of simulating the operations of a food truck. It provides background information on
+    the importance of accurately fitting distributions to model the arrival, preparation,
+    and processing times of orders. The introduction is displayed using styled HTML
+    components for an enhanced visual presentation.
+
+    The section is divided into multiple parts:
+    1. Orders: Details the types of customer orders and their respective distribution
+       types, impacting processing times.
+    2. Stochastic Cooking Times: Explains the normal distribution modeling of cooking
+       times for different meal sizes.
+    3. Arrival Times: Discusses the measurement and analysis of customer arrival times
+       to identify patterns and optimize resource planning.
+
+    Utilizes Streamlit's markdown feature with HTML styling to render the content.
+    """
     st.markdown("""
         <div class="custom-header rtl-content">
             <h1>התאמת התפלגות למודל 📉</h1>

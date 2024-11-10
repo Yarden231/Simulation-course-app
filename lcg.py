@@ -62,6 +62,19 @@ def create_animated_plots():
     return fig
 
 def show_lcg():
+    """
+    Demonstrates the Linear Congruential Generator (LCG) by generating and visualizing 
+    a sequence of pseudo-random numbers.
+
+    This function sets up a Streamlit interface to allow users to input parameters 
+    for the LCG: modulus, multiplier, increment, seed, number of values to generate, 
+    and delay between numbers. It then animates the generation of these numbers, 
+    updating a plot and displaying statistics such as mean, median, minimum, and maximum 
+    in real-time.
+
+    The page includes an explanation of the LCG algorithm and its equation, 
+    with inputs and explanations provided in Hebrew.
+    """
     set_ltr_sliders()
 
     st.markdown('<h2 style="text-align: right; direction: rtl;">Linear Congruential Generator (LCG)</h2>', unsafe_allow_html=True)

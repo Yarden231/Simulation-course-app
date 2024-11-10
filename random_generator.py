@@ -9,6 +9,17 @@ import plotly.graph_objects as go
 
 def show_code_with_explanation(title,  code):
     # Display Hebrew title with RTL
+    """
+    Display a code block with a title, forcing LTR for the code block
+    (so that Python code is displayed correctly even in an RTL context).
+
+    Parameters
+    ----------
+    title : str
+        The title to display above the code block
+    code : str
+        The Python code to display
+    """
     st.markdown(f"<h3 style='text-align: left;'>{title}</h3>", unsafe_allow_html=True)
     
     # Create a container div that forces LTR for code
@@ -60,6 +71,22 @@ def create_distribution_plot(x_data, y_data, hist_data=None, title="התפלגו
     return fig
 
 def show_sampling_methods():
+    """
+    Displays an interactive Streamlit interface for demonstrating different sampling methods.
+
+    Allows users to select from a dropdown menu which sampling method to display, and then
+    renders the corresponding method in the Streamlit app.
+
+    Currently supported methods:
+
+    - טרנספורם הופכי (Inverse Transform)
+    - Box-Muller
+    - קבלה-דחייה (Acceptance-Rejection)
+    - קומפוזיציה (Composition)
+
+    Each method is displayed with an interactive interface allowing users to specify
+    parameters and generate random samples from the corresponding distribution.
+    """
     st.markdown("""
         <h1 style='text-align: right; direction: rtl;'>שיטות דגימה</h1>
         <p style='text-align: right; direction: rtl;'>
@@ -83,6 +110,25 @@ def show_sampling_methods():
         show_composition()
 
 def show_inverse_transform():
+    """
+    Demonstrates the inverse transform sampling method for generating samples 
+    from an exponential distribution.
+
+    This function displays an interactive Streamlit interface allowing users to 
+    specify the rate parameter (λ) and the number of samples to generate. It 
+    uses the inverse transform method to generate random samples from an 
+    exponential distribution by applying the inverse of the cumulative 
+    distribution function (CDF) to uniformly distributed random variables.
+
+    An interactive plot is displayed showing the generated sample distribution 
+    and its probability density function (PDF).
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
     col1, col_space, col2 = st.columns([5,1,5])
 
     with col1:
@@ -115,6 +161,24 @@ def show_inverse_transform():
 
 def show_box_muller():
 
+    """
+    Demonstrates the Box-Muller method for generating samples from a normal distribution.
+
+    This function displays an interactive Streamlit interface allowing users to specify the mean (μ), 
+    standard deviation (σ), and number of samples to generate using the Box-Muller transform. 
+    It generates random samples from a standard normal distribution by transforming two 
+    independent uniform random variables, U_1 and U_2. The generated samples are then adjusted 
+    to match the specified mean and standard deviation.
+
+    An interactive plot is displayed showing the generated sample distribution and its 
+    probability density function (PDF).
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
     col1, col_space, col2 = st.columns([5,1,5])
     with col1:
         st.markdown("""
@@ -149,6 +213,20 @@ def show_box_muller():
 
 def show_acceptance_rejection():
 
+    """
+    Display a Streamlit app demonstrating the Acceptance-Rejection method for sampling from a bimodal distribution.
+
+    The bimodal distribution is a mixture of two normal distributions with means -2 and 2, and standard deviations 0.5 and 0.5 respectively.
+
+    The app allows the user to adjust the number of samples to generate, and displays the resulting samples in a histogram alongside the target PDF.
+
+    The Acceptance-Rejection method is a technique for sampling from a target distribution by generating samples from a proposal distribution and accepting them with a probability proportional to the ratio of the target PDF to the proposal PDF.
+
+    The proposal distribution used in this example is a uniform distribution over the range [-4, 4]. The maximum value of the target PDF is used as the acceptance threshold.
+
+    The app also displays the mathematical expression for the target PDF and the proposal PDF, as well as the acceptance probability expression.
+    """
+    
     col1, col_space, col2 = st.columns([5,1,5])
     with col1:
         st.markdown("""
@@ -190,6 +268,19 @@ def show_acceptance_rejection():
 
 def show_composition():
 
+    """
+    Displays a composition method example, where we generate samples from a mixture of two normal distributions with different means.
+
+    The example shows how to use the composition method to generate samples from a target distribution that is a mixture of two normal distributions.
+
+    The user can adjust the weight of the first distribution using the slider, and the number of samples to generate.
+
+    The resulting plot shows the target distribution (blue) and the generated samples (orange).
+
+    The LaTeX equation for the target distribution is displayed below the plot.
+
+    """
+    
     col1, col_space, col2 = st.columns([5,0.5,5])
     with col1:
         st.markdown("""
@@ -227,6 +318,25 @@ def show_composition():
 
 
 def show_order_sampling():
+
+    """
+    Show a demonstration of order sampling.
+
+    This function generates a page with explanation, theory, and implementation of order sampling.
+
+    The user can select one of three methods for sampling from a mixed distribution:
+
+        1. Inverse Transform Sampling
+        2. Rejection Sampling
+        3. Composition Sampling
+
+    The user can also select the number of samples to generate.
+
+    The resulting samples are displayed as a histogram with the theoretical PDF overlaid.
+
+    The page also displays some statistical measures of the samples, including mean, median, standard deviation, range, skewness, and kurtosis.
+
+    """
 
     st.markdown("""
         <div style='text-align: center;'>
@@ -538,6 +648,24 @@ def show_order_sampling():
             """, unsafe_allow_html=True)
 
 def sample_inverse_transform_order(n):
+    """
+    Generates n random samples using inverse transform sampling from a composite distribution.
+    
+    The distribution consists of:
+    - Uniform between 3 and 4 for 50% of the probability mass
+    - Triangular between 4 and 6 for 25% of the probability mass
+    - A fixed value of 10 for 25% of the probability mass
+
+    Parameters
+    ----------
+    n : int
+        The number of samples to generate.
+
+    Returns
+    -------
+    numpy.ndarray
+        An array of n random samples from the composite distribution.
+    """
     samples = []
     for _ in range(n):
         u = np.random.uniform(0, 1)
@@ -553,6 +681,20 @@ def sample_inverse_transform_order(n):
     return np.array(samples)
 
 def sample_rejection_order(n):
+    """
+    Generates n random samples from a rejection sampling distribution of three uniform distributions: U[3,4], U[4,5], and U[5,6],
+    with weights 0.5, 0.25, and 0.25 respectively, and a point mass at 10 with weight 0.25.
+
+    Parameters
+    ----------
+    n : int
+        The number of samples to generate.
+
+    Returns
+    -------
+    samples : numpy.array
+        An array of n random samples from the rejection sampling distribution.
+    """
     def f(x):
         if 3 <= x < 4:
             return 0.5
@@ -574,6 +716,20 @@ def sample_rejection_order(n):
     return np.array(samples)
 
 def sample_composition_order(n):
+    """
+    Generates n random samples from a composition distribution of three uniform distributions: U[3,4], U[4,5], and U[5,6],
+    with weights 0.5, 0.25, and 0.25 respectively, and a point mass at 10 with weight 0.25.
+
+    Parameters
+    ----------
+    n : int
+        The number of samples to generate.
+
+    Returns
+    -------
+    samples : numpy array
+        The generated samples.
+    """
     samples = []
     for _ in range(n):
         u1 = np.random.uniform(0, 1)
@@ -589,6 +745,24 @@ def sample_composition_order(n):
 
 def show_rng_demo():
         # Apply custom CSS
+    """
+    Shows a demo of random number generators and sampling methods.
+
+    This function first applies custom CSS to the Streamlit app, then sets up
+    the layout of the page. It then explains the process of generating random
+    numbers and sampling from distributions, and provides examples of different
+    methods for doing so.
+
+    The page is divided into three sections: the first explains how to generate
+    random numbers between 0 and 1, the second explains how to sample from
+    different distributions, and the third shows a practical example of sampling
+    arrival times for a food truck simulation.
+
+    The user can select which method to use for each section, and the page will
+    display a graph of the results.
+
+    :return: None
+    """
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 

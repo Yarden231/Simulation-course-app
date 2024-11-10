@@ -499,6 +499,16 @@ def display_statistics(samples):
 
 def run_inverse_transform_simulation(lambda_param, num_samples):
     # Simulate exponential distribution using inverse transform
+    """
+    Simulate exponential distribution using inverse transform sampling.
+
+    Parameters:
+    lambda_param (float): The rate parameter of the exponential distribution.
+    num_samples (int): The number of samples to generate.
+
+    Returns:
+    numpy.array: An array of samples drawn from the exponential distribution.
+    """
     u = np.random.uniform(0, 1, num_samples)
     samples = -np.log(1-u) / lambda_param
     return samples
@@ -676,6 +686,17 @@ def display_statistics(samples):
 
 #good version of display_random_number_generators
 def display_random_number_generators():
+    """
+    Displays an interactive Streamlit interface for demonstrating random number generators.
+
+    Currently supported generators:
+
+    - LCG (Linear Congruential Generator)
+    - LFSR (Linear Feedback Shift Register)
+
+    For each generator, the interface allows users to specify the number of samples to generate
+    and displays the generated numbers in a table.
+    """
     create_styled_card(
         "אלגוריתמים ליצירת מספרים פסאודו-אקראיים 🎲",
         """
@@ -737,6 +758,26 @@ def display_generator_state(generator_type, last_step, iteration):
 def display_interactive_sampling():
 
         # Create three columns for customer types
+    """
+    Interactive sampling demonstration using either Linear Congruential Generator (LCG) or Linear Feedback Shift Register (LFSR).
+    
+    This function creates a Streamlit app with a user interface to select the generator type, sample size, and iteration number.
+    It displays the current state of the generator, the calculation of the next state, and the generated random number.
+    The app also displays a histogram and trace plot of the generated random numbers, as well as a statistical summary of the sample.
+    
+    Parameters
+    ----------
+    None
+    
+    Returns
+    -------
+    None
+    
+    Examples
+    --------
+    >>> display_interactive_sampling()
+    """
+    
     col1, col2 = st.columns(2)
 
     with col1:
@@ -920,6 +961,21 @@ def display_interactive_sampling():
             )
 
 def display_random_number_generators():
+    """
+    Displays a Streamlit page with two interactive demonstrations of random number
+    generation algorithms: the Linear Congruential Generator (LCG) and the
+    Xorshift algorithm.
+
+    The page displays a brief explanation of each algorithm, followed by an
+    interactive interface allowing users to specify parameters and generate
+    random samples from the corresponding distribution.
+
+    The resulting samples are displayed as a histogram with the theoretical PDF
+    overlaid.
+
+    The page also displays some statistical measures of the samples, including
+    mean, median, standard deviation, range, skewness, and kurtosis.
+    """
     create_styled_card(
         "אלגוריתמים ליצירת מספרים פסאודו-אקראיים 🎲",
         """
