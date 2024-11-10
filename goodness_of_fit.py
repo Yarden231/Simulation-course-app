@@ -442,7 +442,7 @@ def estimate_parameters(samples, distribution):
     st.markdown("""
     <div class="custom-card rtl-content">
         <h1 class="section-header" style="color: #8B0000;">אמידת פרמטרים לסימולציה</h1>
-        <p>כדי לייצר זמני הכנה מציאותיים בסימולציה, נבצע אמידה של הפרמטרים המרכזיים של ההתפלגות הנבחרת ונחשב רווחי בר-סמך לכל אחד מהם:</p>
+        <p>כדי לייצר זמני הגעה מציאותיים בסימולציה, נבצע אמידה של הפרמטרים המרכזיים של ההתפלגות הנבחרת ונחשב רווחי בר-סמך לכל אחד מהם:</p>
     </div>
     """, unsafe_allow_html=True)
         
