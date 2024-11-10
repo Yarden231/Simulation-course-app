@@ -176,7 +176,7 @@ def show_story():
         '>פרויקט הסימולציה של אוצ׳ו לוקו</h1>
     """, unsafe_allow_html=True)
 
-    col_r,col_m,col_l = st.columns([2,0.5,5])
+    col_r,col_m,col_l = st.columns([2,0.5,3])
 
 
 

@@ -7,6 +7,25 @@ from plotly.subplots import make_subplots
 import scipy.stats as stats
 import plotly.graph_objects as go
 
+def show_code_with_explanation(title, description, code):
+    """Helper function to display code with consistent RTL/LTR handling"""
+    # RTL section for Hebrew title and description
+    st.markdown(f"""
+        <div style='text-align: right; direction: rtl;'>
+            <h3>{title}</h3>
+            <p>{description}</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # LTR section for code with proper styling
+    st.markdown("""
+        <div style='direction: ltr; text-align: left;'>
+    """, unsafe_allow_html=True)
+    
+    st.code(code, language='python')
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
 def create_distribution_plot(x_data, y_data, hist_data=None, title="התפלגות", bins=100):
     """Create a plot with both PDF and histogram if provided."""
     fig = make_subplots(rows=1, cols=1)
@@ -68,8 +87,6 @@ def show_inverse_transform():
                 <h2>שיטת הטרנספורם ההופכי</h2>
                 <p>שיטת הטרנספורם ההופכי היא שיטה ליצירת דגימות מהתפלגות כלשהי על סמך פונקציית ההתפלגות המצטברת (CDF) ההופכית . שיטה זו שימושית במיוחד עבור התפלגויות בהן יש ביטוי אנליטי לפונקציה המצטברת ההפוכה.</p>
                 <p>מטרה: עבור כל התפלגות רציפה, נוכל ליצור דגימה אקראית התואמת את ההתפלגות הזו על ידי הפעלת פונקציית ה-CDF ההופכית על משתנה אקראי אחיד  U  בטווח [0, 1].</p>
-                <h3>דוגמה: דגימה מהתפלגות מעריכית</h3>
-                <p>ההתפלגות המעריכית מתארת אירועים שמתרחשים במרווחים של זמן, כמו זמני המתנה בין אירועים. פונקציית ה-CDF ההופכית של ההתפלגות המעריכית מאפשרת לדגום ערכים התואמים את צורת ההתפלגות.</p>
             </div>
         """, unsafe_allow_html=True)
     
@@ -165,11 +182,11 @@ def show_acceptance_rejection():
         fig = create_distribution_plot(x_range, pdf, samples, "התפלגות בי-מודלית")
         st.plotly_chart(fig, use_container_width=True)
         
-        st.latex(r"X \sim U(-4, 4)")
+        st.latex(r"f(x) = p \cdot \mathcal{N}(x; \mu_1, \sigma_1^2) + (1-p) \cdot \mathcal{N}(x; \mu_2, \sigma_2^2)")
 
 def show_composition():
 
-    col1, col_space, col2 = st.columns([5,1,5])
+    col1, col_space, col2 = st.columns([5,0.5,5])
     with col1:
         st.markdown("""
             <div style='text-align: right; direction: rtl;'>
@@ -202,6 +219,8 @@ def show_composition():
         st.plotly_chart(fig, use_container_width=True)
         
         st.latex(r"f(x) = p \cdot \mathcal{N}(x; \mu_1, \sigma_1^2) + (1-p) \cdot \mathcal{N}(x; \mu_2, \sigma_2^2)")
+
+
 
 def show_order_sampling():
 
@@ -375,16 +394,11 @@ def show_order_sampling():
         )
         n_samples = st.slider('מספר דגימות', min_value=10000, max_value=100000, value=10000, step=1000, key='n_samples_order')
 
+
         if sampling_method == 'טרנספורם הופכי':
             samples = sample_inverse_transform_order(n_samples)
-            st.markdown("""
-                <div style='text-align: right; direction: rtl;'>
-                    <h3>טרנספורם הופכי לדגימת זמני הזמנה</h3>
-                    <p>נשתמש בפונקציית ההתפלגות המצטברת ההופכית:</p>
-                </div>
-            """, unsafe_allow_html=True)
             
-            code = '''def transpose():
+            inverse_transform_code = '''def transpose():
         u = random.uniform(0, 1)
         if 0 <= u < 0.5:
             x = 2 * u + 3
@@ -395,18 +409,17 @@ def show_order_sampling():
         elif 0.75 <= u <= 1:
             x = 10
         return x'''
-            st.code(code, language='python')
+            
+            show_code_with_explanation(
+                "טרנספורם הופכי לדגימת זמני הזמנה",
+                "נשתמש בפונקציית ההתפלגות המצטברת ההופכית:",
+                inverse_transform_code
+            )
         
         elif sampling_method == 'קבלה-דחייה':
             samples = sample_rejection_order(n_samples)
-            st.markdown("""
-                <div style='text-align: right; direction: rtl;'>
-                    <h3>דגימת קבלה-דחייה לזמני הזמנה</h3>
-                    <p>נשתמש בפונקציית צפיפות הסתברות יעד:</p>
-                </div>
-            """, unsafe_allow_html=True)
             
-            code = '''def f(x):
+            rejection_code = '''def f(x):
         if 3 <= x < 4:
             return 0.5
         elif 4 <= x < 5:
@@ -424,19 +437,17 @@ def show_order_sampling():
             u = random.uniform(0, 1)
             if u <= f(y) / 0.5:
                 return y'''
-                
-            st.code(code, language='python')
+            
+            show_code_with_explanation(
+                "דגימת קבלה-דחייה לזמני הזמנה",
+                "נשתמש בפונקציית צפיפות הסתברות יעד:",
+                rejection_code
+            )
         
         else:  # Composition
             samples = sample_composition_order(n_samples)
-            st.markdown("""
-                <div style='text-align: right; direction: rtl;'>
-                    <h3>שיטת הקומפוזיציה לזמני הזמנה</h3>
-                    <p>נשתמש בשילוב של התפלגויות:</p>
-                </div>
-            """, unsafe_allow_html=True)
             
-            code = '''def composition():
+            composition_code = '''def composition():
         u1 = random.uniform(0, 1)
         if 0 <= u1 < 0.5:
             # Type A: Uniform between 3 and 4
@@ -448,8 +459,16 @@ def show_order_sampling():
             # Type C: Fixed 10 minutes
             x = 10
         return x'''
-                
-            st.code(code, language='python')
+            
+            show_code_with_explanation(
+                "שיטת הקומפוזיציה לזמני הזמנה",
+                "נשתמש בשילוב של התפלגויות:",
+                composition_code
+            )
+
+
+
+
 
         # Create empirical PDF and theoretical PDF
         x_range = np.linspace(2, 11, 100)

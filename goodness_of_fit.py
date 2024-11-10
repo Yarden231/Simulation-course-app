@@ -11,6 +11,8 @@ import numpy as np
 import scipy.stats as stats
 import plotly.graph_objects as go
 
+
+
 def load_css():
     with open('.streamlit/style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -983,6 +985,7 @@ def create_styled_card(title, content, border_color="#453232"):
         """,
         unsafe_allow_html=True
     )
+
 
 
 def show():
