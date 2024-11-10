@@ -403,7 +403,7 @@ def show_order_sampling():
             samples = sample_inverse_transform_order(n_samples)
             
             # Hebrew title
-            st.markdown("<h3 style='text-align: right;'>טרנספורם הופכי לדגימת זמני הזמנה</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: left;'>טרנספורם הופכי לדגימת זמני הזמנה</h3>", unsafe_allow_html=True)
 
             # Code display using markdown code block
             st.markdown("""
@@ -425,7 +425,9 @@ def show_order_sampling():
         elif sampling_method == 'קבלה-דחייה':
             samples = sample_rejection_order(n_samples)
             
-            rejection_code = '''def f(x):
+            st.markdown("""
+        ```python
+    def f(x):
         if 3 <= x < 4:
             return 0.5
         elif 4 <= x < 5:
@@ -442,8 +444,11 @@ def show_order_sampling():
             y = 7 * random.uniform(0, 1) + 3
             u = random.uniform(0, 1)
             if u <= f(y) / 0.5:
-                return y'''
-            
+                return y
+    '''
+        """, unsafe_allow_html=True)
+
+            rejection_code = "def rejection_sample():\n    while True:\n        y = 7 * random.uniform(0, 1) + 3\n        u = random.uniform(0, 1)\n        if u <= f(y) / 0.5:\n            return y" 
             show_code_with_explanation(
                 "דגימת קבלה-דחייה לזמני הזמנה",
                 rejection_code
