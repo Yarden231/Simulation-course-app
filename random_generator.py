@@ -6,7 +6,10 @@ import numpy as np
 from plotly.subplots import make_subplots
 import scipy.stats as stats
 import plotly.graph_objects as go
-
+import numpy as np
+from scipy import stats
+import random
+import math
 def show_code_with_explanation(title,  code):
     # Display Hebrew title with RTL
     """
@@ -315,8 +318,6 @@ def show_composition():
         
         st.latex(r"f(x) = p \cdot \mathcal{N}(x; \mu_1, \sigma_1^2) + (1-p) \cdot \mathcal{N}(x; \mu_2, \sigma_2^2)")
 
-
-
 def show_order_sampling():
 
     """
@@ -368,7 +369,7 @@ def show_order_sampling():
                 <ul>
                     <li>חלק אחיד בין 3-4 דקות עם גובה 0.5 (50% מהלקוחות)</li>
                     <li>חלק משולש בין 4-6 דקות עם שיא ב-5 דקות (25% מהלקוחות)</li>
-                    <li>נקודת מסה ב-10 דקות המייצגת 25% מהלקוחות</li>
+                    <li>חלק אחיד בין 1-2  המייצג 25% מהלקוחות</li>
                 </ul>
                 <p>להלן צורת ההתפלגות התיאורטית:</p>
             </div>
@@ -378,6 +379,9 @@ def show_order_sampling():
         def theoretical_pdf(x):
             if isinstance(x, np.ndarray):
                 pdf = np.zeros_like(x, dtype=float)
+                                # Point mass at 10 minutes
+                mask4 = (1 <= x) & (x < 2)
+                pdf[mask4] = 0.25
                 # Uniform part (3-4 minutes)
                 mask1 = (3 <= x) & (x < 4)
                 pdf[mask1] = 0.5
@@ -388,10 +392,6 @@ def show_order_sampling():
                 pdf[mask2] = (x[mask2] - 4) / 4  # Rising part of triangle
                 pdf[mask3] = (6 - x[mask3]) / 4  # Falling part of triangle
                 
-                # Point mass at 10 minutes
-                mask4 = np.isclose(x, 10)
-                pdf[mask4] = 0.25
-                
                 return pdf
             else:
                 if 3 <= x < 4:
@@ -400,13 +400,13 @@ def show_order_sampling():
                     return (x - 4) / 4
                 elif 5 <= x < 6:
                     return (6 - x) / 4
-                elif x == 10:
+                elif 1 <= x < 2:
                     return 0.25
                 else:
                     return 0
 
         # Create x range for plot
-        x_range = np.linspace(2, 11, 1000)
+        x_range = np.linspace(0, 8, 1000)
         pdf_values = theoretical_pdf(x_range)
 
         # Create plot using plotly
@@ -423,20 +423,8 @@ def show_order_sampling():
             )
         )
         
-        # Add point mass at x=10
-        fig.add_trace(
-            go.Scatter(
-                x=[10],
-                y=[0.25],
-                mode='markers',
-                name='נקודת מסה (10 דקות)',
-                marker=dict(
-                    color='red',
-                    size=10,
-                    symbol='diamond'
-                )
-            )
-        )
+
+
 
         # Update layout
         fig.update_layout(
@@ -470,7 +458,7 @@ def show_order_sampling():
                     ay=-40
                 ),
                 dict(
-                    x=10,
+                    x=1.5,
                     y=0.3,
                     xref="x",
                     yref="y",
@@ -509,6 +497,7 @@ def show_order_sampling():
         n_samples = st.slider('מספר דגימות', min_value=10000, max_value=100000, value=10000, step=1000, key='n_samples_order')
 
 
+        # First method - Inverse Transform
         if sampling_method == 'טרנספורם הופכי':
             samples = sample_inverse_transform_order(n_samples)
             
@@ -517,99 +506,81 @@ def show_order_sampling():
 
             # Code display using markdown code block
             st.markdown("""
-    ```python
-    def transpose():
-        u = random.uniform(0, 1)
-        if 0 <= u < 0.5:
-            x = 2 * u + 3
-        elif 0.5 <= u < 0.625:
-            x = (8 + math.sqrt(32 * u - 16)) / 2
-        elif 0.625 <= u < 0.75:
-            x = (12 + math.sqrt(24 - 32 * u)) / 2
-        elif 0.75 <= u <= 1:
-            x = 10
-        return x
-    ```
+        ```python
+        def inverse_transform():
+            u = random.uniform(0, 1)
+            if u < 0.25:  # First uniform part (1-2 minutes)
+                x = u * 4 + 1  # Maps [0, 0.25] to [1, 2]
+            elif u < 0.75:  # Second uniform part (3-4 minutes)
+                x = (u - 0.25) * 2 + 3  # Maps [0.25, 0.75] to [3, 4]
+            else:  # Triangular part (4-6 minutes)
+                if u < 0.875:  # Rising part of triangle
+                    x = 4 + 2 * math.sqrt((u - 0.75) * 2)  # Maps [0.75, 0.875] to [4, 5]
+                else:  # Falling part of triangle
+                    x = 6 - 2 * math.sqrt((1 - u) * 2)  # Maps [0.875, 1] to [5, 6]
+            return x
+        ```
             """, unsafe_allow_html=True)
 
+        # Second method - Rejection Sampling
         elif sampling_method == 'קבלה-דחייה':
             samples = sample_rejection_order(n_samples)
             
             st.markdown("""
         ```python
-    def f(x):
-        if 3 <= x < 4:
-            return 0.5
-        elif 4 <= x < 5:
-            return (x - 4) / 4
-        elif 5 <= x < 6:
-            return (6 - x) / 4
-        elif x == 10:
-            return 0.25
+        def f(x):
+            if 1 <= x < 2:
+                return 0.25  # First uniform part
+            elif 3 <= x < 4:
+                return 0.5   # Second uniform part
+            elif 4 <= x < 5:
+                return 0.25 * (x - 4)  # Rising part of triangle
+            elif 5 <= x < 6:
+                return 0.25 * (6 - x)  # Falling part of triangle
+            else:
+                return 0
+
+        def rejection_sample():
+            while True:
+                y = random.uniform(1, 6)  # Generate from covering distribution
+                u = random.uniform(0, 1)
+                if u <= f(y) / 0.5:  # 0.5 is the maximum of f(x)
+                    return y
+        ```
+            """, unsafe_allow_html=True)
+
+        # Third method - Composition
         else:
-            return 0
-
-    def rejection_sample():
-        while True:
-            y = 7 * random.uniform(0, 1) + 3
-            u = random.uniform(0, 1)
-            if u <= f(y) / 0.5:
-                return y
-    ```
-        """, unsafe_allow_html=True)
-
-
-        else:  # Composition
             samples = sample_composition_order(n_samples)
             
             st.markdown("""
-    ```python
-    def composition():
-        u1 = random.uniform(0, 1)
-        if 0 <= u1 < 0.5:
-            # Type A: Uniform between 3 and 4
-            x = random.uniform(3, 4)
-        elif 0.5 <= u1 < 0.75:
-            # Type B: Triangular between 4 and 6
-            x = random.triangular(4, 5, 6)
-        else:
-            # Type C: Fixed 10 minutes
-            x = 10
-        return x
-    ```
-    """)
+            ```python
+            def composition():
+                u = random.uniform(0, 1)
+                if u < 0.25:  
+                    # First uniform part (1-2 minutes)
+                    x = random.uniform(1, 2)
+                elif u < 0.75:  
+                    # Second uniform part (3-4 minutes)
+                    x = random.uniform(3, 4)
+                else:  
+                    # Triangular part (4-6 minutes)
+                    v = random.uniform(0, 1)
+                    if v < 0.5:  # Rising part
+                        x = 4 + math.sqrt(2 * v)  # Maps [0, 0.5] to [4, 5]
+                    else:  # Falling part
+                        x = 6 - math.sqrt(2 * (1 - v))  # Maps [0.5, 1] to [5, 6]
+                return x
+            ```
+            """)
 
 
 
 
 
         # Create empirical PDF and theoretical PDF
-        x_range = np.linspace(2, 11, 100)
+        x_range = np.linspace(0, 8, 100)
         
-        def theoretical_pdf(x):
-            if isinstance(x, np.ndarray):
-                pdf = np.zeros_like(x, dtype=float)
-                mask1 = (3 <= x) & (x < 4)
-                mask2 = (4 <= x) & (x < 5)
-                mask3 = (5 <= x) & (x < 6)
-                mask4 = np.isclose(x, 10)
-                
-                pdf[mask1] = 0.5
-                pdf[mask2] = (x[mask2] - 4) / 4
-                pdf[mask3] = (6 - x[mask3]) / 4
-                pdf[mask4] = 0.25
-                return pdf
-            else:
-                if 3 <= x < 4:
-                    return 0.5
-                elif 4 <= x < 5:
-                    return (x - 4) / 4
-                elif 5 <= x < 6:
-                    return (6 - x) / 4
-                elif x == 10:
-                    return 0.25
-                else:
-                    return 0
 
         pdf = theoretical_pdf(x_range)
         
@@ -647,102 +618,150 @@ def show_order_sampling():
                 </div>
             """, unsafe_allow_html=True)
 
-def sample_inverse_transform_order(n):
+
+def sample_inverse_transform_order(n_samples):
     """
-    Generates n random samples using inverse transform sampling from a composite distribution.
-    
-    The distribution consists of:
-    - Uniform between 3 and 4 for 50% of the probability mass
-    - Triangular between 4 and 6 for 25% of the probability mass
-    - A fixed value of 10 for 25% of the probability mass
-
-    Parameters
-    ----------
-    n : int
-        The number of samples to generate.
-
-    Returns
-    -------
-    numpy.ndarray
-        An array of n random samples from the composite distribution.
+    Inverse transform sampling for the mixed distribution
     """
     samples = []
-    for _ in range(n):
-        u = np.random.uniform(0, 1)
-        if 0 <= u < 0.5:
-            x = 2 * u + 3
-        elif 0.5 <= u < 0.625:
-            x = (8 + np.sqrt(32 * u - 16)) / 2
-        elif 0.625 <= u < 0.75:
-            x = (12 - np.sqrt(24 - 32 * u)) / 2
-        elif 0.75 <= u <= 1:
-            x = 10
+    for _ in range(n_samples):
+        u = random.uniform(0, 1)
+        if u < 0.25:  # First uniform part (1-2 minutes)
+            x = u * 4 + 1  # Maps [0, 0.25] to [1, 2]
+        elif u < 0.75:  # Second uniform part (3-4 minutes)
+            x = (u - 0.25) * 2 + 3  # Maps [0.25, 0.75] to [3, 4]
+        else:  # Triangular part (4-6 minutes)
+            if u < 0.875:  # Rising part of triangle
+                x = 4 + 2 * math.sqrt((u - 0.75) * 2)  # Maps [0.75, 0.875] to [4, 5]
+            else:  # Falling part of triangle
+                x = 6 - 2 * math.sqrt((1 - u) * 2)  # Maps [0.875, 1] to [5, 6]
         samples.append(x)
     return np.array(samples)
 
-def sample_rejection_order(n):
+def sample_rejection_order(n_samples):
     """
-    Generates n random samples from a rejection sampling distribution of three uniform distributions: U[3,4], U[4,5], and U[5,6],
-    with weights 0.5, 0.25, and 0.25 respectively, and a point mass at 10 with weight 0.25.
-
-    Parameters
-    ----------
-    n : int
-        The number of samples to generate.
-
-    Returns
-    -------
-    samples : numpy.array
-        An array of n random samples from the rejection sampling distribution.
+    Rejection sampling for the mixed distribution
     """
-    def f(x):
-        if 3 <= x < 4:
-            return 0.5
-        elif 4 <= x < 5:
-            return (x - 4) / 4
-        elif 5 <= x < 6:
-            return (6 - x) / 4
-        elif 9.9 <= x < 10.1:
-            return 0.25
-        else:
-            return 0
-
     samples = []
-    while len(samples) < n:
-        y = 7 * np.random.uniform(0, 1) + 3
-        u = np.random.uniform(0, 1)
-        if u <= f(y) / 0.5:
+    while len(samples) < n_samples:
+        y = random.uniform(1, 6)  # Generate from covering distribution
+        u = random.uniform(0, 1)
+        # Calculate target PDF value
+        if 1 <= y < 2:
+            f_y = 0.25
+        elif 3 <= y < 4:
+            f_y = 0.5
+        elif 4 <= y < 5:
+            f_y = 0.25 * (y - 4)  # Rising part of triangle
+        elif 5 <= y < 6:
+            f_y = 0.25 * (6 - y)  # Falling part of triangle
+        else:
+            f_y = 0
+        
+        # Maximum value of PDF is 0.5
+        if u <= f_y / 0.5:
             samples.append(y)
     return np.array(samples)
 
-def sample_composition_order(n):
+def sample_composition_order(n_samples):
     """
-    Generates n random samples from a composition distribution of three uniform distributions: U[3,4], U[4,5], and U[5,6],
-    with weights 0.5, 0.25, and 0.25 respectively, and a point mass at 10 with weight 0.25.
-
-    Parameters
-    ----------
-    n : int
-        The number of samples to generate.
-
-    Returns
-    -------
-    samples : numpy array
-        The generated samples.
+    Composition sampling for the mixed distribution
     """
+    x = 0.0
     samples = []
-    for _ in range(n):
-        u1 = np.random.uniform(0, 1)
-        if 0 <= u1 < 0.5:
-            x = np.random.uniform(3, 4)
-        elif 0.5 <= u1 < 0.75:
-            x = np.random.triangular(4, 5, 6)
-        else:
-            x = 10
+    for _ in range(n_samples):
+        u = random.uniform(0, 1)
+        if u < 0.25:  
+            # First uniform part (1-2 minutes)
+            x = random.uniform(1, 2)
+        elif u < 0.75:  
+            # Second uniform part (3-4 minutes)
+            x = random.uniform(3, 4)
+        else:  
+            # Triangular part (4-6 minutes)
+            v = random.uniform(0, 1)
+            if v < 0.5:  # Rising part
+                x = 4 + math.sqrt(2 * v)  # Maps [0, 0.5] to [4, 5]
+            else:  # Falling part
+                x = 6 - math.sqrt(2 * (1 - v))  # Maps [0.5, 1] to [5, 6]
         samples.append(x)
+    return samples
 
-    return np.array(samples)
+def create_distribution_plot(x_range, pdf, samples, title):
+    """
+    Create a distribution plot comparing theoretical and empirical distributions
+    """
+    fig = go.Figure()
+    
+    # Add theoretical PDF
+    fig.add_trace(
+        go.Scatter(
+            x=x_range,
+            y=pdf,
+            mode='lines',
+            name='התפלגות תיאורטית',
+            line=dict(color='blue', width=2)
+        )
+    )
+    
+    # Add histogram of samples
+    fig.add_trace(
+        go.Histogram(
+            x=samples,
+            name='דגימות',
+            nbinsx=50,
+            histnorm='probability density',
+            opacity=0.7
+        )
+    )
+    
+    # Update layout
+    fig.update_layout(
+        title=title,
+        xaxis_title='זמן (דקות)',
+        yaxis_title='צפיפות',
+        height=400,
+        showlegend=True,
+        title_x=0.5,
+        bargap=0.1
+    )
+    
+    return fig
 
+def theoretical_pdf(x):
+    """
+    Calculate theoretical PDF value for the mixed distribution
+    """
+    if isinstance(x, np.ndarray):
+        pdf = np.zeros_like(x, dtype=float)
+        
+        # First uniform part (1-2 minutes)
+        mask1 = (1 <= x) & (x < 2)
+        pdf[mask1] = 0.25
+        
+        # Second uniform part (3-4 minutes)
+        mask2 = (3 <= x) & (x < 4)
+        pdf[mask2] = 0.5
+        
+        # Triangular part (4-6 minutes)
+        mask3 = (4 <= x) & (x < 5)
+        mask4 = (5 <= x) & (x < 6)
+        pdf[mask3] = 0.25 * (x[mask3] - 4)  # Rising part
+        pdf[mask4] = 0.25 * (6 - x[mask4])  # Falling part
+        
+        return pdf
+    else:
+        if 1 <= x < 2:
+            return 0.25
+        elif 3 <= x < 4:
+            return 0.5
+        elif 4 <= x < 5:
+            return 0.25 * (x - 4)
+        elif 5 <= x < 6:
+            return 0.25 * (6 - x)
+        else:
+            return 0
+        
 def show_rng_demo():
         # Apply custom CSS
     """

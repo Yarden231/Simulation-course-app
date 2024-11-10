@@ -76,98 +76,159 @@ def show_introduction():
     """, unsafe_allow_html=True)
 
 
-        # Create tabs for different RNG methods
-    tab1, tab2 = st.columns(2)
     
-    with tab1:
-            
-        # Customer Types Section
+    # Create columns for the two main sections with proper spacing
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Orders Section
         st.markdown("""
-            <div style= 'background-color: #2D2D2D;padding: 15px; border-radius: 5px; height: 100%;'>
-                <div class="custom-card rtl-content">
-                    <h3 class="section-header">1. הזמנות</h3>
-                    <p>הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.</p>
-                </div>
+            <div style='
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #453232;
+                margin-bottom: 20px;
+                min-height: 150px;
+            '>
+                <h3 style='
+                    color: #FFFFFF;
+                    font-size: 1.2rem;
+                    margin-bottom: 15px;
+                    text-align: right;
+                '>1. הזמנות</h3>
+                <p style='
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                    margin-bottom: 20px;
+                '>
+                    הזמנות שונות מתקבלות מלקוחות בעלי צרכים ודחיפויות מגוונות, מה שמשפיע ישירות על זמני עיבוד ההזמנות. הגדרת סוגי הלקוחות ותיאור ההתפלגויות לכל סוג מסייעים לדייק את חיזוי זמני השירות והעיבוד בסימולציה.
+                </p>
             </div>
         """, unsafe_allow_html=True)
 
-        # Create three columns for customer types
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
+        # Create three sub-columns for customer types
+        type_cols = st.columns(3)
+        
+        with type_cols[0]:
             st.markdown("""
-                    <h4 style="text-align: center; margin-bottom: 15px;">סוג א'</h4>
-                    <div style="text-align: center; color: #CCCCCC;">
-                        <p style="margin-bottom: 10px;">50% מהלקוחות</p>
-                        <p>אחיד (3-4 דקות)</p>
-                        <p class="highlight">המהיר ביותר</p>
+                <div style='
+                    background-color: #1E1E1E;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    min-height: 180px;
+                '>
+                    <h4 style='color: #FFFFFF; margin-bottom: 10px;'>סוג א׳</h4>
+                    <p style='color: #CCCCCC; margin-bottom: 5px;'>50% מהלקוחות</p>
+                    <p style='color: #FFC107; margin-bottom: 5px;'>אחיד (3-4 דקות)</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with type_cols[1]:
+            st.markdown("""
+                <div style='
+                    background-color: #1E1E1E;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    min-height: 180px;
+                '>
+                    <h4 style='color: #FFFFFF; margin-bottom: 10px;'>סוג ב׳</h4>
+                    <p style='color: #CCCCCC; margin-bottom: 5px;'>25% מהלקוחות</p>
+                    <p style='color: #F44336; margin-bottom: 5px;'>משולש (4-6 דקות)</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with type_cols[2]:
+            st.markdown("""
+                <div style='
+                    background-color: #1E1E1E;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    min-height: 180px;
+                '>
+                    <h4 style='color: #FFFFFF; margin-bottom: 10px;'>סוג ג׳</h4>
+                    <p style='color: #CCCCCC; margin-bottom: 5px;'>25% מהלקוחות</p>
+                    <p style='color: #4CAF50; margin-bottom: 5px;'>אחיד (1-2 דקות)</p>
                 </div>
             """, unsafe_allow_html=True)
 
-        with col2:
-            st.markdown("""
-                    <h4 style=" text-align: center; margin-bottom: 15px;">סוג ב'</h4>
-                    <div style="text-align: center; color: #CCCCCC;">
-                        <p style="margin-bottom: 10px;">25% מהלקוחות</p>
-                        <p>משולש (4-6 דקות)</p>
-                        <p class="highlight">בינוני</p>
-                </div>
-            """, unsafe_allow_html=True)
-
-        with col3:
-            st.markdown("""
-                    <h4 style=" text-align: center; margin-bottom: 15px;">סוג ג'</h4>
-                    <div style="text-align: center; color: #CCCCCC;">
-                        <p style="margin-bottom: 10px;">25% מהלקוחות</p>
-                        <p>קבוע (10 דקות)</p>
-                        <p class="highlight">האיטי ביותר</p>
-                    </div>
-            """, unsafe_allow_html=True)
-    
-    with tab2:
-
+    with col2:
         # Cooking Times Section
         st.markdown("""
-            <div style= 'background-color: #2D2D2D;padding: 15px; border-radius: 5px; height: 100%;'>
-            <div class="custom-card rtl-content">
-                <h3>2. זמני בישול סטוכסטיים</h3>
-                <p>הזמן הנדרש להכנת כל מנה משתנה בהתאם לגודלה ועוקב אחר התפלגות נורמלית. התאמת התפלגות לזמני ההכנה מאפשרת לנו לייצג בצורה אמינה את השונות בתהליך הבישול ולחשב את זמני ההמתנה הצפויים.</p>
+            <div style='
+                background-color: #2D2D2D;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #453232;
+                margin-bottom: 20px;
+                min-height: 150px;
+            '>
+                <h3 style='
+                    color: #FFFFFF;
+                    font-size: 1.2rem;
+                    margin-bottom: 15px;
+                    text-align: right;
+                '>2. זמני בישול סטוכסטיים</h3>
+                <p style='
+                    color: #CCCCCC;
+                    text-align: right;
+                    line-height: 1.6;
+                    margin-bottom: 20px;
+                '>
+                    הזמן הנדרש להכנת כל מנה משתנה בהתאם לגודלה ועוקב אחר התפלגות נורמלית. התאמת התפלגות לזמני ההכנה מאפשרת לנו לייצג בצורה אמינה את השונות בתהליך הבישול ולחשב את זמני ההמתנה הצפויים.
+                </p>
             </div>
         """, unsafe_allow_html=True)
 
-        # Create three columns for meal types
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
+        # Create three sub-columns for meal types
+        meal_cols = st.columns(3)
+        
+        with meal_cols[0]:
             st.markdown("""
-
-                    <h4 style=" text-align: center; margin-bottom: 15px;">ארוחה בודדת</h4>
-                    <div style="text-align: center; color: #CCCCCC;">
-                        <p style="margin-bottom: 10px;">N(5, 1)</p>
-                        <p>הכנה מהירה לשירות מותאם אישית</p>
-                    </div>
+                <div style='
+                    background-color: #1E1E1E;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    min-height: 180px;
+                '>
+                    <h4 style='color: #FFFFFF; margin-bottom: 10px;'>ארוחה בודדת</h4>
+                    <p style='color: #4CAF50; margin-bottom: 10px; font-weight: bold;'>N(5, 1)</p>
+                    <p style='color: #CCCCCC; font-size: 0.9rem;'>הכנה מהירה לשירות מותאם אישית</p>
                 </div>
             """, unsafe_allow_html=True)
-
-        with col2:
+            
+        with meal_cols[1]:
             st.markdown("""
-
-                    <h4 style=" text-align: center; margin-bottom: 15px;">מנה של 2</h4>
-                    <div style="text-align: center; color: #CCCCCC;">
-                        <p style="margin-bottom: 10px;">N(8, 2)</p>
-                        <p>זמן הכנה מאוזן לנפח בינוני</p>
-                    </div>
+                <div style='
+                    background-color: #1E1E1E;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    min-height: 180px;
+                '>
+                    <h4 style='color: #FFFFFF; margin-bottom: 10px;'>מנה של 2</h4>
+                    <p style='color: #FFC107; margin-bottom: 10px; font-weight: bold;'>N(8, 2)</p>
+                    <p style='color: #CCCCCC; font-size: 0.9rem;'>זמן הכנה מאוזן לנפח בינוני</p>
                 </div>
             """, unsafe_allow_html=True)
-
-        with col3:
+            
+        with meal_cols[2]:
             st.markdown("""
-
-                    <h4 style=" text-align: center; margin-bottom: 15px;">מנה של 3</h4>
-                    <div style="text-align: center; color: #CCCCCC;">
-                        <p style="margin-bottom: 10px;">N(10, 3)</p>
-                        <p>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
-                    </div>
+                <div style='
+                    background-color: #1E1E1E;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    min-height: 180px;
+                '>
+                    <h4 style='color: #FFFFFF; margin-bottom: 10px;'>מנה של 3</h4>
+                    <p style='color: #F44336; margin-bottom: 10px; font-weight: bold;'>N(10, 3)</p>
+                    <p style='color: #CCCCCC; font-size: 0.9rem;'>הכנה ארוכה יותר עם יעילות אך סיכון לבישול חסר</p>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -182,6 +243,9 @@ def show_introduction():
             </div>
         </div>
     """, unsafe_allow_html=True)
+
+
+
 
 def generate_arrival_times(size=1000):
     """Generate arrival times based on exponential distribution eith lambda parameter = 6."""

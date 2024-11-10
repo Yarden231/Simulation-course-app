@@ -17,9 +17,7 @@ set_rtl()
 # Import all page functions
 from home import show as show_home
 from food_truck import show_food_truck
-from sampling_methods import show_sampling_methods
 from  goodness_of_fit import show as show_googness
-from Random_Number_Generators import show_random_generator
 from story import show_story
 from flow import show as show_flow
 from lcg import show_lcg
