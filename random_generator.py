@@ -12,8 +12,8 @@ def show_code_with_explanation(title, description, code):
     # RTL section for Hebrew title and description
     st.markdown(f"""
         <div style='text-align: left; direction: ltr;'>
-            <h3>{title}</h3>
-            <p>{description}</p>
+            <h3 style='text-align: left; direction: ltr;'>{title}</h3>
+            <p style='text-align: left; direction: ltr;'>{description}</p>
         </div>
     """, unsafe_allow_html=True)
     
