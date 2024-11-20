@@ -291,7 +291,7 @@ def display_samples(samples):
         # Display first few samples in a table
         st.markdown("""
             <div class="info-box rtl-content">
-                <h4>זמני ההכנה שנמדדו (בדקות):</h4>
+                <h4>זמני ההגעה שנמדדו (בדקות):</h4>
             </div>
         """, unsafe_allow_html=True)
         
@@ -326,7 +326,7 @@ def display_samples(samples):
 
         # Update layout to match styling
         fig.update_layout(
-            title="זמני שירות",
+            title="זמני הגעה",
             xaxis_title="מספר מדגם",
             yaxis_title="זמן (בדקות)",
             height=400,
@@ -1138,7 +1138,7 @@ def show():
             st.session_state.samples, st.session_state.dist_info = generate_arrival_times()
 
     with col_service_times:
-        random_button = st.button('יצירת מדגם מהתפלגות רנדומלית')
+        random_button = st.button('יצירת מדגם מהתפלגות רנדומלית (עבור תרגול עצמי)')
         if random_button: 
             st.session_state.samples, st.session_state.dist_info = generate_service_times()
 
@@ -1154,7 +1154,7 @@ def show():
             <div class="custom-card rtl-content">
                 <h3 class="section-header">בחירת התפלגות מתאימה</h3>
                 <p>
-                    על בסיס הניתוח הגרפי, יש לבחור את ההתפלגות המשקפת באופן המדויק ביותר את זמני ההכנה במשאית המזון.
+                    על בסיס הניתוח הגרפי, יש לבחור את ההתפלגות המשקפת באופן המדויק ביותר את זמני ההגעה במשאית המזון.
                     כל התפלגות מתאימה לסוג שונה של תרחיש עסקי, ומאפשרת לנו לחזות את זמני ההמתנה בצורה מיטבית:
                 </p>
             </div>
@@ -1173,7 +1173,7 @@ def show():
             st.markdown("""
                 <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
                     <h4>התפלגות נורמלית</h4>
-                    <p>מתאימה עבור מנות סטנדרטיות עם זמן הכנה עקבי יחסית, כמו הזמנות רגילות בימים ללא עומס.</p>
+                    <p>מאופיינת בצורת פעמון סימטרית סביב הממוצע. מתאימה לזמני הגעה הנעים סביב ערך ממוצע, עם סטיות תקן מעל ומתחת לו.</p>
                 </div>
             """, unsafe_allow_html=True)
             if st.button("בחר התפלגות נורמלית", key="normal"):
@@ -1183,7 +1183,7 @@ def show():
             st.markdown("""
                 <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
                     <h4>התפלגות אחידה</h4>
-                    <p>מתאימה עבור מנות פשוטות עם טווח זמן הכנה גמיש, המתאימות לתנאים משתנים.</p>
+                    <p>מאופיינת בהסתברות שווה לכל ערך בטווח נתון. מתאימה לזמני הגעה בעלי טווח קבוע, ללא העדפה לערכים מסוימים.</p>
                 </div>
             """, unsafe_allow_html=True)
             if st.button("בחר התפלגות אחידה", key="uniform"):
@@ -1193,7 +1193,7 @@ def show():
             st.markdown("""
                 <div class="custom-card rtl-content" style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #452b2b;">
                     <h4>התפלגות מעריכית</h4>
-                    <p>מתאימה עבור מנות מורכבות או הזמנות שמתקבלות בשעות עומס, כשהזמן מתארך ככל שהעומס גובר.</p>
+                    <p>מאופיינת בהסתברות גבוהה לערכים נמוכים שיורדת בחדות ככל שהערכים עולים. מתאימה לזמני הגעה בהם רוב הלקוחות מגיעים בזמן בין מופעי נמוך, והסיכוי לזמן בין מופעי ארוך יותר פוחת משמעותית.</p>
                 </div>
             """, unsafe_allow_html=True)
             if st.button("בחר התפלגות מעריכית", key="exponential"):
