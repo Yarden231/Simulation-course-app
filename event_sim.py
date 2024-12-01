@@ -808,7 +808,7 @@ def show_simulation_page():
         if max(max_additional_current, max_additional_alternative) > 0 and not st.session_state.simulation_state['additional_runs_completed']:
             st.markdown(f"""
                 <div style='text-align: right; direction: rtl; 
-                      background-color: #ff9800; 
+                      background-color: #02261b; 
                       color: white; 
                       padding: 1rem; 
                       border-radius: 0.5rem;
@@ -1145,7 +1145,7 @@ def show_simulation_page():
         if max(max_additional_current, max_additional_alternative) > 0:
             st.markdown(f"""
                 <div style='text-align: right; direction: rtl; 
-                    background-color: #ff9800; 
+                    background-color: #02261b; 
                     color: white; 
                     padding: 1rem; 
                     border-radius: 0.5rem;
@@ -1271,9 +1271,9 @@ def show_simulation_page():
 
                     # Dictionary to map English measure names to Hebrew
                     measure_names = {
-                        'served': 'שירות הושלם',
-                        'left': 'לקוחות שעזבו',
-                        'undercooked': 'מנות לא מבושלות'
+                        'served': '🤭לקוחות ששורתו',
+                        'left': '😡לקוחות שעזבו',
+                        'undercooked': '🍲מנות לא מבושלות'
                     }
 
                     # Display results in columns
@@ -1284,22 +1284,22 @@ def show_simulation_page():
                                     text-align: right;
                                     direction: rtl;
                                     padding: 1rem;
-                                    background-color: #453232;
+                                    background-color: #02261b;
                                     border-radius: 0.5rem;
                                     height: 100%;
                                     color: white;  # Set the text color to white
                                 '>
                                     <h4 style='color: #1f77b4; margin-bottom: 1rem;'>{measure_names[measure]}</h4>
-                                    <p style='background-color: #453232; padding: 0.25rem;'>  
+                                    <p style='background-color: #02261b; padding: 0.25rem;'>  
                                         <strong>הפרש ממוצע:   </strong>{data['mean_diff']:.2f}
                                     </p>
-                                    <p style='background-color: #453232; padding: 0.25rem;'>
+                                    <p style='background-color: #02261b; padding: 0.25rem;'>
                                         <strong>רווח סמך:   </strong>[{data['ci_lower']:.2f}, {data['ci_upper']:.2f}]
                                     </p>
-                                    <p style='background-color: #453232; padding: 0.25rem;'>
+                                    <p style='background-color: #02261b; padding: 0.25rem;'>
                                         <strong>מסקנה:   </strong>{data['preference']}
                                     </p>
-                                    <p style='background-color: #453232; padding: 0.25rem;'>
+                                    <p style='background-color: #02261b; padding: 0.25rem;'>
                                         <strong>מספר דגימות:   </strong>{data['n_samples']}
                                     </p>
                                 </div>
