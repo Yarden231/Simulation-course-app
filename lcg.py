@@ -65,17 +65,12 @@ def show_lcg():
     """
     Demonstrates the Linear Congruential Generator (LCG) by generating and visualizing 
     a sequence of pseudo-random numbers.
-
-    This function sets up a Streamlit interface to allow users to input parameters 
-    for the LCG: modulus, multiplier, increment, seed, number of values to generate, 
-    and delay between numbers. It then animates the generation of these numbers, 
-    updating a plot and displaying statistics such as mean, median, minimum, and maximum 
-    in real-time.
-
-    The page includes an explanation of the LCG algorithm and its equation, 
-    with inputs and explanations provided in Hebrew.
     """
     set_ltr_sliders()
+
+    # Initialize session state for stop button
+    if 'stop_generation' not in st.session_state:
+        st.session_state.stop_generation = False
 
     st.markdown('<h2 style="text-align: right; direction: rtl;">Linear Congruential Generator (LCG)</h2>', unsafe_allow_html=True)
     
@@ -91,8 +86,6 @@ def show_lcg():
         """, unsafe_allow_html=True)
         
         st.latex(r"X_{n+1} = (aX_n + c) \bmod m")
-        
-
 
         st.markdown("""
         <div dir="rtl" style="text-align: right;">
@@ -121,7 +114,13 @@ def show_lcg():
         
         st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.button('צור מספרים'):
+        # Create columns for start and stop buttons
+        btn_col1, btn_col2 = st.columns(2)
+        
+        # Reset stop flag when starting new generation
+        if btn_col1.button('צור מספרים'):
+            st.session_state.stop_generation = False
+            
             # Initialize plots
             plot_spot = st.empty()
             fig = create_animated_plots()
@@ -134,11 +133,19 @@ def show_lcg():
             min_spot = col3.empty()
             max_spot = col4.empty()
             
+            # Add stop button after generation starts
+            stop_button = btn_col2.button('עצור', key='stop_button')
+            
             # Generate and display numbers one by one
             numbers = []
             current = lcg_seed
             
             for i in range(lcg_count):
+                # Check if stop button was clicked
+                if stop_button or st.session_state.stop_generation:
+                    st.session_state.stop_generation = True
+                    break
+                
                 # Generate next number
                 new_number = generate_next_number(lcg_modulus, a, c, current)
                 numbers.append(new_number)
@@ -166,6 +173,9 @@ def show_lcg():
                     max_spot.metric("מקסימום", f"{max(numbers):.4f}")
                 
                 time.sleep(lcg_delay)
+            
+            if st.session_state.stop_generation:
+                st.info('יצירת המספרים הופסקה על ידי המשתמש')
 
 if __name__ == "__main__":
     show_lcg()

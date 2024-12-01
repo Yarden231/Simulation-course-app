@@ -132,8 +132,17 @@ def show_lfsr():
                             key="lfsr_delay_lfsr")
         
         st.markdown('</div>', unsafe_allow_html=True)
+        # Create columns for start and stop buttons
+        btn_col1, btn_col2 = st.columns(2)
+        
+        # Reset stop flag when starting new generation
+        if btn_col1.button('צור מספרים', key='start_button'):
 
-        if st.button('צור מספרים', key='generate_lfsr'):
+            st.session_state.stop_generation = False
+
+            # Add stop button after generation starts
+            stop_button = btn_col2.button('עצור', key='stop_button')
+            
             if len(taps) < 2:
                 st.error('יש לבחור לפחות שני מיקומי משוב')
                 return
@@ -160,6 +169,11 @@ def show_lfsr():
             
             i = 0
             for value in sequence:
+                # Check if stop button was clicked
+                if stop_button or st.session_state.stop_generation:
+                    st.session_state.stop_generation = True
+                    break
+                
                 i+=1
                 current_sequence.append(value)
                 
@@ -198,6 +212,9 @@ def show_lfsr():
                     </ul>
                 </div>
             """, unsafe_allow_html=True)
+
+            if st.session_state.stop_generation:
+                st.info('יצירת המספרים הופסקה על ידי המשתמש')
 
 if __name__ == "__main__":
     show_lfsr()
