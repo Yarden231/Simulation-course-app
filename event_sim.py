@@ -495,7 +495,7 @@ def update_simulation_results(current_data: tuple, alternative_data: tuple,
     if (max_current > 0 or max_alternative > 0) and not state['additional_runs_completed']:
         st.markdown(f"""
             <div style='text-align: right; direction: rtl; 
-                  background-color: #ff9800; 
+                  background-color: #02261b; 
                   color: white; 
                   padding: 1rem; 
                   border-radius: 0.5rem;
