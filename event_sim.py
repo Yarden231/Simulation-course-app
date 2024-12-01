@@ -8,7 +8,7 @@ import random
 import math
 from typing import Tuple, List, Dict
 from graphviz import Digraph
-from IPython.display import display, Image
+
 
 def create_station_grid():
     stations = [
