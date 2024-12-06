@@ -924,8 +924,16 @@ def show_simulation_page():
 
 
 def show_simulation_page():
-    st.title("סימולציית אירועים בדידים")
-    
+    #st.title("סימולציית אירועים בדידים")
+
+        # Path to the SVG or PNG file
+    image_path = "events.svg"  # or change to "/mnt/data/image.png" if using PNG
+
+    # Display the image directly with Streamlit
+    st.image(image_path, use_column_width=True)
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")    
     # Initialize session state if not already done
     if 'simulation_state' not in st.session_state:
         st.session_state.simulation_state = {
