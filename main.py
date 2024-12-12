@@ -24,7 +24,8 @@ from lcg import show_lcg
 from lfsr import show_lfsr
 from random_generator import show_rng_demo
 from intro import show as show_intro
-from event_sim import show_simulation_page
+from event_sim import show_simulation_page as alternative_page
+from event_sim2 import show_simulation_page
 
 def main():
     with open('.streamlit/style.css') as f:
@@ -46,6 +47,7 @@ def main():
         "התאמת התפלגות למודל": show_googness,
         "אלגוריתמי דגימה": show_rng_demo,
         "תכנות אירועים": show_simulation_page,
+        "השוואה בין חלופות": alternative_page
         #"תכנות אירועים": show_food_truck,
         #"Flow": show_flow,
         #"lcg": show_lcg,

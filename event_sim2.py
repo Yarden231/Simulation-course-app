@@ -153,89 +153,12 @@ class SimulationVisualizer:
 
 # Main application
 def show_simulation_page():
-    st.title("סימולציית אירועים בדידים")
     
-    # Setup configuration
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        employee_location = st.selectbox(
-            "מיקום העובד הנוסף",
-            ["עמדת הזמנות", "עמדת הכנה", "עמדת איסוף"]
-        )
-        
-        initial_runs = st.number_input(
-            "מספר הרצות התחלתי",
-            min_value=10,
-            max_value=100,
-            value=20,
-            step=5
-        )
-    
-    with col2:
-        alpha = st.number_input(
-            "רמת מובהקות (α)",
-            min_value=0.01,
-            max_value=0.1,
-            value=0.05,
-            step=0.01
-        )
-        
-        precision = st.number_input(
-            "דיוק יחסי נדרש",
-            min_value=0.01,
-            max_value=0.2,
-            value=0.05,
-            step=0.01
-        )
-    
-    # Initialize simulation
-    location_map = {
-        "עמדת הזמנות": EmployeeLocation.ORDER,
-        "עמדת הכנה": EmployeeLocation.PREP,
-        "עמדת איסוף": EmployeeLocation.PICKUP
-    }
-    
-    config = SimulationConfig(
-        initial_runs=initial_runs,
-        alpha=alpha,
-        relative_precision=precision,
-        extra_employee=location_map[employee_location]
-    )
-    
-    simulator = FoodTruckSimulator(config)
-    visualizer = SimulationVisualizer()
-    
-    # Run simulation when requested
-    if st.button("הרץ סימולציה"):
-        with st.spinner('מריץ סימולציה התחלתית...'):
-            current_results, alternative_results = simulator.run_initial_simulations()
-            
-            # Show initial results
-            fig = visualizer.create_comparison_plot(
-                current_results,
-                alternative_results,
-                alpha
-            )
-            st.plotly_chart(fig)
-            
-            # Calculate additional runs needed
-            additional_runs_current = max(
-                simulator.calculate_required_repetitions(data)[0]
-                for data in current_results
-            )
-            
-            additional_runs_alternative = max(
-                simulator.calculate_required_repetitions(data)[0]
-                for data in alternative_results
-            )
-            
-            if additional_runs_current > 0 or additional_runs_alternative > 0:
-                st.warning(
-                    f"נדרשות הרצות נוספות:\n"
-                    f"מצב קיים: {additional_runs_current}\n"
-                    f"חלופה: {additional_runs_alternative}"
-                )
+        # Path to the SVG or PNG file
+    image_path = "events_full.svg"  # or change to "/mnt/data/image.png" if using PNG
+
+    # Display the image directly with Streamlit
+    st.image(image_path, use_column_width=True)
 
 if __name__ == "__main__":
-    main()
+    show_simulation_page()

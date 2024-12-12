@@ -924,16 +924,9 @@ def show_simulation_page():
 
 
 def show_simulation_page():
-    #st.title("סימולציית אירועים בדידים")
+    st.title("השוואה בין חלופות")
 
-        # Path to the SVG or PNG file
-    image_path = "events.svg"  # or change to "/mnt/data/image.png" if using PNG
 
-    # Display the image directly with Streamlit
-    st.image(image_path, use_column_width=True)
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")    
     # Initialize session state if not already done
     if 'simulation_state' not in st.session_state:
         st.session_state.simulation_state = {
@@ -952,7 +945,7 @@ def show_simulation_page():
 
     st.markdown("""
         <div style='text-align: right; direction: rtl;'>
-            <h3> בעמוד זה נבחן חלופות שונות עבור השמה של עובד נוסף באחת מעמדות משאית המזון. </h3>
+            <h3> לאחר שיצרנו מודל סימולציה שמדמה את מערכת טאקו לוקו, בעמוד זה נבחן חלופות שונות עבור השמה של עובד נוסף באחת מעמדות משאית המזון. </h3>
             <h4> נבחר את החלופה הטובה ביותר לפי שלושה מדדי ביצוע מרכזיים:</h4>
         </div>
     """, unsafe_allow_html=True)
