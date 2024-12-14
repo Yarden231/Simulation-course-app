@@ -158,7 +158,7 @@ def show_simulation_page():
     image_path = "events_full.svg"  # or change to "/mnt/data/image.png" if using PNG
 
     # Display the image directly with Streamlit
-    st.image(image_path, use_column_width=True)
+    st.image(image_path)
 
 if __name__ == "__main__":
     show_simulation_page()
