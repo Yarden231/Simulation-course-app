@@ -211,7 +211,7 @@ def show_story():
         image_path = "story.svg"  # or change to "/mnt/data/image.png" if using PNG
 
         # Display the image directly with Streamlit
-        st.image(image_path, use_column_width=True)
+        st.image(image_path)
 
     # Summary header with spacing
     st.markdown("""

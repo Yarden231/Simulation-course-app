@@ -14,7 +14,7 @@ def show():
     image_path = "home3.svg"  # or change to "/mnt/data/image.png" if using PNG
 
     # Display the image directly with Streamlit
-    st.image(image_path, use_column_width=True)
+    st.image(image_path)
 
 
 if __name__ == "__main__":
