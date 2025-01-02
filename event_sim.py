@@ -8,7 +8,7 @@ import random
 import math
 from typing import Tuple, List, Dict
 from graphviz import Digraph
-
+import pandas as pd
 
 def create_station_grid():
     stations = [
@@ -108,7 +108,6 @@ def initial_analysis(initial_n, alpha, relative_precision, extra_employee):
         current_results,
         alternative_results
     )
-
 
 def create_process_diagram() -> graphviz.Digraph:
     """Create a Graphviz diagram showing the food truck process flow."""
@@ -277,6 +276,8 @@ def run_extended_simulation(initial_n, additional_runs, extra_employee):
     return (current_served, current_left, current_undercooked), \
            (alt_served, alt_left, alt_undercooked)
 
+
+# לא משומשת
 def update_simulation_section(current_data, alternative_data, reps_current, reps_alternative, alpha, extra_employee):
     """Add a section to run additional simulations if needed."""
     
@@ -633,299 +634,69 @@ def process_additional_runs(current_data, alternative_data, max_additional_curre
     
     return current_data, alternative_data, final_results
 
-def show_simulation_page():
-    st.title("סימולציית אירועים בדידים")
+def initial_analysis(initial_n, alpha, relative_precision, extra_employee):
+    """Perform initial analysis of the simulation with given parameters."""
+    # Data collection for current and alternative scenarios
+    current_served, current_left, current_undercooked = [], [], []
+    alternative_served, alternative_left, alternative_undercooked = [], [], []
+
+    # Run initial simulations
+    for _ in range(initial_n):
+        # Current scenario
+        served, left, undercooked = run_simulation()
+        current_served.append(served)
+        current_left.append(left)
+        current_undercooked.append(undercooked)
+        
+        # Alternative scenario
+        served, left, undercooked = run_simulation(extra_employee=extra_employee)
+        alternative_served.append(served)
+        alternative_left.append(left)
+        alternative_undercooked.append(undercooked)
+
+    # Calculate required repetitions, confidence intervals, and relative precision
+    current_results = [
+        calculate_required_repetitions(data, initial_n, alpha, relative_precision)
+        for data in [current_served, current_left, current_undercooked]
+    ]
     
-    # Initialize session state if not already done
-    if 'simulation_state' not in st.session_state:
-        st.session_state.simulation_state = {
-            'initialized': False,
-            'additional_runs_completed': False,
-            'current_data': None,
-            'alternative_data': None,
-            'running_additional': False,
-            'reps_current': None,
-            'reps_alternative': None,
-            'final_results': None
-        }
-
-    st.markdown("""
-        <div style='text-align: right; direction: rtl;'>
-            <h3> בעמוד זה נבחן חלופות שונות עבור השמה של עובד נוסף באחת מעמדות משאית המזון. </h3>
-            <h4> נבחר את החלופה הטובה ביותר לפי שלושה מדדי ביצוע מרכזיים:</h4>
-        </div>
-    """, unsafe_allow_html=True)
+    alternative_results = [
+        calculate_required_repetitions(data, initial_n, alpha, relative_precision)
+        for data in [alternative_served, alternative_left, alternative_undercooked]
+    ]
     
-    create_station_grid()
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    # Process Flow Diagram
-    st.markdown("<h3 style='text-align: right;'>תרשים זרימת התהליך</h3>", unsafe_allow_html=True)
-    dot = create_process_diagram()
-    st.graphviz_chart(dot)
+    # Calculate relative precision (γ) for each metric
+    current_relative_precisions = [
+        calculate_relative_precision(data, alpha, initial_n)
+        for data in [current_served, current_left, current_undercooked]
+    ]
     
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
+    alternative_relative_precisions = [
+        calculate_relative_precision(data, alpha, initial_n)
+        for data in [alternative_served, alternative_left, alternative_undercooked]
+    ]
 
-    st.markdown("<h2 style='text-align: center;'>כעת נבחר את העמדה אליה נרצה לצרף עובד נוסף ונריץ את סימולצית המצב הקיים אל מול החלופה</h2>", unsafe_allow_html=True)
+    return (
+        (current_served, current_left, current_undercooked),
+        (alternative_served, alternative_left, alternative_undercooked),
+        current_results,
+        alternative_results,
+        current_relative_precisions,
+        alternative_relative_precisions
+    )
 
-    # Simulation Parameters
-    st.markdown("<h3 style='text-align: right;'>הגדרות סימולציה</h3>", unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-
-
-        employee_location = st.radio(
-            "מיקום העובד הנוסף",
-            ["עמדת הזמנות", "עמדת הכנה", "עמדת איסוף"],
-            key="employee_location"
-        )
-
-
-    
-    with col2:
-
-        initial_runs = st.number_input(
-            "מספר הרצות התחלתי",
-            min_value=10,
-            max_value=100,
-            value=20,
-            step=5
-        )
-
-        alpha = st.number_input(
-            "רמת מובהקות (α)",
-            min_value=0.01,
-            max_value=0.1,
-            value=0.05,
-            step=0.01
-        )
-        
-        precision = 0.05
-
-    # Map Hebrew location names to English
-    location_map = {
-        "עמדת הזמנות": "order",
-        "עמדת הכנה": "prep",
-        "עמדת איסוף": "pickup"
-    }
-    extra_employee = location_map[employee_location]
-
-    # Initial simulation run button
-    if not st.session_state.simulation_state['initialized'] and st.button("הרץ סימולציה"):
-        with st.spinner('מריץ סימולציה התחלתית...'):
-            # Run initial analysis
-            current_data, alternative_data, reps_current, reps_alternative = initial_analysis(
-                initial_runs, alpha, precision, extra_employee
-            )
-            
-            # Store data in session state
-            st.session_state.simulation_state.update({
-                'initialized': True,
-                'current_data': current_data,
-                'alternative_data': alternative_data,
-                'reps_current': reps_current,
-                'reps_alternative': reps_alternative
-            })
-            st.rerun()
-
-    # If simulation has been initialized, show results and handle additional runs
-    if st.session_state.simulation_state['initialized']:
-        current_data = st.session_state.simulation_state['current_data']
-        alternative_data = st.session_state.simulation_state['alternative_data']
-        reps_current = st.session_state.simulation_state['reps_current']
-        reps_alternative = st.session_state.simulation_state['reps_alternative']
-
-        # Show initial results
-        st.markdown("<h3 style='text-align: right;'>תוצאות הסימולציה</h3>", unsafe_allow_html=True)
-        
-        # Create visualization
-        fig = make_subplots(
-            rows=1, cols=2,
-            subplot_titles=("מצב קיים", "חלופה מוצעת")
-        )
-        
-        metrics = ["שירות הושלם", "לקוחות שעזבו", "מנות לא מבושלות"]
-        
-        # Plot current scenario
-        current_means = [np.mean(data) for data in current_data]
-        current_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in current_data]
-        
-        fig.add_trace(
-            go.Bar(
-                name="מצב קיים",
-                x=metrics,
-                y=current_means,
-                error_y=dict(
-                    type='data',
-                    array=[t.ppf(1 - alpha/2, df=len(data)-1) * std 
-                          for data, std in zip(current_data, current_stds)]
-                ),
-                marker_color='rgb(55, 83, 109)'
-            ),
-            row=1, col=1
-        )
-        
-        # Plot alternative scenario
-        alt_means = [np.mean(data) for data in alternative_data]
-        alt_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in alternative_data]
-        
-        fig.add_trace(
-            go.Bar(
-                name="חלופה",
-                x=metrics,
-                y=alt_means,
-                error_y=dict(
-                    type='data',
-                    array=[t.ppf(1 - alpha/2, df=len(data)-1) * std 
-                          for data, std in zip(alternative_data, alt_stds)]
-                ),
-                marker_color='rgb(26, 118, 255)'
-            ),
-            row=1, col=2
-        )
-        
-        fig.update_layout(
-            height=500,
-            showlegend=False,
-            title_text="השוואת מדדי ביצוע",
-            title_x=0.5
-        )
-        
-        st.plotly_chart(fig)
-
-        # Calculate required additional runs
-        max_additional_current = max(rep for rep in reps_current)
-        max_additional_alternative = max(rep for rep in reps_alternative)
-
-        if max(max_additional_current, max_additional_alternative) > 0 and not st.session_state.simulation_state['additional_runs_completed']:
-            st.markdown(f"""
-                <div style='text-align: right; direction: rtl; 
-                      background-color: #02261b; 
-                      color: white; 
-                      padding: 1rem; 
-                      border-radius: 0.5rem;
-                      margin: 1rem 0;'>
-                    <strong>נדרשות הרצות נוספות:</strong>
-                    <br>מצב קיים: {max_additional_current} הרצות
-                    <br>חלופה: {max_additional_alternative} הרצות
-                </div>
-            """, unsafe_allow_html=True)
-
-            # Add a key to the button to make it unique
-            if st.button("בצע הרצות נוספות", key="additional_runs_button"):
-                with st.spinner('מבצע הרצות נוספות...'):
-                    try:
-                        # Process additional runs
-                        new_current, new_alternative, final_results = process_additional_runs(
-                            current_data,
-                            alternative_data,
-                            max_additional_current,
-                            max_additional_alternative,
-                            extra_employee,
-                            alpha
-                        )
-                        
-                        # Update session state
-                        st.session_state.simulation_state.update({
-                            'additional_runs_completed': True,
-                            'current_data': new_current,
-                            'alternative_data': new_alternative,
-                            'final_results': final_results
-                        })
-                        
-                        # Show success message instead of rerunning
-                        st.success("ההרצות הנוספות הושלמו בהצלחה!")
-                        
-                    except Exception as e:
-                        st.error(f"שגיאה בביצוע ההרצות הנוספות: {str(e)}")
-
-            # After completing additional runs, show final results
-            if st.session_state.simulation_state['additional_runs_completed']:
-                results = st.session_state.simulation_state.get('final_results', {})
-                
-                if results:  # Only show results if we have them
-
-                    # Plot current scenario
-                    current_means = [np.mean(data) for data in current_data]
-                    current_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in current_data]
-                    
-                    fig.add_trace(
-                        go.Bar(
-                            name="מצב קיים",
-                            x=metrics,
-                            y=current_means,
-                            error_y=dict(
-                                type='data',
-                                array=[t.ppf(1 - alpha/2, df=len(data)-1) * std 
-                                    for data, std in zip(current_data, current_stds)]
-                            ),
-                            marker_color='rgb(55, 83, 109)'
-                        ),
-                        row=1, col=1
-                    )
-                    
-                    # Plot alternative scenario
-                    alt_means = [np.mean(data) for data in alternative_data]
-                    alt_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in alternative_data]
-                    
-                    fig.add_trace(
-                        go.Bar(
-                            name="חלופה",
-                            x=metrics,
-                            y=alt_means,
-                            error_y=dict(
-                                type='data',
-                                array=[t.ppf(1 - alpha/2, df=len(data)-1) * std 
-                                    for data, std in zip(alternative_data, alt_stds)]
-                            ),
-                            marker_color='rgb(26, 118, 255)'
-                        ),
-                        row=1, col=2
-                    )
-
-
-                    st.markdown("<h3 style='text-align: right;'>ניתוח סופי</h3>", unsafe_allow_html=True)
-                    
-                    # Create three columns for final results
-                    col1, col2, col3 = st.columns(3)
-                    
-                    # Dictionary to map English measure names to Hebrew
-                    measure_names = {
-                        'served': 'שירות הושלם',
-                        'left': 'לקוחות שעזבו',
-                        'undercooked': 'מנות לא מבושלות'
-                    }
-                    
-                    # Display results in columns
-                    for (measure, data), col in zip(results.items(), [col1, col2, col3]):
-                        with col:
-                            st.markdown(f"""
-                                <div style='text-align: right; direction: rtl; padding: 1rem; 
-                                    background-color: #453232; border-radius: 0.5rem; height: 100%;'>
-                                    <h4 style='color: #1f77b4; margin-bottom: 1rem;'>{measure_names[measure]}</h4>
-                                    <p><strong>הפרש ממוצע:</strong><br/>{data['mean_diff']:.2f}</p>
-                                    <p><strong>רווח סמך:</strong><br/>[{data['ci_lower']:.2f}, {data['ci_upper']:.2f}]</p>
-                                    <p><strong>מסקנה:</strong><br/>{data['preference']}</p>
-                                    <p><strong>מספר דגימות:</strong><br/>{data['n_samples']}</p>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-
-
-
+def calculate_relative_precision(data, alpha, initial_n):
+    """Calculate relative precision γ for a given data."""
+    mean = np.mean(data)
+    std_error = np.std(data, ddof=1) / np.sqrt(initial_n)
+    confidence_interval_width = t.ppf(1 - alpha / 2, df=initial_n - 1) * std_error
+    gamma = confidence_interval_width / mean
+    relative_precision = gamma / (1 + gamma)
+    return relative_precision
 
 
 def show_simulation_page():
     st.title("השוואה בין חלופות")
-
 
     # Initialize session state if not already done
     if 'simulation_state' not in st.session_state:
@@ -940,13 +711,140 @@ def show_simulation_page():
             'final_results': None,
             'extra_employee': None,
             'initial_runs': 20,
-            'alpha': 0.05
+            'alpha': 0.05,
+            'show_results': False  # New flag to control results visibility
         }
 
+    # Display initial content
     st.markdown("""
         <div style='text-align: right; direction: rtl;'>
-            <h3> לאחר שיצרנו מודל סימולציה שמדמה את מערכת טאקו לוקו, בעמוד זה נבחן חלופות שונות עבור השמה של עובד נוסף באחת מעמדות משאית המזון. </h3>
-            <h4> נבחר את החלופה הטובה ביותר לפי שלושה מדדי ביצוע מרכזיים:</h4>
+            <h4> לאחר שיצרנו מודל סימולציה שמדמה את מערכת טאקו לוקו, בעמוד זה נבחן חלופות שונות עבור השמה של עובד נוסף באחת מעמדות משאית המזון.  בכדי להבין במובהקות סטטיסטית נתונה, מהי החלופה המצנחת, נצטרך לבצע את השלבים הבאים:</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    st.text(" ")
+
+ 
+    cols = st.columns(3)
+    with cols[0]:
+        st.markdown(
+            """
+            <div style="border-radius: 8px; padding: 15px;">
+                <h4 style="color: #FFFFFF; text-align: center;">1️⃣ חישוב רווח סמך</h4>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+        st.latex(r"\bar{X} = \frac{1}{n_0} \sum_{i=1}^{n_0} X_i")
+        st.latex(r"S = \sqrt{\frac{1}{n_0-1} \sum_{i=1}^{n_0} (X_i - \bar{X})^2}")
+        st.latex(r"CI = \bar{X} \pm t_{n_0-1, 1-\alpha/6} \cdot \frac{s}{\sqrt{n_0}}")
+    
+    with cols[1]:
+        st.markdown(
+            """
+            <div style="border-radius: 8px; padding: 15px;">
+                <h4 style="color: #FFFFFF; text-align: center;">2️⃣ בדיקת דיוק יחסי</h4>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+        st.latex(r"\frac{\gamma}{1+\gamma} = \frac{\text{CI width}}{\bar{X}}")
+    
+    with cols[2]:
+        st.markdown(
+            """
+            <div style="border-radius: 8px; padding: 15px;">
+                <h4 style="text-align: center;">3️⃣ חישוב ריצות נוספות</h4>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+        st.latex(r"n^* = n_0 \cdot \left(\frac{\text{CI current}}{\text{CI desired}}\right)^2")
+
+    st.markdown("### הסבר מפורט 📝")
+
+
+    st.markdown("""
+    <div style="color: #FFFFFF; text-align: right; direction: rtl; font-size: 18px;">
+        <p>מתחילים עם n_0 ריצות התחלתיות (לרוב 15-20 ריצות).</p>
+        <ul style="margin-right: 20px;">
+            <li>עבור מדד בודד משתמשים ברמת המובהקות α.</li>
+            <li>עבור k מדדים משתמשים באי-שוויון בונפרוני:</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.latex(r"\alpha = \sum_{i=1}^{k*d} \alpha_i")
+    st.latex(r"\alpha_i = \frac{\alpha}{k \cdot d}")
+
+    st.markdown("""
+    <ul style="color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>כאשר d מוגדר להיות מספר החלופות.</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <ul style="color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>עבור כל אחד מהמדדים בכל אחת מהחלוקות:</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <ul style="margin-right: 20px; color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>אם מעוניינים בדיוק יחסי γ, מחשבים האם:</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.latex(r"\frac{\gamma}{1+\gamma} \geq \frac{t_{n-1, 1-\alpha_i} \cdot \frac{s}{\sqrt{n}}}{\bar{X}}")
+
+    st.markdown("""
+    <ul style="color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>אם הדיוק היחסי של אחד או יותר  לא מספק:</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <ul style="margin-right: 20px; color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>מחשבים רק עבור המדדים שלא עמדו בתנאי את מספר הריצות הנדרש לפי הנוסחא:</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.latex(r"n^* = n \cdot \left(\frac{\text{CI current}}{\bar{X}\frac{\gamma}{1+\gamma}}\right)^2")
+
+    st.markdown("""
+    <ul style="margin-right: 20px; color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>מבצעים ריצות נוספות כדי להשלים למספר הריצות המקסימאלי מבין כל המדדים שלא עמדו בתנאי.</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <ul style="margin-right: 20px; color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>בודקים מחדש את רמת הדיוק היחסי עד להשגת הדיוק הרצוי.</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <ul style="color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>במקרה של מערכת Non-Terminating:</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <ul style="margin-right: 20px; color: #FFFFFF; text-align: right; direction: rtl;">
+        <li>יש להוסיף שלב מקדים של קביעת זמן חימום.</li>
+        <li>להחליט האם להשתמש בשיטת Replication/Deletion או Batch Means.</li>
+    </ul>
+    """, unsafe_allow_html=True)
+
+
+
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+
+    # Display initial content
+    st.markdown("""
+        <div style='text-align: right; direction: rtl;'>            
+            <h4>המדדים שמעניינים את חולייסיטו ואוצ'ו לוקו הם:</h4>
         </div>
     """, unsafe_allow_html=True)
     
@@ -954,17 +852,15 @@ def show_simulation_page():
     st.text(" ")
     st.text(" ")
     st.text(" ")
-    # Process Flow Diagram
-    st.markdown("<h3 style='text-align: right;'>תרשים זרימת התהליך</h3>", unsafe_allow_html=True)
-    dot = create_process_diagram()
-    st.graphviz_chart(dot)
+    
+    #st.markdown("<h3 style='text-align: right;'>תרשים זרימת התהליך</h3>", unsafe_allow_html=True)
+    #dot = create_process_diagram()
+    #st.graphviz_chart(dot)
     
     st.text(" ")
     st.text(" ")
     st.text(" ")
-    st.text(" ")
-    st.text(" ")
-    st.text(" ")
+
 
     st.markdown("<h2 style='text-align: center;'>כעת נבחר את העמדה אליה נרצה לצרף עובד נוסף ונריץ את סימולצית המצב הקיים אל מול החלופה</h2>", unsafe_allow_html=True)
 
@@ -978,8 +874,16 @@ def show_simulation_page():
             "מיקום העובד הנוסף",
             ["עמדת הזמנות", "עמדת הכנה", "עמדת איסוף"],
             key="employee_location",
-            # Use the stored value if exists, otherwise use default
             index=["עמדת הזמנות", "עמדת הכנה", "עמדת איסוף"].index(st.session_state.simulation_state.get('employee_location', "עמדת הזמנות"))
+        )
+
+        precision = st.number_input(
+            "רמת דיוק יחסי (γ)",
+            min_value=0.01,
+            max_value=0.1,
+            value=st.session_state.simulation_state.get('alpha', 0.05),
+            step=0.01,
+            key="precision_input"
         )
 
     with col2:
@@ -987,7 +891,6 @@ def show_simulation_page():
             "מספר הרצות התחלתי",
             min_value=10,
             max_value=100,
-            # Use the stored value if exists, otherwise use default
             value=st.session_state.simulation_state.get('initial_runs', 20),
             step=5,
             key="initial_runs_input"
@@ -997,13 +900,12 @@ def show_simulation_page():
             "רמת מובהקות (α)",
             min_value=0.01,
             max_value=0.1,
-            # Use the stored value if exists, otherwise use default
             value=st.session_state.simulation_state.get('alpha', 0.05),
             step=0.01,
             key="alpha_input"
         )
         
-        precision = 0.05
+
 
     # Map Hebrew location names to English
     location_map = {
@@ -1024,7 +926,6 @@ def show_simulation_page():
 
     # Reset simulation if reset button is pressed
     if reset_simulation:
-        # Reset all simulation-related session state
         st.session_state.simulation_state = {
             'initialized': False,
             'additional_runs_completed': False,
@@ -1036,279 +937,289 @@ def show_simulation_page():
             'final_results': None,
             'extra_employee': None,
             'initial_runs': 20,
-            'alpha': 0.05
+            'alpha': 0.05,
+            'show_results': False
         }
-        st.rerun()
+    
 
-    # Initial simulation run or re-run with new parameters
-    if run_simulation or (not st.session_state.simulation_state['initialized'] and 
-                          st.session_state.simulation_state.get('extra_employee') != extra_employee):
+    # Run initial simulation when run button is pressed
+    if run_simulation:
         with st.spinner('מריץ סימולציה התחלתית...'):
-            # Run initial analysis
-            current_data, alternative_data, reps_current, reps_alternative = initial_analysis(
+            # Run the initial analysis to get the current and alternative data
+            current_data, alternative_data, reps_current, reps_alternative, relative_precision_current, relative_precision_alternative = initial_analysis(
                 initial_runs, alpha, precision, extra_employee
             )
             
-            # Store data in session state
+            # Update session state with the data
             st.session_state.simulation_state.update({
                 'initialized': True,
                 'current_data': current_data,
                 'alternative_data': alternative_data,
                 'reps_current': reps_current,
                 'reps_alternative': reps_alternative,
+                'relative_precision_current': relative_precision_current,  # Store relative precision for current scenario
+                'relative_precision_alternative': relative_precision_alternative,  # Store relative precision for alternative scenario
                 'extra_employee': extra_employee,
                 'initial_runs': initial_runs,
                 'alpha': alpha,
                 'additional_runs_completed': False,
-                'final_results': None
+                'final_results': None,
+                'show_results': True  # Set to True when simulation is run
             })
-            st.rerun()
+         
+    # Show results only if simulation has been run
+    if st.session_state.simulation_state.get('show_results', False):
 
-    # If simulation has been initialized, show results and handle additional runs
-    if st.session_state.simulation_state['initialized']:
         current_data = st.session_state.simulation_state['current_data']
         alternative_data = st.session_state.simulation_state['alternative_data']
         reps_current = st.session_state.simulation_state['reps_current']
         reps_alternative = st.session_state.simulation_state['reps_alternative']
+        current_relative_precisions = st.session_state.simulation_state['relative_precision_current']
+        alternative_relative_precisions = st.session_state.simulation_state['relative_precision_alternative']
 
         # Show initial results
         st.markdown("<h3 style='text-align: right;'>תוצאות הסימולציה</h3>", unsafe_allow_html=True)
-        
-        # Create visualization
-        fig = make_subplots(
-            rows=1, cols=2,
-            subplot_titles=("מצב קיים", "חלופה מוצעת")
-        )
-        
-        metrics = ["שירות הושלם", "לקוחות שעזבו", "מנות לא מבושלות"]
 
-        # Calculate means and confidence intervals
+     
+        # Create initial visualization for metrics
+        metrics = ["שירות הושלם", "לקוחות שעזבו", "מנות לא מבושלות"]
+        
         current_means = [np.mean(data) for data in current_data]
         current_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in current_data]
         alt_means = [np.mean(data) for data in alternative_data]
         alt_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in alternative_data]
 
-        # Confidence interval bounds (t-distribution)
         current_conf_intervals = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(current_data, current_stds)]
         alt_conf_intervals = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(alternative_data, alt_stds)]
 
-        # Create a grouped bar chart
-        fig = go.Figure()
 
-        fig.add_trace(
-            go.Bar(
-                name="מצב קיים",
-                x=metrics,
-                y=current_means,
-                error_y=dict(
-                    type='data',
-                    array=current_conf_intervals  # Confidence intervals for the current scenario
-                ),
-                marker_color='rgb(55, 83, 109)'
+        # הצגת הנוסחה המקורית
+        relative_precision = precision/(1+precision)
+        st.markdown("<h5 style='text-align: right;'>    נבדוק את הדיוק היחסי שהתקבל עבור כל המדדים בכל החלופות  המדדים לפי הנוסחא:</h5>", unsafe_allow_html=True)
+        st.latex(r"\frac{\gamma}{1+\gamma} \geq \frac{t_{n-1, 1-\alpha_i} \cdot \frac{s}{\sqrt{n}}}{\bar{X}}")
+
+        # הצגת הנוסחה המוצבת
+        st.markdown("<h5 style='text-align: right;'>מציאת הערך איתו נבדוק את התנאי:</h5>", unsafe_allow_html=True)
+        st.latex(
+            rf"\frac{{{precision}}}{{1+{precision}}} = {relative_precision:.4f}"
+        )
+        
+
+
+        st.markdown("<h5 style='text-align: right;'>רמות הדיוק עבור כל המדדים:</h5>", unsafe_allow_html=True)
+    
+        col1, col2 = st.columns([2,3])
+   
+        with col1:
+
+            st.write("")
+            st.write("")
+            st.write("")
+
+            # Create a list to hold the data for the table
+            table_data = []
+
+            # Loop through the metrics and precision values
+            for metric, current_precision, alternative_precision in zip(metrics, current_relative_precisions, alternative_relative_precisions):
+                table_data.append([metric, current_precision, alternative_precision])
+
+            # Create a DataFrame from the table data
+            df = pd.DataFrame(table_data, columns=['', 'מצב קיים', 'חלופה'])
+
+                        
+            def color_cell(value):
+                """עיצוב תא לפי התנאי."""
+                if value <= relative_precision:
+                    return f"background-color: #d4edda; color: black;"  # ירוק
+                else:
+                    return f"background-color: #f8d7da; color: black;"  # אדום
+
+            # עיצוב הטבלה
+            styled_table = (
+                df.style
+                .applymap(color_cell, subset=['מצב קיים', 'חלופה'])  # עיצוב לפי הערכים
+                .set_table_styles([{'selector': 'th', 'props': [('text-align', 'right')]}])  # יישור ימין
+                .set_properties(**{'text-align': 'right'})  # יישור ימין לטקסט
             )
-        )
 
-        fig.add_trace(
-            go.Bar(
-                name="חלופה",
-                x=metrics,
-                y=alt_means,
-                error_y=dict(
-                    type='data',
-                    array=alt_conf_intervals  # Confidence intervals for the alternative scenario
-                ),
-                marker_color='rgb(26, 118, 255)'
-            )
-        )
+            # הצגת הטבלה
+            st.write(styled_table.to_html(), unsafe_allow_html=True)
 
-        # Update layout for grouped bars
-        fig.update_layout(
-            barmode='group',  # Group the bars side-by-side
-            height=500,
-            title_text="השוואת מדדי ביצוע",
-            font=dict(
-                size=30
-            ),
-            title_x=0.5,
-            xaxis_title="מדדים",
-            yaxis_title="ממוצע",
-            showlegend=True  # Add a legend to distinguish between the two scenarios
-        )
 
-        # Display the updated plot
-        st.plotly_chart(fig)
 
-        # Calculate required additional runs
-        max_additional_current = max(rep for rep in reps_current)
-        max_additional_alternative = max(rep for rep in reps_alternative)
+            # Calculate required additional runs
+            max_additional_current = max(rep for rep in reps_current)
+            max_additional_alternative = max(rep for rep in reps_alternative)
 
-        # Always show the button if additional runs are needed, regardless of previous runs
-        if max(max_additional_current, max_additional_alternative) > 0:
-            st.markdown(f"""
-                <div style='text-align: right; direction: rtl; 
-                    background-color: #02261b; 
-                    color: white; 
-                    padding: 1rem; 
-                    border-radius: 0.5rem;
-                    margin: 1rem 0;'>
-                    <strong>נדרשות הרצות נוספות:</strong>
-                    <br>מצב קיים: {max_additional_current} הרצות
-                    <br>חלופה: {max_additional_alternative} הרצות
-                </div>
-            """, unsafe_allow_html=True)
+            # Show additional runs section if needed
+            if max(max_additional_current, max_additional_alternative) > 0:
+                st.markdown(f"""
+                    <div style='text-align: right; direction: rtl; 
+                        background-color: #02261b; 
+                        color: white; 
+                        padding: 1rem; 
+                        border-radius: 0.5rem;
+                        margin: 1rem 0;'>
+                        <strong>נדרשות הרצות נוספות:</strong>
+                        <br>מצב קיים: {max_additional_current} הרצות
+                        <br>חלופה: {max_additional_alternative} הרצות
+                    </div>
+                """, unsafe_allow_html=True)
 
-            # Check if additional runs are not completed
-            if not st.session_state.simulation_state['additional_runs_completed']:
-                # Add a key to the button to make it unique
-                if st.button("בצע הרצות נוספות", key="additional_runs_button"):
-                    with st.spinner('מבצע הרצות נוספות...'):
-                        try:
-                            # Process additional runs
-                            new_current, new_alternative, final_results = process_additional_runs(
-                                current_data,
-                                alternative_data,
-                                max_additional_current,
-                                max_additional_alternative,
-                                extra_employee,
-                                alpha
-                            )
-                            
-                            # Update session state
-                            st.session_state.simulation_state.update({
-                                'additional_runs_completed': True,
-                                'current_data': new_current,
-                                'alternative_data': new_alternative,
-                                'final_results': final_results
-                            })
-                            
-                            # Show success message instead of rerunning
-                            st.success("ההרצות הנוספות הושלמו בהצלחה!")
-                            
-                        except Exception as e:
-                            st.error(f"שגיאה בביצוע ההרצות הנוספות: {str(e)}")
-            else:
-                # Show a disabled button or informative text
-                st.button("בצע הרצות נוספות", disabled=True, key="additional_runs_button_disabled")
-                st.info("הרצות נוספות הושלמו")
-
-            if st.session_state.simulation_state['additional_runs_completed']:
-                results = st.session_state.simulation_state.get('final_results', {})
+        with col2:
                 
-                if results:  # Only show results if we have them
-                    # Recreate the plots with updated data
-                    fig = make_subplots(
-                        rows=1, cols=2,
-                        subplot_titles=("מצב קיים", "חלופה מוצעת")
-                    )
-                    
-                    metrics = ["שירות הושלם", "לקוחות שעזבו", "מנות לא מבושלות"]
-                    
-                    # Get the updated data after additional runs
-                    current_data = st.session_state.simulation_state['current_data']
-                    alternative_data = st.session_state.simulation_state['alternative_data']
-                    # Calculate error bars (confidence intervals)
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Bar(
+                    name="מצב קיים",
+                    x=metrics,
+                    y=current_means,
+                    error_y=dict(type='data', array=current_conf_intervals),
+                    marker_color='rgb(55, 83, 109)'
+                )
+            )
+
+            fig.add_trace(
+                go.Bar(
+                    name="חלופה",
+                    x=metrics,
+                    y=alt_means,
+                    error_y=dict(type='data', array=alt_conf_intervals),
+                    marker_color='rgb(26, 118, 255)'
+                )
+            )
+
+            fig.update_layout(
+                barmode='group',
+                height=500,
+                title_text="השוואת מדדי ביצוע",
+                font=dict(size=30),
+                title_x=0.5,
+                xaxis_title="מדדים",
+                yaxis_title="ממוצע",
+                showlegend=True
+            )
+
+            st.plotly_chart(fig)
+
+        
 
 
-                    # Calculate means and standard errors
-                    current_means = [np.mean(data) for data in current_data]
-                    current_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in current_data]
-                    alt_means = [np.mean(data) for data in alternative_data]
-                    alt_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in alternative_data]
-
-                    # Calculate correct confidence intervals (CI)
-                    current_errors = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(current_data, current_stds)]
-                    alt_errors = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(alternative_data, alt_stds)]
-
-                    # Create a grouped bar chart
-                    fig = go.Figure()
-
-                    fig.add_trace(
-                        go.Bar(
-                            name="מצב קיים",
-                            x=metrics,
-                            y=current_means,
-                            error_y=dict(
-                                type='data',
-                                array=current_errors  # Corrected confidence intervals
-                            ),
-                            marker_color='rgb(55, 83, 109)'
+        if not st.session_state.simulation_state['additional_runs_completed']:
+            if st.button("בצע הרצות נוספות", key="additional_runs_button"):
+                with st.spinner('מבצע הרצות נוספות...'):
+                    try:
+                        new_current, new_alternative, final_results = process_additional_runs(
+                            current_data,
+                            alternative_data,
+                            max_additional_current,
+                            max_additional_alternative,
+                            extra_employee,
+                            alpha
                         )
+                        
+                        st.session_state.simulation_state.update({
+                            'additional_runs_completed': True,
+                            'current_data': new_current,
+                            'alternative_data': new_alternative,
+                            'final_results': final_results
+                        })
+                        st.success("ההרצות הנוספות הושלמו בהצלחה!")
+                        
+                        
+                    except Exception as e:
+                        st.error(f"שגיאה בביצוע ההרצות הנוספות: {str(e)}")
+
+        # Show final results if additional runs are completed
+        if st.session_state.simulation_state['additional_runs_completed']:
+            results = st.session_state.simulation_state.get('final_results', {})
+            
+            if results:
+                # Create final visualization with updated data
+                current_data = st.session_state.simulation_state['current_data']
+                alternative_data = st.session_state.simulation_state['alternative_data']
+                
+                current_means = [np.mean(data) for data in current_data]
+                current_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in current_data]
+                alt_means = [np.mean(data) for data in alternative_data]
+                alt_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in alternative_data]
+
+                current_errors = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(current_data, current_stds)]
+                alt_errors = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(alternative_data, alt_stds)]
+
+                fig = go.Figure()
+
+                fig.add_trace(
+                    go.Bar(
+                        name="מצב קיים",
+                        x=metrics,
+                        y=current_means,
+                        error_y=dict(type='data', array=current_errors),
+                        marker_color='rgb(55, 83, 109)'
                     )
+                )
 
-                    fig.add_trace(
-                        go.Bar(
-                            name="חלופה",
-                            x=metrics,
-                            y=alt_means,
-                            error_y=dict(
-                                type='data',
-                                array=alt_errors  # Corrected confidence intervals
-                            ),
-                            marker_color='rgb(26, 118, 255)'
-                        )
+                fig.add_trace(
+                    go.Bar(
+                        name="חלופה",
+                        x=metrics,
+                        y=alt_means,
+                        error_y=dict(type='data', array=alt_errors),
+                        marker_color='rgb(26, 118, 255)'
                     )
+                )
 
-                    # Update layout for grouped bars
-                    fig.update_layout(
-                        barmode='group',  # Group the bars side-by-side
-                        height=500,
-                        title_text="השוואת מדדי ביצוע (לאחר הרצות נוספות)",
-                        font=dict(
-                            size=30
-                        ),
-                        title_x=0.5,
-                        xaxis_title="מדדים",
-                        yaxis_title="ממוצע",
-                        showlegend=True
-                    )
+                fig.update_layout(
+                    barmode='group',
+                    height=500,
+                    title_text="השוואת מדדי ביצוע (לאחר הרצות נוספות)",
+                    font=dict(size=30),
+                    title_x=0.5,
+                    xaxis_title="מדדים",
+                    yaxis_title="ממוצע",
+                    showlegend=True
+                )
 
-                    # Display the updated plot
-                    st.plotly_chart(fig)
+                st.plotly_chart(fig)
 
-                    st.markdown("<h3 style='text-align: right;'>ניתוח סופי</h3>", unsafe_allow_html=True)
-                    
-                    # Create three columns for final results
-                    col1, col2, col3 = st.columns(3)
+                # Display final analysis
+                st.markdown("<h3 style='text-align: right;'>ניתוח סופי</h3>", unsafe_allow_html=True)
+                
+                measure_names = {
+                    'served': '🤭לקוחות ששורתו',
+                    'left': '😡לקוחות שעזבו',
+                    'undercooked': '🍲מנות לא מבושלות'
+                }
 
-                    # Dictionary to map English measure names to Hebrew
-                    measure_names = {
-                        'served': '🤭לקוחות ששורתו',
-                        'left': '😡לקוחות שעזבו',
-                        'undercooked': '🍲מנות לא מבושלות'
-                    }
-
-                    # Display results in columns
-                    for (measure, data), col in zip(results.items(), [col1, col2, col3]):
-                        with col:
-                            st.markdown(f"""
-                                <div style='
-                                    text-align: right;
-                                    direction: rtl;
-                                    padding: 1rem;
-                                    background-color: #02261b;
-                                    border-radius: 0.5rem;
-                                    height: 100%;
-                                    color: white;  # Set the text color to white
-                                '>
-                                    <h4 style='color: #1f77b4; margin-bottom: 1rem;'>{measure_names[measure]}</h4>
-                                    <p style='background-color: #02261b; padding: 0.25rem;'>  
-                                        <strong>הפרש ממוצע:   </strong>{data['mean_diff']:.2f}
-                                    </p>
-                                    <p style='background-color: #02261b; padding: 0.25rem;'>
-                                        <strong>רווח סמך:   </strong>[{data['ci_lower']:.2f}, {data['ci_upper']:.2f}]
-                                    </p>
-                                    <p style='background-color: #02261b; padding: 0.25rem;'>
-                                        <strong>מסקנה:   </strong>{data['preference']}
-                                    </p>
-                                    <p style='background-color: #02261b; padding: 0.25rem;'>
-                                        <strong>מספר דגימות:   </strong>{data['n_samples']}
-                                    </p>
-                                </div>
-                            """, unsafe_allow_html=True)
-
-
-
-
+                col1, col2, col3 = st.columns(3)
+                for (measure, data), col in zip(results.items(), [col1, col2, col3]):
+                    with col:
+                        st.markdown(f"""
+                            <div style='
+                                text-align: right;
+                                direction: rtl;
+                                padding: 1rem;
+                                background-color: #02261b;
+                                border-radius: 0.5rem;
+                                height: 100%;
+                                color: white;
+                            '>
+                                <h4 style='color: #1f77b4; margin-bottom: 1rem;'>{measure_names[measure]}</h4>
+                                <p style='background-color: #02261b; padding: 0.25rem;'>  
+                                    <strong>הפרש ממוצע:   </strong>{data['mean_diff']:.2f}
+                                </p>
+                                <p style='background-color: #02261b; padding: 0.25rem;'>
+                                    <strong>רווח סמך:   </strong>[{data['ci_lower']:.2f}, {data['ci_upper']:.2f}]
+                                </p>
+                                <p style='background-color: #02261b; padding: 0.25rem;'>
+                                    <strong>מסקנה:   </strong>{data['preference']}
+                                </p>
+                                <p style='background-color: #02261b; padding: 0.25rem;'>
+                                    <strong>מספר דגימות:   </strong>{data['n_samples']}
+                                </p>
+                            </div>
+                        """, unsafe_allow_html=True)
 
 
 

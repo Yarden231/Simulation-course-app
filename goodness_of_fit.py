@@ -244,9 +244,6 @@ def show_introduction():
         </div>
     """, unsafe_allow_html=True)
 
-
-
-
 def generate_arrival_times(size=1000):
     """Generate arrival times based on exponential distribution eith lambda parameter = 6."""
     samples = np.random.exponential(scale=1/6, size=size)
@@ -386,7 +383,6 @@ def display_samples(samples):
                 </div>
             </div>
         """, unsafe_allow_html=True)
-
 
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and Q-Q plots using Plotly for consistent styling."""
@@ -1055,7 +1051,6 @@ def perform_goodness_of_fit(samples, distribution, params):
 
         st.plotly_chart(fig, use_container_width=True)
 
-
 def create_styled_card(title, content, border_color="#453232"):
     st.markdown(
         f"""
@@ -1080,8 +1075,6 @@ def create_styled_card(title, content, border_color="#453232"):
         """,
         unsafe_allow_html=True
     )
-
-
 
 def show():
     """
@@ -1219,9 +1212,7 @@ def show():
                 # Display the results in a formatted way
                 st.write(st.session_state.goodness_of_fit_results)
 
- 
-
-       
+     
 # To show the app, call the show() function
 if __name__ == "__main__":
     show()
