@@ -827,9 +827,7 @@ def show_simulation_page():
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <ul style="color: #FFFFFF; text-align: right; direction: rtl;">
-        <li>במקרה של מערכת Non-Terminating:</li>
-    </ul>
+    <h4 style="color: #FFFFFF; text-align: right; direction: rtl;">במקרה של מערכת Non-Terminating:</h4>
     """, unsafe_allow_html=True)
 
     st.markdown("""
