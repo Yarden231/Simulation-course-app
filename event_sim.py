@@ -496,7 +496,7 @@ def update_simulation_results(current_data: tuple, alternative_data: tuple,
     if (max_current > 0 or max_alternative > 0) and not state['additional_runs_completed']:
         st.markdown(f"""
             <div style='text-align: right; direction: rtl; 
-                  background-color: #02261b; 
+                  background-color: #420518; 
                   color: white; 
                   padding: 1rem; 
                   border-radius: 0.5rem;
@@ -1055,7 +1055,7 @@ def show_simulation_page():
             if max(max_additional_current, max_additional_alternative) > 0:
                 st.markdown(f"""
                     <div style='text-align: right; direction: rtl; 
-                        background-color: #02261b; 
+                        background-color: #420518; 
                         color: white; 
                         padding: 1rem; 
                         border-radius: 0.5rem;
@@ -1200,22 +1200,22 @@ def show_simulation_page():
                                 text-align: right;
                                 direction: rtl;
                                 padding: 1rem;
-                                background-color: #02261b;
+                                background-color: #420518;
                                 border-radius: 0.5rem;
                                 height: 100%;
                                 color: white;
                             '>
                                 <h4 style='color: #1f77b4; margin-bottom: 1rem;'>{measure_names[measure]}</h4>
-                                <p style='background-color: #02261b; padding: 0.25rem;'>  
+                                <p style='background-color: #420518; padding: 0.25rem;'>  
                                     <strong>הפרש ממוצע:   </strong>{data['mean_diff']:.2f}
                                 </p>
-                                <p style='background-color: #02261b; padding: 0.25rem;'>
+                                <p style='background-color: #420518; padding: 0.25rem;'>
                                     <strong>רווח סמך:   </strong>[{data['ci_lower']:.2f}, {data['ci_upper']:.2f}]
                                 </p>
-                                <p style='background-color: #02261b; padding: 0.25rem;'>
+                                <p style='background-color: #420518; padding: 0.25rem;'>
                                     <strong>מסקנה:   </strong>{data['preference']}
                                 </p>
-                                <p style='background-color: #02261b; padding: 0.25rem;'>
+                                <p style='background-color: #420518; padding: 0.25rem;'>
                                     <strong>מספר דגימות:   </strong>{data['n_samples']}
                                 </p>
                             </div>
