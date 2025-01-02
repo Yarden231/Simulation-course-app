@@ -639,7 +639,6 @@ def initial_analysis(initial_n, alpha, relative_precision, extra_employee):
     # Data collection for current and alternative scenarios
     current_served, current_left, current_undercooked = [], [], []
     alternative_served, alternative_left, alternative_undercooked = [], [], []
-    st.write(f'Running {initial_n} initial runs...')
     print(f'Running {initial_n} initial runs...')
     # Run initial simulations
     for _ in range(initial_n):
