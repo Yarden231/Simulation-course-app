@@ -639,7 +639,8 @@ def initial_analysis(initial_n, alpha, relative_precision, extra_employee):
     # Data collection for current and alternative scenarios
     current_served, current_left, current_undercooked = [], [], []
     alternative_served, alternative_left, alternative_undercooked = [], [], []
-
+    st.write(f'Running {initial_n} initial runs...')
+    print(f'Running {initial_n} initial runs...')
     # Run initial simulations
     for _ in range(initial_n):
         # Current scenario
@@ -1018,8 +1019,10 @@ def show_simulation_page():
         with col1:
             st.write("")
             st.write("")
-            st.write("")
 
+            st.markdown(f"""
+                <div style='text-align: right; direction: rtl;'>תוצאות הדיוק היחסי של הדגימות הנתונות:</div>
+            """, unsafe_allow_html=True)
             # Create a list to hold the data for the table
             table_data = []
 
@@ -1143,46 +1146,15 @@ def show_simulation_page():
 
         if not st.session_state.simulation_state['additional_runs_completed']:
             if st.button("בצע הרצות נוספות", key="additional_runs_button"):
-                with st.spinner('מבצע הרצות נוספות...'):
-                    try:
-                        # Run the initial analysis to get the current and alternative data
-                        current_data, alternative_data, reps_current, reps_alternative, relative_precision_current, relative_precision_alternative = initial_analysis(
-                            initial_runs, alpha, precision, extra_employee
-                        )
-                        
-                        # Update session state with the data
-                        st.session_state.simulation_state.update({
-                            'initialized': True,
-                            'current_data': current_data,
-                            'alternative_data': alternative_data,
-                            'reps_current': reps_current,
-                            'reps_alternative': reps_alternative,
-                            'relative_precision_current': relative_precision_current,  # Store relative precision for current scenario
-                            'relative_precision_alternative': relative_precision_alternative,  # Store relative precision for alternative scenario
-                            'extra_employee': extra_employee,
-                            'initial_runs': initial_runs,
-                            'alpha': alpha,
-                            'additional_runs_completed': True,
-                            'final_results': None,
-                            'show_results': True  # Set to True when simulation is run
-                        })
-                        
 
-                        st.success("ההרצות הנוספות הושלמו בהצלחה!")
-                        
-                        
-                    except Exception as e:
-                        st.error(f"שגיאה בביצוע ההרצות הנוספות: {str(e)}")
-
-        # Show final results if additional runs are completed
-        if st.session_state.simulation_state['additional_runs_completed']:
-            results = st.session_state.simulation_state.get('current_data', {})
-            
-            if results:
-                # Create final visualization with updated data
                 current_data = st.session_state.simulation_state['current_data']
                 alternative_data = st.session_state.simulation_state['alternative_data']
                 n_samples = max(max_additional_alternative, max_additional_current)
+                # Run the initial analysis to get the current and alternative data
+                current_data, alternative_data, reps_current, reps_alternative, relative_precision_current, relative_precision_alternative = initial_analysis(
+                    n_samples, alpha, precision, extra_employee
+                )
+                
 
                 st.markdown(f"""
                     <div style='text-align: right; direction: rtl;'>
@@ -1218,7 +1190,9 @@ def show_simulation_page():
 
                     metrics = ["שירות הושלם", "לקוחות שעזבו", "מנות לא מבושלות"]
                     relative_precision = precision/(1+precision)
-
+                    st.markdown(f"""
+                        <div style='text-align: right; direction: rtl;'>תוצאות הדיוק היחסי של הדגימות הנתונות:</div>
+                    """, unsafe_allow_html=True)
                     # Create table data with relative precision
                     table_data = []
                     for i, metric in enumerate(metrics):
