@@ -330,7 +330,7 @@ def update_simulation_section(current_data, alternative_data, reps_current, reps
                 )
                 
                 st.session_state.additional_runs_completed = True
-                st.experimental_rerun()
+                st.rerun()
     
     if st.session_state.additional_runs_completed:
         # Create comparison visualization
@@ -531,7 +531,7 @@ def update_simulation_results(current_data: tuple, alternative_data: tuple,
                 
                 state['additional_runs_completed'] = True
                 state['showing_results'] = True
-                st.experimental_rerun()
+                st.rerun()
     
     # Show final results if completed
     if state['additional_runs_completed'] and state['showing_results']:
@@ -695,6 +695,8 @@ def calculate_relative_precision(data, alpha, initial_n):
     return relative_precision
 
 
+
+
 def show_simulation_page():
     st.title("השוואה בין חלופות")
 
@@ -712,7 +714,8 @@ def show_simulation_page():
             'extra_employee': None,
             'initial_runs': 20,
             'alpha': 0.05,
-            'show_results': False  # New flag to control results visibility
+            'show_results': False,  # New flag to control results visibility
+            'run_additional_sims': False
         }
 
     # Display initial content
@@ -938,7 +941,8 @@ def show_simulation_page():
             'extra_employee': None,
             'initial_runs': 20,
             'alpha': 0.05,
-            'show_results': False
+            'show_results': False,
+            'run_additional_sims': False
         }
     
 
@@ -1010,8 +1014,8 @@ def show_simulation_page():
     
         col1, col2 = st.columns([2,3])
    
+        
         with col1:
-
             st.write("")
             st.write("")
             st.write("")
@@ -1019,17 +1023,27 @@ def show_simulation_page():
             # Create a list to hold the data for the table
             table_data = []
 
-            # Loop through the metrics and precision values
-            for metric, current_precision, alternative_precision in zip(metrics, current_relative_precisions, alternative_relative_precisions):
-                table_data.append([metric, current_precision, alternative_precision])
+            # Loop through all the metrics and values
+            for i, (metric, current_precision, alternative_precision) in enumerate(zip(metrics, current_relative_precisions, alternative_relative_precisions)):
+                # Get required runs for current and alternative scenarios
+                current_required = "-" if current_precision <= relative_precision else str(reps_current[i])+" הרצות"
+                alternative_required = "-" if alternative_precision <= relative_precision else str(reps_alternative[i])+" הרצות"
+                
+                # Add both precision and required runs
+                table_data.append([
+                    metric, 
+                    f"{current_precision:.4f}<br>({current_required})", 
+                    f"{alternative_precision:.4f}<br>({alternative_required})"
+                ])
 
             # Create a DataFrame from the table data
             df = pd.DataFrame(table_data, columns=['', 'מצב קיים', 'חלופה'])
 
-                        
             def color_cell(value):
                 """עיצוב תא לפי התנאי."""
-                if value <= relative_precision:
+                # Extract the precision value from the cell (before the <br>)
+                precision = float(value.split("<br>")[0])
+                if precision <= relative_precision:
                     return f"background-color: #d4edda; color: black;"  # ירוק
                 else:
                     return f"background-color: #f8d7da; color: black;"  # אדום
@@ -1038,12 +1052,15 @@ def show_simulation_page():
             styled_table = (
                 df.style
                 .applymap(color_cell, subset=['מצב קיים', 'חלופה'])  # עיצוב לפי הערכים
-                .set_table_styles([{'selector': 'th', 'props': [('text-align', 'right')]}])  # יישור ימין
+                .set_table_styles([
+                    {'selector': 'th', 'props': [('text-align', 'right')]},
+                    {'selector': 'td', 'props': [('white-space', 'pre-line')]}  # Allow line breaks in cells
+                ])
                 .set_properties(**{'text-align': 'right'})  # יישור ימין לטקסט
             )
 
             # הצגת הטבלה
-            st.write(styled_table.to_html(), unsafe_allow_html=True)
+            st.write(styled_table.to_html(escape=False), unsafe_allow_html=True)
 
 
 
@@ -1104,27 +1121,53 @@ def show_simulation_page():
             st.plotly_chart(fig)
 
         
-
+        repitition_needed = max(max_additional_current, max_additional_alternative)
+        # Run additional simulations for current scenario
+        if repitition_needed > 0:
+            new_current = run_complete_simulation(
+                len(current_data[0]), repitition_needed
+            )
+            current_data = tuple(
+                list(old) + list(new)
+                for old, new in zip(current_data, new_current)
+            )
+        
+            # Run additional simulations for alternative scenario
+            new_alternative = run_complete_simulation(
+                len(alternative_data[0]), max_additional_alternative, extra_employee
+            )
+            alternative_data = tuple(
+                list(old) + list(new)
+                for old, new in zip(alternative_data, new_alternative)
+            )
 
         if not st.session_state.simulation_state['additional_runs_completed']:
             if st.button("בצע הרצות נוספות", key="additional_runs_button"):
                 with st.spinner('מבצע הרצות נוספות...'):
                     try:
-                        new_current, new_alternative, final_results = process_additional_runs(
-                            current_data,
-                            alternative_data,
-                            max_additional_current,
-                            max_additional_alternative,
-                            extra_employee,
-                            alpha
+                        # Run the initial analysis to get the current and alternative data
+                        current_data, alternative_data, reps_current, reps_alternative, relative_precision_current, relative_precision_alternative = initial_analysis(
+                            initial_runs, alpha, precision, extra_employee
                         )
                         
+                        # Update session state with the data
                         st.session_state.simulation_state.update({
+                            'initialized': True,
+                            'current_data': current_data,
+                            'alternative_data': alternative_data,
+                            'reps_current': reps_current,
+                            'reps_alternative': reps_alternative,
+                            'relative_precision_current': relative_precision_current,  # Store relative precision for current scenario
+                            'relative_precision_alternative': relative_precision_alternative,  # Store relative precision for alternative scenario
+                            'extra_employee': extra_employee,
+                            'initial_runs': initial_runs,
+                            'alpha': alpha,
                             'additional_runs_completed': True,
-                            'current_data': new_current,
-                            'alternative_data': new_alternative,
-                            'final_results': final_results
+                            'final_results': None,
+                            'show_results': True  # Set to True when simulation is run
                         })
+                        
+
                         st.success("ההרצות הנוספות הושלמו בהצלחה!")
                         
                         
@@ -1133,13 +1176,21 @@ def show_simulation_page():
 
         # Show final results if additional runs are completed
         if st.session_state.simulation_state['additional_runs_completed']:
-            results = st.session_state.simulation_state.get('final_results', {})
+            results = st.session_state.simulation_state.get('current_data', {})
             
             if results:
                 # Create final visualization with updated data
                 current_data = st.session_state.simulation_state['current_data']
                 alternative_data = st.session_state.simulation_state['alternative_data']
-                
+                n_samples = max(max_additional_alternative, max_additional_current)
+
+                st.markdown(f"""
+                    <div style='text-align: right; direction: rtl;'>
+                        <strong> השוואת מדדי ביצוע עבור {n_samples} הרצות:</strong>
+                    </div>
+                """, unsafe_allow_html=True)
+
+
                 current_means = [np.mean(data) for data in current_data]
                 current_stds = [np.std(data, ddof=1) / np.sqrt(len(data)) for data in current_data]
                 alt_means = [np.mean(data) for data in alternative_data]
@@ -1148,40 +1199,98 @@ def show_simulation_page():
                 current_errors = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(current_data, current_stds)]
                 alt_errors = [t.ppf(1 - alpha / 2, df=len(data) - 1) * std for data, std in zip(alternative_data, alt_stds)]
 
-                fig = go.Figure()
+                # Calculate relative precision for both scenarios
+                current_relative_precisions = [(t.ppf(1 - alpha / 2, df=len(data) - 1) * std) / mean 
+                                            for data, std, mean in zip(current_data, current_stds, current_means)]
+                alternative_relative_precisions = [(t.ppf(1 - alpha / 2, df=len(data) - 1) * std) / mean 
+                                                for data, std, mean in zip(alternative_data, alt_stds, alt_means)]
 
-                fig.add_trace(
-                    go.Bar(
-                        name="מצב קיים",
-                        x=metrics,
-                        y=current_means,
-                        error_y=dict(type='data', array=current_errors),
-                        marker_color='rgb(55, 83, 109)'
+
+                
+                
+                col1, col2 = st.columns([2,3])
+            
+                
+                with col1:
+                    st.write("")
+                    st.write("")
+                    st.write("")
+
+                    metrics = ["שירות הושלם", "לקוחות שעזבו", "מנות לא מבושלות"]
+                    relative_precision = precision/(1+precision)
+
+                    # Create table data with relative precision
+                    table_data = []
+                    for i, metric in enumerate(metrics):
+                        current_achieved = current_relative_precisions[i]
+                        alternative_achieved = alternative_relative_precisions[i]
+                        
+                        # Format the cells with precision values
+                        current_cell = f"{current_achieved:.4f}"
+                        alternative_cell = f"{alternative_achieved:.4f}"
+                        
+                        table_data.append([metric, current_cell, alternative_cell])
+
+                    # Create DataFrame
+                    df = pd.DataFrame(table_data, columns=['', 'מצב קיים', 'חלופה'])
+
+                    def color_cell(value):
+                        """Style cell based on relative precision threshold."""
+                        try:
+                            precision_val = float(value)
+                            if precision_val <= relative_precision:
+                                return f"background-color: #d4edda; color: black;"
+                            return f"background-color: #f8d7da; color: black;"
+                        except:
+                            return ""
+
+                    # Style the table
+                    styled_table = (
+                        df.style
+                        .applymap(color_cell, subset=['מצב קיים', 'חלופה'])
+                        .set_table_styles([
+                            {'selector': 'th', 'props': [('text-align', 'right')]},
+                            {'selector': 'td', 'props': [('text-align', 'right')]}
+                        ])
                     )
-                )
 
-                fig.add_trace(
-                    go.Bar(
-                        name="חלופה",
-                        x=metrics,
-                        y=alt_means,
-                        error_y=dict(type='data', array=alt_errors),
-                        marker_color='rgb(26, 118, 255)'
+                    st.write(styled_table.to_html(escape=False), unsafe_allow_html=True)
+
+                with col2:
+                    fig = go.Figure()
+
+                    fig.add_trace(
+                        go.Bar(
+                            name="מצב קיים",
+                            x=metrics,
+                            y=current_means,
+                            error_y=dict(type='data', array=current_errors),
+                            marker_color='rgb(55, 83, 109)'
+                        )
                     )
-                )
 
-                fig.update_layout(
-                    barmode='group',
-                    height=500,
-                    title_text="השוואת מדדי ביצוע (לאחר הרצות נוספות)",
-                    font=dict(size=30),
-                    title_x=0.5,
-                    xaxis_title="מדדים",
-                    yaxis_title="ממוצע",
-                    showlegend=True
-                )
+                    fig.add_trace(
+                        go.Bar(
+                            name="חלופה",
+                            x=metrics,
+                            y=alt_means,
+                            error_y=dict(type='data', array=alt_errors),
+                            marker_color='rgb(26, 118, 255)'
+                        )
+                    )
 
-                st.plotly_chart(fig)
+                    fig.update_layout(
+                        barmode='group',
+                        height=500,
+                        title_text="השוואת מדדי ביצוע (לאחר הרצות נוספות)",
+                        font=dict(size=30),
+                        title_x=0.5,
+                        xaxis_title="מדדים",
+                        yaxis_title="ממוצע",
+                        showlegend=True
+                    )
+
+                    st.plotly_chart(fig)
 
                 # Display final analysis
                 st.markdown("<h3 style='text-align: right;'>ניתוח סופי</h3>", unsafe_allow_html=True)
@@ -1191,7 +1300,7 @@ def show_simulation_page():
                     'left': '😡לקוחות שעזבו',
                     'undercooked': '🍲מנות לא מבושלות'
                 }
-
+                results = run_extended_analysis(current_data, alternative_data, alpha)
                 col1, col2, col3 = st.columns(3)
                 for (measure, data), col in zip(results.items(), [col1, col2, col3]):
                     with col:
@@ -1215,13 +1324,8 @@ def show_simulation_page():
                                 <p style='background-color: #420518; padding: 0.25rem;'>
                                     <strong>מסקנה:   </strong>{data['preference']}
                                 </p>
-                                <p style='background-color: #420518; padding: 0.25rem;'>
-                                    <strong>מספר דגימות:   </strong>{data['n_samples']}
-                                </p>
                             </div>
                         """, unsafe_allow_html=True)
-
-
 
 
 
