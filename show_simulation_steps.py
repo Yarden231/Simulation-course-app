@@ -37,7 +37,7 @@ class CustomerArrivalEvent(Event):
         sim.schedule_event(RenegingEvent(reneging_time, self.customer_id))
 
         # Schedule next arrival
-        next_arrival_time = self.time + np.random.exponential(5.5)
+        next_arrival_time = self.time + np.random.exponential(1)
         sim.schedule_event(CustomerArrivalEvent(next_arrival_time, sim.state.customers_arrived))
 
         # Handle current arrival
@@ -201,8 +201,7 @@ class FoodTruckSimulation:
         heapq.heappush(self.state.event_queue, event)
 
     def process_next_event(self) -> bool:
-        if not self.state.event_queue:
-            return False
+
 
         # Get next event and update simulation time
         event = heapq.heappop(self.state.event_queue)
