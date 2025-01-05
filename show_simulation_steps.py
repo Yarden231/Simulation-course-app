@@ -37,7 +37,7 @@ class CustomerArrivalEvent(Event):
         sim.schedule_event(RenegingEvent(reneging_time, self.customer_id))
 
         # Schedule next arrival
-        next_arrival_time = self.time + np.random.exponential(1)
+        next_arrival_time = self.time + np.random.exponential(6)
         sim.schedule_event(CustomerArrivalEvent(next_arrival_time, sim.state.customers_arrived))
 
         # Handle current arrival
@@ -72,7 +72,7 @@ class OrderCompletionEvent(Event):
         # Move to prep station
         if sim.state.prep_station_busy < 1:
             sim.state.prep_station_busy += 1
-            sim.schedule_event(PrepCompletionEvent(max(0.5,self.time+np.random.normal(2, 1)), self.customer_id))
+            sim.schedule_event(PrepCompletionEvent(self.time+max(0.5,np.random.normal(4, 1)), self.customer_id))
         else:
             sim.state.prep_queue.append(self.customer_id)
 
@@ -80,7 +80,7 @@ class OrderCompletionEvent(Event):
         if sim.state.order_queue and sim.state.order_station_busy < 1:
             next_customer = sim.state.order_queue.pop(0)
             sim.state.order_station_busy += 1
-            order_service_time = np.random.normal(2, 3)
+            order_service_time = np.random.normal(4, 1)
             next_order_completion_time = self.time + max(0.5, order_service_time)
             sim.schedule_event(OrderCompletionEvent(next_order_completion_time, next_customer))
 
@@ -112,7 +112,7 @@ class PrepCompletionEvent(Event):
         if sim.state.prep_queue and sim.state.prep_station_busy < 1:
             next_customer = sim.state.prep_queue.pop(0)
             sim.state.prep_station_busy += 1
-            sim.schedule_event(PrepCompletionEvent(max(0.5,self.time+np.random.normal(2, 4)), next_customer))
+            sim.schedule_event(PrepCompletionEvent(self.time+max(0.5,np.random.normal(2, 4)), next_customer))
 
 class PickupCompletionEvent(Event):
     def __init__(self, time: float, customer_id: int):
