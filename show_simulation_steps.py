@@ -37,7 +37,7 @@ class CustomerArrivalEvent(Event):
         sim.schedule_event(RenegingEvent(reneging_time, self.customer_id))
 
         # Schedule next arrival
-        next_arrival_time = self.time + np.random.exponential(6)
+        next_arrival_time = self.time + np.random.exponential(5.5)
         sim.schedule_event(CustomerArrivalEvent(next_arrival_time, sim.state.customers_arrived))
 
         # Handle current arrival
@@ -226,18 +226,6 @@ def show_food_truck_simulation():
         st.session_state.simulation = FoodTruckSimulation()
 
     st.title("סימולציה של משאית המזון - הרצה צעד אחר צעד")
-
-    # Explanation Section
-    st.markdown("""
-        <div style='text-align: center; direction: rtl;'>
-            <h4>סימולציה זו מאפשרת לנו לעקוב אחר התהליכים במשאית המזון צעד אחר צעד. נוכל לראות:</h4>
-            <h4>
-                <li>מצב התורים בכל תחנה</li>
-                <li>סטטיסטיקות של לקוחות</li>
-                <li>זמני המתנה והתקדמות הסימולציה</li>
-            </h4>
-        </div>
-    """, unsafe_allow_html=True)
 
     st.title("לחץ על כפתור הצעד הבא כדי להתקדם לזמן האירוע הבא בסימולציה")
 

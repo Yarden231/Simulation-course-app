@@ -156,7 +156,7 @@ class SimulationVisualizer:
 def show_simulation_page():
     
         # Path to the SVG or PNG file
-    image_path = "events_full.svg"  # or change to "/mnt/data/image.png" if using PNG
+    image_path = "events2.svg"  # or change to "/mnt/data/image.png" if using PNG
 
     # Display the image directly with Streamlit
     st.image(image_path)
