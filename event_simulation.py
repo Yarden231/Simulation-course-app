@@ -10,6 +10,7 @@ import math
 from typing import Tuple, List, Dict, NamedTuple
 from dataclasses import dataclass
 from enum import Enum
+from show_simulation_steps import show_food_truck_simulation 
 
 # Define data structures
 class EmployeeLocation(Enum):
@@ -159,6 +160,7 @@ def show_simulation_page():
 
     # Display the image directly with Streamlit
     st.image(image_path)
+    show_food_truck_simulation()
 
 if __name__ == "__main__":
     show_simulation_page()

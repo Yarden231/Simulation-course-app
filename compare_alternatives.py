@@ -9,7 +9,7 @@ import math
 from typing import Tuple, List, Dict
 from graphviz import Digraph
 import pandas as pd
-
+import heapq
 def create_station_grid():
     stations = [
         ("🤭",  "אחוז לקוחות שהושלם שירותם (נמקסם)"),
@@ -37,23 +37,186 @@ def create_station_grid():
                 unsafe_allow_html=True
             )
 
+
+# Generalized class for the food truck simulation
+class EventBasedFoodTruck:
+    def __init__(self, extra_employee=None):
+        # Initialize the simulation variables
+        self.current_time = 0
+        self.event_queue = []  # Priority queue for events
+        self.extra_employee = extra_employee  # Allows an additional employee at one station
+        # Define the max capacity for each station based on where the extra employee is assigned
+        self.max_order_stations = 2 if self.extra_employee == 'order' else 1
+        self.max_prep_stations = 2 if self.extra_employee == 'prep' else 1
+        self.max_pickup_stations = 2 if self.extra_employee == 'pickup' else 1
+        self.order_station_busy = 0
+        self.prep_station_busy = 0
+        self.pickup_station_busy = 0
+        self.batch = []  # Queue for orders waiting to be processed
+        self.left_count = 0  # Count of visitors who left due to long wait
+        self.undercooked_count = 0  # Count of undercooked meals in 3-meal batches
+        self.wait_times = []  # List to store waiting times of visitors (includes both served and left)
+        self.visitors = {}  # Dictionary to store information about each visitor
+        self.customers_arrived = 0  # Track total arrivals
+        self.customers_served = 0  # Track successfully served customers
+        self.three_meal_batches = 0  # Count of 3-meal batches prepared
+
+    # Function to schedule a new event
+    def schedule_event(self, time, event_type, visitor_id):
+        heapq.heappush(self.event_queue, (time, event_type, visitor_id))
+
+    # Function to process the next event in the queue
+    def process_event(self):
+        if not self.event_queue:
+            return False
+        time, event_type, visitor_id = heapq.heappop(self.event_queue)
+        self.current_time = time
+
+        # Check patience for all customers each time an event is processed
+        self.check_patience()
+
+        if event_type == 'arrival':
+            self.handle_arrival(visitor_id)
+        elif event_type == 'order_end':
+            self.handle_order_end(visitor_id)
+        elif event_type == 'prep_end':
+            self.handle_prep_end(visitor_id)
+        elif event_type == 'pickup_end':
+            self.handle_pickup_end(visitor_id)
+        elif event_type == 'monitor':
+            self.monitor()
+        return True
+
+    # Function to check if any customer exceeds their patience threshold
+    def check_patience(self):
+        for visitor_id in list(self.visitors.keys()):
+            if visitor_id in self.batch or visitor_id in self.visitors:
+                arrival_time = self.visitors[visitor_id]['arrival_time']
+                max_wait_time = self.visitors[visitor_id]['max_wait_time']
+                wait_time = self.current_time - arrival_time
+                if wait_time > max_wait_time:
+                    self.left_count += 1
+                    self.wait_times.append(wait_time)
+                    if visitor_id in self.batch:
+                        self.batch.remove(visitor_id)
+                    del self.visitors[visitor_id]  # Remove from tracking
+                    continue
+
+    # Handle the arrival of a new visitor
+    def handle_arrival(self, visitor_id):
+        self.customers_arrived += 1
+        max_wait_time = np.random.uniform(5, 20)
+        self.visitors[visitor_id] = {
+            'arrival_time': self.current_time,
+            'max_wait_time': max_wait_time
+        }
+        if self.order_station_busy < self.max_order_stations:
+            self.order_station_busy += 1
+            self.schedule_event(self.current_time, 'order_end', visitor_id)
+        else:
+            self.batch.append(visitor_id)
+
+    # Handle the end of the ordering process
+    def handle_order_end(self, visitor_id):
+        self.order_station_busy -= 1
+        if visitor_id not in self.visitors:  # If customer already left, skip
+            return
+
+        # Ensure the event is not re-scheduled unnecessarily
+        if 'order_complete' in self.visitors[visitor_id]:
+            return
+
+        # Mark as order completed
+        self.visitors[visitor_id]['order_complete'] = True
+
+        batch_size = np.random.choice([1, 2, 3], p=[0.2, 0.5, 0.3])
+        self.visitors[visitor_id]['batch_size'] = batch_size
+        if batch_size == 1:
+            service_time = np.random.normal(5, 1)  # Single meal prep time
+        elif batch_size == 2:
+            service_time = np.random.normal(8, 2)  # Batch of 2 prep time
+        else:
+            service_time = np.random.normal(10, 3)  # Batch of 3 prep time
+            self.three_meal_batches += 1
+            if np.random.rand() < 0.5:
+                self.undercooked_count += 1
+
+        if self.prep_station_busy < self.max_prep_stations:
+            self.prep_station_busy += 1
+            self.schedule_event(self.current_time + service_time, 'prep_end', visitor_id)
+        else:
+            self.batch.append(visitor_id)
+
+        # Check if there are more orders to process
+        if len(self.batch) > 0 and self.order_station_busy < self.max_order_stations:
+            self.order_station_busy += 1
+            self.schedule_event(self.current_time, 'order_end', self.batch.pop(0))
+
+    # Handle the end of the food preparation process
+    def handle_prep_end(self, visitor_id):
+        self.prep_station_busy -= 1
+        if visitor_id not in self.visitors:  # If customer already left, skip
+            return
+
+        if self.pickup_station_busy < self.max_pickup_stations:
+            self.pickup_station_busy += 1
+            self.schedule_event(self.current_time, 'pickup_end', visitor_id)
+        else:
+            self.batch.append(visitor_id)
+
+        # Check if there are more prep tasks to process
+        if len(self.batch) > 0 and self.prep_station_busy < self.max_prep_stations:
+            self.prep_station_busy += 1
+            self.schedule_event(self.current_time, 'prep_end', self.batch.pop(0))
+
+    # Handle the end of the order pickup process
+    def handle_pickup_end(self, visitor_id):
+        self.pickup_station_busy -= 1
+        if visitor_id not in self.visitors:  # If customer already left, skip
+            return
+
+        wait_time = self.current_time - self.visitors[visitor_id]['arrival_time']
+        self.wait_times.append(wait_time)
+        self.customers_served += 1
+        del self.visitors[visitor_id]  # Remove from tracking once served
+
+        # Check if there are more pickups to process
+        if len(self.batch) > 0 and self.pickup_station_busy < self.max_pickup_stations:
+            self.pickup_station_busy += 1
+            self.schedule_event(self.current_time, 'pickup_end', self.batch.pop(0))
+
+    # Monitor function to periodically check the queue size
+    def monitor(self):
+        self.schedule_event(self.current_time + 1, 'monitor', None)
+
+# Function to run the simulation
 def run_simulation(extra_employee=None):
-    """
-    Simulates the food truck operation and returns performance metrics.
-    This is a simplified version for demonstration. In practice, use your full simulation.
-    """
-    # Simplified simulation for demonstration
-    # In practice, use your actual simulation code
-    if extra_employee:
-        served = random.uniform(75, 85)
-        left = random.uniform(8, 15)
-        undercooked = random.uniform(3, 8)
-    else:
-        served = random.uniform(65, 75)
-        left = random.uniform(15, 25)
-        undercooked = random.uniform(8, 15)
-    
-    return served, left, undercooked
+    food_truck = EventBasedFoodTruck(extra_employee)
+    visitor_count = 0
+    food_truck.schedule_event(0, 'monitor', None)
+
+    # Initial arrival
+    interarrival_time = np.random.exponential(6)
+    food_truck.schedule_event(interarrival_time, 'arrival', visitor_count)
+    visitor_count += 1
+
+    while food_truck.current_time < 300:
+        food_truck.process_event()
+
+        # Only schedule the next arrival if the event processed was an arrival
+        if food_truck.event_queue and food_truck.event_queue[0][1] == 'arrival':
+            interarrival_time = np.random.exponential(6)
+            next_arrival_time = food_truck.current_time + interarrival_time
+            food_truck.schedule_event(next_arrival_time, 'arrival', visitor_count)
+            visitor_count += 1
+
+    # Calculate percentages
+    served_percentage = (food_truck.customers_served / food_truck.customers_arrived) * 100 if food_truck.customers_arrived > 0 else 0
+    left_percentage = (food_truck.left_count / food_truck.customers_arrived) * 100 if food_truck.customers_arrived > 0 else 0
+    undercooked_percentage = (food_truck.undercooked_count / food_truck.three_meal_batches) * 100 if food_truck.three_meal_batches > 0 else 0
+
+    return served_percentage, left_percentage, undercooked_percentage
+
 
 def calculate_required_repetitions(data_series, initial_n, alpha, relative_precision):
     """Calculate required number of additional repetitions needed."""
@@ -1191,10 +1354,17 @@ def show_simulation_page():
                         <div style='text-align: right; direction: rtl;'>תוצאות הדיוק היחסי של הדגימות הנתונות:</div>
                     """, unsafe_allow_html=True)
                     # Create table data with relative precision
+                    # Create table data with relative precision
                     table_data = []
+                    has_precision_issues = False  # משתנה דגל לסימון אם יש בעיות דיוק
+
                     for i, metric in enumerate(metrics):
                         current_achieved = current_relative_precisions[i]
                         alternative_achieved = alternative_relative_precisions[i]
+                        
+                        # בדיקה אם יש חריגה מהדיוק היחסי הנדרש
+                        if current_achieved > relative_precision or alternative_achieved > relative_precision:
+                            has_precision_issues = True
                         
                         # Format the cells with precision values
                         current_cell = f"{current_achieved:.4f}"
@@ -1227,6 +1397,10 @@ def show_simulation_page():
 
                     st.write(styled_table.to_html(escape=False), unsafe_allow_html=True)
 
+                    # הצגת הודעת התראה אם יש בעיות דיוק
+                    if has_precision_issues:
+                        st.warning("לא כל המדדים עומדים בדיוק היחסי הנדרש. יש להגדיל את מספר ההרצות כדי להגיע לדיוק היחסי המבוקש.")
+                        st.markdown("<h3 style='text-align: right;'>לא כל המדדים עומדים בדיוק היחסי הנדרש. יש להגדיל את מספר ההרצות כדי להגיע לדיוק היחסי המבוקש. </h3>", unsafe_allow_html=True)
                 with col2:
                     fig = go.Figure()
 

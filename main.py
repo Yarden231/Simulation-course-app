@@ -1,7 +1,4 @@
 import streamlit as st
-
-
-
 # Set page config without the theme argument
 st.set_page_config(
     page_title="Simulation Course Platform",
@@ -11,21 +8,22 @@ st.set_page_config(
 )
 
 
-from utils import set_rtl
-# Call the set_rtl function to apply RTL styles
-set_rtl()
 # Import all page functions
+from utils import set_rtl
 from home import show as show_home
 from food_truck import show_food_truck
 from  goodness_of_fit import show as show_googness
 from story import show_story
-from flow import show as show_flow
-from lcg import show_lcg
-from lfsr import show_lfsr
 from random_generator import show_rng_demo
 from intro import show as show_intro
-from event_sim import show_simulation_page as alternative_page
-from event_sim2 import show_simulation_page
+from compare_alternatives import show_simulation_page as alternative_page
+from event_simulation import show_simulation_page
+from show_simulation_steps import show_food_truck_simulation as show_simulation_steps
+
+
+
+
+set_rtl()
 
 def main():
     with open('.streamlit/style.css') as f:
@@ -47,6 +45,7 @@ def main():
         "התאמת התפלגות למודל": show_googness,
         "אלגוריתמי דגימה": show_rng_demo,
         "תכנות אירועים": show_simulation_page,
+        #"הרצת תכנות אירועים": show_simulation_steps,
         "השוואה בין חלופות": alternative_page
         #"תכנות אירועים": show_food_truck,
         #"Flow": show_flow,
