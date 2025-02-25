@@ -4,7 +4,7 @@ An interactive learning platform for teaching simulation concepts through a real
 
 ## 🌟 Features
 
-### 📖 Story Mode
+### 📖 Story 
 - Interactive food truck business case presentation
 - Visual representation of service stations and workflow
 - Real-world context for simulation concepts
@@ -81,10 +81,6 @@ The platform is organized into five interactive modules that guide students thro
 3. **Distribution Fitting**: Shows how to analyze and fit statistical distributions
 4. **Event Simulation**: Provides real-time visualization of the simulation process
 5. **Alternative Analysis**: Enables statistical comparison of system alternatives
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 ## 🙏 Acknowledgments
