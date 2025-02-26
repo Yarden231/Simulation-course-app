@@ -11,14 +11,15 @@ st.set_page_config(
 # Import all page functions
 from utils import set_rtl
 from home import show as show_home
-from food_truck import show_food_truck
 from  goodness_of_fit import show as show_googness
 from story import show_story
-from random_generator import show_rng_demo
 from intro import show as show_intro
-from compare_alternatives import show_simulation_page as alternative_page
+from sampling_methods_page import show_rng_demo
+
 from event_simulation import show_simulation_page
-from show_simulation_steps import show_food_truck_simulation as show_simulation_steps
+from compare_alternatives import show_simulation_page as alternative_page
+
+
 
 
 
@@ -45,13 +46,7 @@ def main():
         "התאמת התפלגות למודל": show_googness,
         "אלגוריתמי דגימה": show_rng_demo,
         "תכנות אירועים": show_simulation_page,
-        #"הרצת תכנות אירועים": show_simulation_steps,
         "השוואה בין חלופות": alternative_page
-        #"תכנות אירועים": show_food_truck,
-        #"Flow": show_flow,
-        #"lcg": show_lcg,
-        #"lfsr": show_lfsr,
-        #"מחולל מספרים אקראיים": show_rng_demo
     }
 
     # Add buttons for each page in the sidebar

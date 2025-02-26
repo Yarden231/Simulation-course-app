@@ -17,7 +17,6 @@ def set_rtl():
     )
 
 
-
 # Inject CSS to apply LTR for sliders while keeping the overall page RTL
 def set_ltr_sliders():
     st.markdown(

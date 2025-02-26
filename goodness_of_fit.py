@@ -56,6 +56,7 @@ def show_introduction():
         </div>
     """, unsafe_allow_html=True)
 
+    
     # Background card
     st.markdown("""
         <div class="custom-card rtl-content">
@@ -282,9 +283,9 @@ def display_samples(samples):
     """, unsafe_allow_html=True)
 
     # Create two columns
-    col1, col2 = st.columns([1, 1])
+    cola, colc, colb = st.columns([1,3, 2])
 
-    with col1:
+    with cola:
         # Display first few samples in a table
         st.markdown("""
             <div class="info-box rtl-content">
@@ -300,10 +301,60 @@ def display_samples(samples):
         
         st.dataframe(sample_df, height=250)
 
-        
+    with colb:
+
+        # Display summary statistics with business context
+        st.markdown("""
+            <div class="info-box rtl-content">
+                <h4 style='text-align: center; margin-bottom: 20px;'>סטטיסטיקה תיאורית של דגימות זמני ההגעה שנמדדו</h4>
+            </div>
+        """, unsafe_allow_html=True)
 
 
-    with col2:
+        # Create three columns for statistics
+        col1, col2, col3 = st.columns(3)
+
+        # First column
+        with col1:
+            st.markdown(f"""
+                <div style= padding: 15px; border-radius: 5px; height: 100%;'>
+                    <h5 style='text-align: center; color: #FF4B4B; margin-bottom: 15px;'>מדדי מרכז</h5>
+                    <div style='text-align: right; '>
+                        <p><strong>מספר מדידות:</strong> {len(samples):d}</p>
+                        <p><strong>ממוצע:</strong> {np.mean(samples):.2f} דקות</p>
+                        <p><strong>חציון:</strong> {np.median(samples):.2f} דקות</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        # Second column
+        with col2:
+            st.markdown(f"""
+                <div style= padding: 15px; border-radius: 5px; height: 100%;'>
+                    <h5 style='text-align: center; margin-bottom: 15px;'>מדדי פיזור</h5>
+                    <div style='text-align: right;'>
+                        <p><strong>סטיית תקן:</strong> {np.std(samples):.2f} דקות</p>
+                        <p><strong>טווח בין-רבעוני:</strong> {np.percentile(samples, 75) - np.percentile(samples, 25):.2f} דקות</p>
+                        <p><strong>שונות:</strong> {np.var(samples):.2f}</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        # Third column
+        with col3:
+            st.markdown(f"""
+                <div style= padding: 15px; border-radius: 5px; height: 100%;'>
+                    <h5 style='text-align: center; color: #FF4B4B; margin-bottom: 15px;'>ערכי קיצון</h5>
+                    <div style='text-align: right;'>
+                        <p><strong>מינימום:</strong> {np.min(samples):.2f} דקות</p>
+                        <p><strong>מקסימום:</strong> {np.max(samples):.2f} דקות</p>
+                        <p><strong>טווח:</strong> {np.max(samples) - np.min(samples):.2f} דקות</p>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)   
+
+
+    with colc:
         fig = go.Figure()
 
         # Add scatter plot for service times
@@ -335,54 +386,6 @@ def display_samples(samples):
         # Display plot
         st.plotly_chart(fig, use_container_width=True)
 
-        # Display summary statistics with business context
-    st.markdown("""
-        <div class="info-box rtl-content">
-            <h4 style='text-align: center; margin-bottom: 20px;'>סטטיסטיקה תיאורית של דגימות זמני ההגעה שנמדדו</h4>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Create three columns for statistics
-    col1, col2, col3 = st.columns(3)
-
-    # First column
-    with col1:
-        st.markdown(f"""
-            <div style= 'background-color: #2D2D2D;padding: 15px; border-radius: 5px; height: 100%;'>
-                <h5 style='text-align: center; color: #FF4B4B; margin-bottom: 15px;'>מדדי מרכז</h5>
-                <div style='text-align: right;'>
-                    <p><strong>מספר מדידות:</strong> {len(samples):d}</p>
-                    <p><strong>ממוצע:</strong> {np.mean(samples):.2f} דקות</p>
-                    <p><strong>חציון:</strong> {np.median(samples):.2f} דקות</p>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # Second column
-    with col2:
-        st.markdown(f"""
-            <div style='background-color: #2D2D2D; padding: 15px; border-radius: 5px; height: 100%;'>
-                <h5 style='text-align: center; margin-bottom: 15px;'>מדדי פיזור</h5>
-                <div style='text-align: right;'>
-                    <p><strong>סטיית תקן:</strong> {np.std(samples):.2f} דקות</p>
-                    <p><strong>טווח בין-רבעוני:</strong> {np.percentile(samples, 75) - np.percentile(samples, 25):.2f} דקות</p>
-                    <p><strong>שונות:</strong> {np.var(samples):.2f}</p>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # Third column
-    with col3:
-        st.markdown(f"""
-            <div style='background-color: #2D2D2D; padding: 15px; border-radius: 5px; height: 100%;'>
-                <h5 style='text-align: center; color: #FF4B4B; margin-bottom: 15px;'>ערכי קיצון</h5>
-                <div style='text-align: right;'>
-                    <p><strong>מינימום:</strong> {np.min(samples):.2f} דקות</p>
-                    <p><strong>מקסימום:</strong> {np.max(samples):.2f} דקות</p>
-                    <p><strong>טווח:</strong> {np.max(samples) - np.min(samples):.2f} דקות</p>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
 
 def visualize_samples_and_qqplots(samples):
     """Display enhanced histograms and Q-Q plots using Plotly for consistent styling."""
