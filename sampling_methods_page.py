@@ -505,19 +505,19 @@ def show_order_sampling():
             st.markdown("<h3 style='text-align: left;'>טרנספורם הופכי לדגימת זמני הזמנה</h3>", unsafe_allow_html=True)
 
             # Code display using markdown code block
-            st.image("figures\sampling_methods\inverse_transform.png")
+            st.image("sampling_methods\inverse_transform.png")
 
         # Second method - Rejection Sampling
         elif sampling_method == 'קבלה-דחייה':
             samples = sample_rejection_order(n_samples)
             
-            st.image("figures\sampling_methods\accept_reject.png")
+            st.image("sampling_methods\accept_reject.png")
 
         # Third method - Composition
         else:
             samples = sample_composition_order(n_samples)
             
-            st.image("figures\sampling_methods\composition.png")
+            st.image("sampling_methods\composition.png")
 
 
 
